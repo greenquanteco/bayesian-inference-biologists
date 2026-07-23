@@ -1,0 +1,50 @@
+project:
+  type: book
+
+book:
+  title: "bayesian-inference-for-biologists"
+  author: "Nick Green"
+  chapters:
+    - index.qmd
+    - syllabus.qmd
+
+    - part: "Foundations"
+      chapters:
+        - chapters/01-introduction.qmd
+        - chapters/02-probability.qmd
+        - chapters/03-bayes-theorem.qmd
+    - part: "Bayesian methods in R"
+      chapters: 
+        - chapters/04-intro-to-jags.qmd
+        - chapters/05-bayesian-workflow.qmd
+    - part: "Bayesian analyses in R and JAGS"
+      chapters: 
+        - chapters/06-linear-models.qmd
+        - chapters/07-glm-01-counts.qmd
+        - chapters/08-glm-02-logistic.qmd
+        - chapters/09-glm-03-gamma.qmd
+        - chapters/10-nonlinear.qmd
+        - chapters/11-mixed-models.qmd
+    - part: "Special applications"
+      chapters: 
+        - chapters/12-mark-recapture.qmd
+        - chapters/13-state-space.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+    code-copy: true
+    code-overflow: wrap
+    smooth-scroll: true
+    respect-user-color-scheme: true
+    css: styles.css
+
+execute:
+  freeze: auto
+  warning: false
+  message: false
