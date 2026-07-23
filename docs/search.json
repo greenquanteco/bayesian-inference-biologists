@@ -1,0 +1,99 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "bayesian-inference-for-biologists",
+    "section": "",
+    "text": "Welcome",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>BIOL 7950: Bayesian inference for biologists</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#course-organization",
+    "href": "index.html#course-organization",
+    "title": "bayesian-inference-for-biologists",
+    "section": "1.1 Course organization",
+    "text": "1.1 Course organization\nThe book is organized into four parts:\n\nFoundations: introduces the basic ideas behind Bayesian inference, Bayes’ rule, and how Bayesian inference differs from frequentist inference.\nBayesian methods in R: introduces some key aspects of working with Bayesian models in R and JAGS.\nBayesian analyses in R and JAGS: demonstrates Bayesian versions of common models for biology like linear models, GLMs, and nonlinear models.\nSpecial applications: demonstrates some situations where Bayesian methods really shine, like mark-recapture and state space models.\n\nThis book is always a work in progress and I welcome constructive criticism and feedback. You can get in touch with me by email, on Bluesky ([at]greenquanteco), and Twitter ([at]GreenQuantEco).\nVisit the lab website for more information about Dr. Green’s other courses and QuantEco lab research!",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>BIOL 7950: Bayesian inference for biologists</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-linear-models.html",
+    "href": "chapters/06-linear-models.html",
+    "title": "8  Bayesian linear models",
+    "section": "",
+    "text": "8.1 Linear models refresher\nThis week we will continue learning the JAGS language and interface by exploring an important class of statistical methods: the linear model. This module includes the following common linear models:\n-Student’s t-test - ANOVA - Linear regression (including multiple linear regression) - Analysis of covariance (ANCOVA) - …and probably many more.\nIn one sense, these are all different “tests” because they test different null hypotheses, use different test statistics, and arrive at their p-values differently. However, as we shall see, the distinctions between many of the classic linear models are largely an artifact of the different ways that p-values are calculated. In Bayesian inference, where P-values are not used, there is no need to calculate a test statistic. Thus, the Bayesian modeler can look behind the curtain and see that these are really all the same model. So, while “what’s the difference between a t-test and ANOVA?” is a good exam question for an introductory (and thus frequentist) statistics course, the question doesn’t even make sense to a Bayesian. In Bayesian inference, this question is like asking about the difference between \\(3\\) and \\(2+1\\).\nBy the end of this module you should be able to:\nFor this module you will need a recent versions of R, JAGS, and the R packages rjags and R2jags (Plummer 2003, Plummer 2022, R Core Team 2022, Su and Yajima 2021). This module and all code examples were developed and tested using R version 4.2.2, JAGS 4.3.1, rjags version 4-13, and R2jags version 0.7-1.",
+    "crumbs": [
+      "Bayesian analyses in R and JAGS",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Bayesian linear models</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-linear-models.html#linear-models-refresher",
+    "href": "chapters/06-linear-models.html#linear-models-refresher",
+    "title": "8  Bayesian linear models",
+    "section": "",
+    "text": "8.1.1 Enter the matrix\nLinear models are called linear models because they assume linearity. This means that a change in some response variable \\(Y\\) is described by an additive change in some predictor \\(X\\) multiplied by a constant called the slope. The slope encodes the change in in \\(Y\\) resulting from adding 1 to \\(X\\).\n\\[Y=f\\left(X\\right)\\]\n\\[f\\left(X+1\\right)=f\\left(X\\right)+\\beta_1\\]\nIn practice, we also include a y-intercept to define the value of the function at \\(X=0\\).\n\\[f\\left(0\\right)=\\beta_0\\]\nAll linear models can be written very compactly in matrix notation:\n\\[\\bf{Y}=\\bf{XB}+\\bf{U}\\]\nThe boldface variables indicate that each term is really a matrix, not a variable in the usual sense. In most biological analyses, \\(\\bf{Y}\\), \\(\\bf{B}\\), and \\(\\bf{U}\\) are column vectors, or matrices with 1 column. The matrix \\(\\bf{X}\\) is the design matrix, which contains the explanatory variables. This notation isn’t very helpful for us biologists, but it describes what the computer is doing when it fits a model. The matrix notation above can be expanded as:\n\\[\\left[\\begin{matrix}y_1\\\\y_2\\\\\\vdots\\\\y_n\\\\\\end{matrix}\\right]=\\left[\\begin{matrix}1&x_{11}&\\cdots&x_{1p}\\\\1&x_{21}&\\cdots&x_{2p}\\\\\\vdots&\\vdots&\\ddots&\\vdots\\\\1&x_{n1}&\\cdots&x_{np}\\\\\\end{matrix}\\right]\\left[\\begin{matrix}\\beta_0\\\\\\beta_1\\\\\\beta_2\\\\\\vdots\\\\\\beta_p\\\\\\end{matrix}\\right]+\\left[\\begin{matrix}\\varepsilon_1\\\\\\varepsilon_2\\\\\\vdots\\\\\\varepsilon_n\\\\\\end{matrix}\\right]\\]\nwhere \\(n\\) is the number of observations; \\(y_1\\), \\(y_2\\), and so on up to \\(y_n\\) is a column vector of observed values of the dependent variable (aka: response variable); \\(p\\) is the number of model coefficients including the intercept; \\(x_{ij}\\) is the \\(i\\)-th value of predictor \\(j\\); \\(\\beta_0\\), \\(\\beta_1\\), up to \\(\\beta_p\\) is the vector of regression coefficients; and \\(\\varepsilon_1\\), \\(\\varepsilon_2\\), up to \\(\\varepsilon_n\\) is a vector of i.i.d. normally distributed residuals. This matrix notation illustrates how linear regression can be extended to models with multiple predictor variables or even multiple response variables.\n\n\n8.1.2 Straight lines (somehow)\nAnother meaning of the name “linear” refers to the fact that the change in the response variable \\(Y\\) per unit change in some predictor variable \\(X\\) is a scalar (aka: constant). This means that a given change in \\(X\\) will always produce the same change in \\(Y\\). Changing \\(X\\) from 1 to 2 will have the same effect on \\(Y\\) as changing \\(X\\) from 101 to 102, or 1,000,001 to 1,000,002, which is decidedly not the case with nonlinear functions. In other words, the plot of \\(Y\\) vs. \\(X\\) will be a straight line with a constant slope. If it sounds like I’m belaboring this point, it’s because I am…it’s really important!\nMany models that initially appear nonlinear can nevertheless be analyzed using linear-model methods. The important distinction is not whether the predictors are transformed, but whether the model is linear in its parameters.\nFor example, a polynomial model\n\\[Y = \\beta_0 + \\beta_1X + \\beta_2X^2 + \\beta_3X^3\\]\nis still a linear model. Although the relationship between \\(Y\\) and \\(X\\) is curved, the quantities \\(X^2\\) and \\(X^3\\) are simply additional predictor variables once the data are observed. The unknown parameters \\(\\beta_0\\), \\(\\beta_1\\), \\(\\beta_2\\), and \\(\\beta_3\\) enter the model only as coefficients.\nSimilarly, some nonlinear models can be transformed into linear ones. For example, the power law\n\\[Y = aX^b\\]\nbecomes\n\\[log\\left(Y\\right)=log\\left(a\\right)+blog\\left(X\\right)\\]\nafter taking logarithms of both sides, producing a linear relationship between \\(log\\left(Y\\right)\\) and \\(log\\left(X\\right)\\).\nI think of these models as “linear with extra steps.” They may require transformed variables or transformed equations, but once those transformations are complete, they can be fit using the same machinery as ordinary linear models.\nThis notion of linearity is what makes many analyses with factors (categories or grouping variables) as predictors “linear”. For example, the t-test is a linear model, but it doesn’t really describe a line on a plot of y vs. x the way that linear regression does. However, if you encode the factor (grouping variable) as 0s and 1s and think about the underlying linear algebra, it becomes clear what the difference in group means really means:\n\\[\n\\begin{bmatrix}\ny_1\\\\\ny_2\\\\\n\\vdots\\\\\ny_n\n\\end{bmatrix}\n=\n\\begin{bmatrix}\n1 & x_1\\\\\n1 & x_2\\\\\n\\vdots & \\vdots\\\\\n1 & x_n\n\\end{bmatrix}\n\\begin{bmatrix}\n\\beta_0\\\\\n\\beta_1\n\\end{bmatrix}\n+\n\\begin{bmatrix}\n\\varepsilon_1\\\\\n\\varepsilon_2\\\\\n\\vdots\\\\\n\\varepsilon_n\n\\end{bmatrix}\n\\]\nFor any observation \\(Y_i\\), the expected value (without any error term) is:\n\\[E\\left(y_i\\right)=\\left(1\\times\\beta_0\\right)+\\left(x_i\\times\\beta_1\\right)\\]\nFor group 1, \\(x_i = 0\\), so the expected value is \\(\\beta_0\\). For group 2, \\(x_i = 0\\), so the \\(\\beta_1\\) term comes into play as the difference in means between groups 1 and 2. This is what R, SAS, and other programs are doing internally when you analyze data with a factor variable.\n\n\n8.1.3 Other details and assumptions\nLinear models have some other features and assumptions that you need to be aware of. If your data or variables violate the assumptions below, you may need to use something other than linear models to analyze your data.\n\n8.1.3.1 Normal residuals\nA model’s residuals are the random error, or differences between observed and predicted values. Linear models assume that residuals follow a normal distribution. Models for data that do not have normal residuals exist, but they are not linear models. We’ll explore those in a later module.\nThe assumption of normal residuals explains the last term in the linear model equation, \\(\\varepsilon_i\\):\n\\[##y_i=\\beta_0+\\beta_1x_i+\\varepsilon_i\\]\nIn this equation, \\(y_i\\) is observation \\(i\\) of the response variable \\(y\\); \\(\\beta_0\\) is the intercept; \\(\\beta_1\\) is the slope; \\(x_i\\) is the predictor variable \\(x\\) for observation \\(i\\), and \\(\\varepsilon_i\\) is the residual for observation i (\\(\\varepsilon\\) is the Greek letter “epsilon” and usually stands for error or residual terms). The residual term can be expanded like this:\n\\[y_i=\\beta_0+\\beta_1x_i+Normal\\left(0,\\sigma_{res}\\right)\\]\nThis expansion makes it clear that each residual \\(\\varepsilon_i\\) comes independently from a normal distribution with mean 0 and standard deviation (SD) \\(\\sigma_{res}\\). For convenience, we sometimes separate the deterministic part and the stochastic part of the model and write the state space form of the linear regression model:\n\\[y_i\\sim Normal\\left(\\eta_i,\\ \\sigma_{res}\\right)\\]\n\\[\\eta_i=\\beta_0+\\beta_1x_i\\]\nIn this version, the symbol $$ means “distributed as” and denotes a stochastic relationship—a relationship that contains some element of randomness. This is in contrast to a deterministic relationship, which does not (equality, aka: identity, = is the most famous kind of deterministic relationship).\n\n\n8.1.3.2 Constant variance (aka: heteroscedasticity)\nLinear models assume homoscedasticity, or constant variance. This means that the residual variance does not depend on either \\(x\\) or \\(y\\). This is part of the definition of a variable being independent and identically distributed (i.i.d.). If the variance in the response variable depends on some predictor variable, then this should be incorporated into the model (resulting in something other than a linear model). If the variance appears to depend on the response variable, then there is probably an issue with the assumed response distribution (more on this below).\nThe figure below shows two datasets with a linear relationship between \\(x\\) and \\(y\\). In the left panel, the variance is the same everywhere (homoscedastic). The right panel shows a heteroscedastic relationship where the variance increases at larger \\(x\\).\n\n\n8.1.3.3 Fixed and independent predictors\n\n\n8.1.3.4 Independent and identically distributed errors (i.i.d.)",
+    "crumbs": [
+      "Bayesian analyses in R and JAGS",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Bayesian linear models</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-linear-models.html#comparing-groups",
+    "href": "chapters/06-linear-models.html#comparing-groups",
+    "title": "8  Bayesian linear models",
+    "section": "8.2 Comparing groups",
+    "text": "8.2 Comparing groups\n\n8.2.1 Student’s t-test\n\n8.2.1.1 One-sample t-test\n\n\n8.2.1.2 Two-sample t-test\n\n\n8.2.1.3 Paired t-tests\n\n8.2.1.3.1 Method 1: One sample test on differences\n\n\n8.2.1.3.2 Method 2: Paired test (direct)\n\n\n\n\n8.2.2 Analysis of variance (ANOVA)\n\n8.2.2.1 ANOVA basics\n\n\n8.2.2.2 One-way ANOVA\n\n\n8.2.2.3 Two-way ANOVA\n\n\n8.2.2.4 Two-way ANOVA with interaction",
+    "crumbs": [
+      "Bayesian analyses in R and JAGS",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Bayesian linear models</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-linear-models.html#continuous-patterns",
+    "href": "chapters/06-linear-models.html#continuous-patterns",
+    "title": "8  Bayesian linear models",
+    "section": "8.3 Continuous patterns",
+    "text": "8.3 Continuous patterns\n\n8.3.1 Linear regression\n\n\n8.3.2 Multiple linear regression",
+    "crumbs": [
+      "Bayesian analyses in R and JAGS",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Bayesian linear models</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-linear-models.html#analysis-of-covariance-ancova",
+    "href": "chapters/06-linear-models.html#analysis-of-covariance-ancova",
+    "title": "8  Bayesian linear models",
+    "section": "8.4 Analysis of covariance (ANCOVA)",
+    "text": "8.4 Analysis of covariance (ANCOVA)",
+    "crumbs": [
+      "Bayesian analyses in R and JAGS",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Bayesian linear models</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-linear-models.html#linear-with-extra-steps",
+    "href": "chapters/06-linear-models.html#linear-with-extra-steps",
+    "title": "8  Bayesian linear models",
+    "section": "8.5 Linear with extra steps",
+    "text": "8.5 Linear with extra steps\n\n8.5.1 Log-linear models\n\n\n8.5.2 Power laws (log-log) models",
+    "crumbs": [
+      "Bayesian analyses in R and JAGS",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Bayesian linear models</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-linear-models.html#conclusions",
+    "href": "chapters/06-linear-models.html#conclusions",
+    "title": "8  Bayesian linear models",
+    "section": "8.6 Conclusions",
+    "text": "8.6 Conclusions\nNow that you have seen the ways we fit linear models in JAGS, you should have both a better understanding of linear models and Bayesian model fitting. In particular, wrapping your head around the ANCOVA models should set you up to understand one of the more advanced topics in this course, mixed models. It only takes one subtle change to convert an ANCOVA into a mixed model.\nLikewise, understanding how the linear regression model was put together will help you understand the generalized linear model (GLM). The GLM generalized the linear model by allowing the response distribution to be something other than the normal, and allowing a link function that relates the scale of the response variable and the scale of the deterministic part of the model. Both of these changes are very straightforward in JAGS…much more so than in R!",
+    "crumbs": [
+      "Bayesian analyses in R and JAGS",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Bayesian linear models</span>"
+    ]
+  }
+]

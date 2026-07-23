@@ -19,6 +19,6 @@ The book is organized into four parts:
 1. Bayesian analyses in R and JAGS: demonstrates Bayesian versions of common models for biology like linear models, GLMs, and nonlinear models.
 1. Special applications: demonstrates some situations where Bayesian methods really shine, like mark-recapture and state space models.
 
-This book is always a work in progress and I welcome constructive criticism and feedback. You can get in touch with me by [email](mailto:ngreen62@kennesaw.edu), on [Bluesky (@greenquanteco@bsky.social)](https://bsky.app/profile/greenquanteco.bsky.social), and [Twitter (@GreenQuantEco)](https://x.com/GreenQuantEco).
+This book is always a work in progress and I welcome constructive criticism and feedback. You can get in touch with me by [email](mailto:ngreen62@kennesaw.edu), on [Bluesky ([at]greenquanteco)](https://bsky.app/profile/greenquanteco.bsky.social), and [Twitter ([at]GreenQuantEco)](https://x.com/GreenQuantEco).
 
 Visit the [lab website](https://facultyweb.kennesaw.edu/ngreen62/index.php) for more information about Dr. Green's other courses and QuantEco lab research!

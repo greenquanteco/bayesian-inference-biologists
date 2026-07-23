@@ -1,12 +1,16 @@
-# Overview
+---
+title: "Bayesian linear models"
+---
 
 This week we will continue learning the JAGS language and interface by exploring an important class of statistical methods: the linear model. This module includes the following common linear models:
-•	Student’s t-test
-•	ANOVA
-•	Linear regression (including multiple linear regression)
-•	Analysis of covariance (ANCOVA)
-•	…and probably many more.
-In one sense, these are all different “tests” because they test different null hypotheses, use different test statistics, and arrive at their P-values differently. However, as we shall see, the distinctions between many of the classic linear models are largely an artifact of the different ways that P-values are calculated. In Bayesian inference, where P-values are not used, there is no need to calculate a test statistic. Thus, the Bayesian modeler can look behind the curtain and see that these are really all the same model. So, while “what’s the difference between a t-test and ANOVA?” is a good exam question for an introductory (and thus frequentist) statistics course, the question doesn’t even make sense to a Bayesian. In Bayesian inference, this question is like asking about the difference between “3” and “2+1”. 
+
+-Student’s t-test
+- ANOVA
+- Linear regression (including multiple linear regression)
+- Analysis of covariance (ANCOVA)
+- …and probably many more.
+
+In one sense, these are all different “tests” because they test different null hypotheses, use different test statistics, and arrive at their *p*-values differently. However, as we shall see, the distinctions between many of the classic linear models are largely an artifact of the different ways that *p*-values are calculated. In Bayesian inference, where P-values are not used, there is no need to calculate a test statistic. Thus, the Bayesian modeler can look behind the curtain and see that these are really all the same model. So, while “what’s the difference between a *t*-test and ANOVA?” is a good exam question for an introductory (and thus frequentist) statistics course, the question doesn’t even make sense to a Bayesian. In Bayesian inference, this question is like asking about the difference between $3$ and $2+1$. 
 
 **By the end of this module you should be able to:**
 
@@ -15,9 +19,9 @@ In one sense, these are all different “tests” because they test different nu
 
 For this module you will need a recent versions of R, JAGS, and the R packages `rjags` and `R2jags` (Plummer 2003, Plummer 2022, R Core Team 2022, Su and Yajima 2021). This module and all code examples were developed and tested using R version 4.2.2, JAGS 4.3.1, `rjags` version 4-13, and `R2jags` version 0.7-1. 
 
-# Linear models refresher
+## Linear models refresher
 
-## Enter the matrix
+### Enter the matrix
 
 **Linear models** are called linear models because they assume **linearity**. This means that a change in some response variable $Y$ is described by an additive change in some predictor $X$ multiplied by a constant called the **slope**. The slope encodes the change in in $Y$ resulting from adding 1 to $X$.
 
@@ -40,7 +44,7 @@ $$\left[\begin{matrix}y_1\\y_2\\\vdots\\y_n\\\end{matrix}\right]=\left[\begin{ma
 
 where $n$ is the number of observations; $y_1$, $y_2$, and so on up to $y_n$ is a column vector of observed values of the dependent variable (aka: response variable); $p$ is the number of model coefficients including the intercept; $x_{ij}$ is the $i$-th value of predictor $j$; $\beta_0$, $\beta_1$, up to $\beta_p$ is the vector of regression coefficients; and $\varepsilon_1$, $\varepsilon_2$, up to $\varepsilon_n$ is a vector of *i.i.d.* normally distributed residuals. This matrix notation illustrates how linear regression can be extended to models with multiple predictor variables or even multiple response variables.
 
-## Straight lines (somehow)
+### Straight lines (somehow)
 
 Another meaning of the name “linear” refers to the fact that the change in the response variable $Y$ per unit change in some predictor variable $X$ is a scalar (aka: constant). This means that a given change in $X$ will always produce the same change in $Y$. Changing $X$ from 1 to 2 will have the same effect on $Y$ as changing $X$ from 101 to 102, or 1,000,001 to 1,000,002, which is decidedly not the case with nonlinear functions. In other words, the plot of $Y$ vs. $X$ will be a straight line with a constant slope. If it sounds like I’m belaboring this point, it’s because I am…it’s really important! 
 
@@ -99,11 +103,11 @@ $$E\left(y_i\right)=\left(1\times\beta_0\right)+\left(x_i\times\beta_1\right)$$
 
 For group 1, $x_i = 0$, so the expected value is $\beta_0$. For group 2, $x_i = 0$, so the $\beta_1$ term comes into play as the difference in means between groups 1 and 2. This is what R, SAS, and other programs are doing internally when you analyze data with a factor variable.
 
-## Other details and assumptions
+### Other details and assumptions
 
 Linear models have some other features and assumptions that you need to be aware of. If your data or variables violate the assumptions below, you may need to use something other than linear models to analyze your data. 
 
-### Normal residuals
+#### Normal residuals
 
 A model's **residuals** are the random error, or differences between observed and predicted values. Linear models assume that residuals follow a normal distribution. Models for data that do not have normal residuals exist, but they are not linear models. We’ll explore those in a later module.
 
@@ -123,7 +127,7 @@ $$\eta_i=\beta_0+\beta_1x_i$$
 
 In this version, the symbol $\sim $ means “distributed as” and denotes a stochastic relationship—a relationship that contains some element of randomness. This is in contrast to a deterministic relationship, which does not (equality, aka: identity, = is the most famous kind of deterministic relationship).
 
-### Constant variance (aka: heteroscedasticity)
+#### Constant variance (aka: heteroscedasticity)
 
 Linear models assume **homoscedasticity**, or constant variance. This means that the residual variance does not depend on either $x$ or $y$. This is part of the definition of a variable being independent and identically distributed (i.i.d.). If the variance in the response variable depends on some predictor variable, then this should be incorporated into the model (resulting in something other than a linear model). If the variance appears to depend on the response variable, then there is probably an issue with the assumed response distribution (more on this below).
 
@@ -131,49 +135,49 @@ The figure below shows two datasets with a linear relationship between $x$ and $
 
 
 
-### Fixed and independent predictors
+#### Fixed and independent predictors
 
-### Independent and identically distributed errors (i.i.d.)
+#### Independent and identically distributed errors (i.i.d.)
 
-# Comparing groups
+## Comparing groups
 
-## Student's *t*-test
+### Student's *t*-test
 
-### One-sample *t*-test
+#### One-sample *t*-test
 
-### Two-sample *t*-test
+#### Two-sample *t*-test
 
-### Paired *t*-tests
+#### Paired *t*-tests
 
-#### Method 1: One sample test on differences
+##### Method 1: One sample test on differences
 
-#### Method 2: Paired test (direct)
+##### Method 2: Paired test (direct)
 
-## Analysis of variance (ANOVA)
+### Analysis of variance (ANOVA)
 
-### ANOVA basics
+#### ANOVA basics
 
-### One-way ANOVA
+#### One-way ANOVA
 
-### Two-way ANOVA
+#### Two-way ANOVA
 
-### Two-way ANOVA with interaction
+#### Two-way ANOVA with interaction
 
-# Continuous patterns
+## Continuous patterns
 
-## Linear regression
+### Linear regression
 
-## Multiple linear regression
+### Multiple linear regression
 
-# Analysis of covariance (ANCOVA)
+## Analysis of covariance (ANCOVA)
 
-# Linear with extra steps
+## Linear with extra steps
 
-## Log-linear models
+### Log-linear models
 
-## Power laws (log-log) models
+### Power laws (log-log) models
 
-# Conclusions
+## Conclusions
 
 Now that you have seen the ways we fit linear models in JAGS, you should have both a better understanding of linear models and Bayesian model fitting. In particular, wrapping your head around the ANCOVA models should set you up to understand one of the more advanced topics in this course, mixed models. It only takes one subtle change to convert an ANCOVA into a mixed model.
 
