@@ -1,0 +1,19 @@
+
+    model{
+        # priors
+        ## difference in means
+        dif ~ dnorm(0, 0.001)
+
+        ## residual SD and precision
+        sigma.res ~ dlnorm(1, 0.25)
+        tau <- 1/(sigma.res^2)
+
+        # likelihood
+        for(i in 1:n){
+            y2[i] ~ dnorm(eta[i], tau)
+            eta[i] <- y1[i] + dif
+        }#i
+
+    }#model
+
+

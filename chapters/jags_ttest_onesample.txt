@@ -1,0 +1,18 @@
+
+    model{
+        # priors
+        ## population mean
+        mu ~ dnorm(0, 0.001)        
+
+        ## precision and residual SD
+        sigma ~ dunif(0.0001, 10)
+        tau <- 1/(sigma^2)
+
+        # likelihood
+        for(i in 1:n){
+            y[i] ~ dnorm(mu, tau)
+        }#i
+
+    }#model
+
+

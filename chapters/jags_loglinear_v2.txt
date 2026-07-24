@@ -1,0 +1,27 @@
+
+    data{
+        for(i in 1:n){
+            z[i] <- log(y[i])
+        }#i
+    }#data
+
+    model{
+        # priors
+        ## intercept
+        beta0 ~ dnorm(0, 0.001)
+        beta1 ~ dnorm(0, 0.001)
+
+        ## residual SD and precision
+        sigma ~ dlnorm(1, 0.25)
+        tau <- 1 / (sigma^2)
+
+        # likelihood
+        for(i in 1:n){
+            # expected value on LOG scale
+            eta[i] <- beta0 + beta1 * x[i]
+            # NOTE: uses normal, not lognormal
+            # and z, which is on log scale
+            z[i] ~ dnorm(eta[i], tau)
+        }#i
+    }#model
+

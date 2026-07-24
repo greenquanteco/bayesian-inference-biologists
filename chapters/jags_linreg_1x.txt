@@ -1,0 +1,23 @@
+
+    model{
+        # priors
+        ## intercept
+        beta0 ~ dnorm(0, 0.001)
+
+        ## slope
+        beta1 ~ dnorm(0, 0.001)
+
+        ## residual SD and precision
+        sigma ~ dlnorm(1, 0.25)
+        tau <- 1 / (sigma^2)
+
+        # likelihood
+        # (for loop)
+        for(i in 1:n){
+            y[i] ~ dnorm(eta[i], tau)
+            eta[i] <- beta0 + beta1 * x[i]
+        }#i
+
+    }#model
+
+

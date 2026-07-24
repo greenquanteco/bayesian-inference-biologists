@@ -1,0 +1,21 @@
+
+    model{
+        # priors
+        for(i in 1:nfac1){
+            for(j in 1:nfac2){
+                mu[i,j] ~ dnorm(0, 0.001)
+            }#j
+        }#i
+
+        ## residual SD and precision
+        sigma ~ dlnorm(1, 0.25)
+        tau <- 1 / (sigma^2)
+
+        # likelihood
+        for(i in 1:n){
+            y[i] ~ dnorm(mu[fac1[i], fac2[i]], tau)
+        }#i
+
+    }#model
+
+

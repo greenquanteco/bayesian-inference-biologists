@@ -1,0 +1,22 @@
+
+    model{
+        # priors
+        
+        for(i in 1:2){
+            ## group means
+            mu[i] ~ dnorm(0, 0.001)
+            ## residual and precision
+            sigma[i] ~ dunif(0.0001, 10)
+            tau[i] <- 1 / (sigma[i]^2)
+        }#i
+
+        # likelihood
+        for(i in 1:n){
+            y[i] ~ dnorm(mu[x[i]], tau[x[i]])
+        }#i
+
+        # derived parameters
+        effect <- mu[2] - mu[1]
+    }#model
+
+

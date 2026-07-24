@@ -1,0 +1,28 @@
+
+    model{
+        # priors
+        ## intercept
+        beta0 ~ dnorm(0, 0.001)
+
+        ## effects of factor 1
+        beta1[1] ~ dnorm(0, 1e9) # set first level to 0
+        beta1[2] ~ dnorm(0, 0.001)
+        beta1[3] ~ dnorm(0, 0.001)
+
+        ## effects of factor 2
+        beta2[1] ~ dnorm(0, 1e9) # set first level to 0
+        beta2[2] ~ dnorm(0, 0.001)
+
+        ## residual SD and precision
+        sigma ~ dlnorm(1, 0.25)
+        tau <- 1 / (sigma^2)
+
+        # likelihood
+        for(i in 1:n){
+            y[i] ~ dnorm(eta[i], tau)
+            eta[i] <- beta0 + beta1[fac1[i]] + beta2[fac2[i]]
+        }#i
+
+    }#model
+
+

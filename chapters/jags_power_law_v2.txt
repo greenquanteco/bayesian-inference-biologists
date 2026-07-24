@@ -1,0 +1,32 @@
+
+    data{
+        for(i in 1:n){z[i] <- log(y[i])}#i
+    }
+
+    model{
+        # priors
+        ## intercept
+        logA ~ dnorm(0, 0.001)
+
+        ## growth constant
+        B ~ dnorm(0, 0.001)
+
+        ## residual SD and precision
+        sigma ~ dlnorm(1, 0.25)
+        tau <- 1 / (sigma^2)
+
+        # likelihood
+        for(i in 1:n){
+            # expected value on LOG scale
+            eta[i] <- logA +  B * log(x[i])
+            # NOTE: likelihood uses transformed z, not y
+            # and dnorm(), not dlnorm()
+            z[i] ~ dnorm(eta[i], tau)
+        }#i
+
+        # derived quantity: original scale A
+        A <- exp(logA)        
+
+    }#model
+
+
