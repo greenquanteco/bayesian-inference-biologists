@@ -1,0 +1,1 @@
+# GLM for binomial data {#sec-glm2}

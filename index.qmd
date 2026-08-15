@@ -1,24 +1,17 @@
----
-title: "BIOL 7950: Bayesian inference for biologists"
----
-
 # Welcome {.unnumbered}
 
-# Welcome
-
-These notes accompany BIOL 7950: Bayesian Inference for Biologists at Kennesaw State University.
+These notes accompany **BIOL 7950: Bayesian Inference for Biologists** at Kennesaw State University.
 
 The goal of this course is to introduce Bayesian statistical thinking and modern Bayesian analysis for biological data.
 
 ## Course organization
 
-The book is organized into four parts:
+The book is organized into three parts:
 
-1. Foundations: introduces the basic ideas behind Bayesian inference, Bayes' rule, and how Bayesian inference differs from frequentist inference. 
-1. Bayesian methods in R: introduces some key aspects of working with Bayesian models in R and JAGS.
+1. Foundations: introduces the basic ideas behind Bayesian inference, Bayes' rule, and how Bayesian inference differs from frequentist inference. Also introduces some key aspects of working with Bayesian models in R and JAGS.
 1. Bayesian analyses in R and JAGS: demonstrates Bayesian versions of common models for biology like linear models, GLMs, and nonlinear models.
 1. Special applications: demonstrates some situations where Bayesian methods really shine, like mark-recapture and state space models.
 
 This book is always a work in progress and I welcome constructive criticism and feedback. You can get in touch with me by [email](mailto:ngreen62@kennesaw.edu), on [Bluesky ([at]greenquanteco)](https://bsky.app/profile/greenquanteco.bsky.social), and [Twitter ([at]GreenQuantEco)](https://x.com/GreenQuantEco).
 
-Visit the [lab website](https://facultyweb.kennesaw.edu/ngreen62/index.php) for more information about Dr. Green's other courses and QuantEco lab research!
+Visit the [lab website](https://greenquanteco.github.io/) for more information about Dr. Green's other courses and QuantEco lab research!

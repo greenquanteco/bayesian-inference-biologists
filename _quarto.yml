@@ -3,49 +3,97 @@ project:
   output-dir: docs
 
 book:
-  title: "bayesian-inference-for-biologists"
-  author: "Nick Green"
+  site-url: "https://greenquanteco.github.io/bayesian-inference-for-biologists/"
+  repo-url: "https://github.com/greenquanteco/bayesian-inference-for-biologists"
+  repo-actions: [edit, issue]
+  cover-image: images/lab_logo_02.jpg
+  
+  title: "Bayesian Inference for Biologists"
+  date: today
+  date-format: long
+ 
+  author:
+  - name: Nick Green
+    degrees:
+    - Ph.D.
+    orcid: 0000-0002-8538-4191
+    email: ngreen62@kennesaw.edu
+    affiliation:
+      - name: Kennesaw State University
+        department: "Department of Ecology, Evolution, and Organismal Biology"
+        city: Kennesaw
+        state: Georgia
+        country: USA
+        url: https://greenquanteco.github.io/
+        
   chapters:
     - index.qmd
-    - syllabus.qmd
-
-    - part: "Foundations"
+    - part: chapters/part-01.qmd
       chapters:
         - chapters/01-introduction.qmd
-        - chapters/02-probability.qmd
-        - chapters/03-bayes-theorem.qmd
-    - part: "Bayesian methods in R"
+        - chapters/02-bayesian.qmd
+        - chapters/03-intro-to-jags.qmd
+    - part: chapters/part-02.qmd
       chapters: 
-        - chapters/04-intro-to-jags.qmd
-        - chapters/05-bayesian-workflow.qmd
-    - part: "Bayesian analyses in R and JAGS"
+        - chapters/04-linear-models.qmd
+        - chapters/05-glm-01-counts.qmd
+        - chapters/06-glm-02-logistic.qmd
+        - chapters/07-glm-03-gamma.qmd
+        - chapters/08-nonlinear.qmd
+        - chapters/09-mixed-models.qmd
+    - part: chapters/part-03.qmd
       chapters: 
-        - chapters/06-linear-models.qmd
-        - chapters/07-glm-01-counts.qmd
-        - chapters/08-glm-02-logistic.qmd
-        - chapters/09-glm-03-gamma.qmd
-        - chapters/10-nonlinear.qmd
-        - chapters/11-mixed-models.qmd
-    - part: "Special applications"
-      chapters: 
-        - chapters/12-mark-recapture.qmd
-        - chapters/13-state-space.qmd
+        - chapters/10-mark-recapture.qmd
+        - chapters/11-state-space.qmd
     - references.qmd
+
+license: "CC BY-SA"
+copyright:
+  holder: Nick Green
+  year: 2026
 
 bibliography: references.bib
 
+csl: journal-of-mammalogy.csl
+
 format:
   html:
-    theme: cosmo
+    theme:
+      - cosmo
+      - brand
     toc: true
     number-sections: true
-    code-copy: true
-    code-overflow: wrap
+    number-depth: 4
+    fig-cap-location: top
+    toc-depth: 3
     smooth-scroll: true
-    respect-user-color-scheme: true
-    css: styles.css
+      
+  pdf:
+    mainfont: "Arial"
+    monofont: "Courier New"
+    documentclass: report
+    toc: true
+    number-sections: true
+    number-depth: 4
+    fig-cap-location: top
+    keep-tex: true
+    fontsize: "13"
+    linestretch: 1.3
+    geometry: 
+     - margin=1in
+    include-in-header: preamble.tex
+    pdf-engine: xelatex
+    fig-width: 6
+    fig-height: 4
 
+editor: source
+crossref:
+  fig-title: "Figure"
+  tbl-title: "Table"
+  
 execute:
   freeze: auto
+  echo: true
   warning: false
   message: false
+  error: false

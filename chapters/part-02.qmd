@@ -1,0 +1,4 @@
+# Example analyses with JAGS and R
+
+LM, GLM, NLS, and more!
+

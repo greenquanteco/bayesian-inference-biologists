@@ -1,0 +1,10 @@
+# Introduction: Modes of inference {#sec-intro}
+
+## Motivation: hypothesis testing in biology
+
+## Null hypothesis significance testing and *p*-values
+
+## Maximum likelihood estimation (MLE)
+
+## Bayes' Theorem
+

@@ -1,0 +1,3 @@
+# Introduction to Bayesian inference
+
+If it feels backwards, that's because it is.

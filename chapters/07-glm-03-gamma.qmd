@@ -1,0 +1,1 @@
+# GLM for continuous data {#sec-glm3}

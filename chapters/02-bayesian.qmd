@@ -1,0 +1,11 @@
+# Probability and Bayes' theorem {#sec-bayes}
+
+## Bayesian thinking
+
+### Priors
+
+### Evidence (Data)
+
+### Posteriors
+
+## Updating beliefs and Bayes' factors
