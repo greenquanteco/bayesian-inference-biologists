@@ -1,7 +1,7 @@
 # Introduction: Modes of inference {#sec-intro}
 
 
-## Motivation: hypothesis testing in biology {#sec-intro}
+## Motivation: hypothesis testing in biology {#sec-intro-motiv}
 
 Biology, like all sciences, depends on the **scientific method**. This means testing proposed explanations, or **hypotheses**, against the data to see if the data support the hypothesis or not. That critical step, of deciding whether observations support or refute a hypothesis, is the domain of **statistics**: the branch of mathematics concerned with finding and interpreting patterns in data.
 
@@ -285,14 +285,14 @@ cols <- topo.colors(20)
 layout(matrix(c(1, 2), nrow=1), widths=c(5, 1))
 
 # likelihood surface
-par(mar=c(5.1, 5.1, 1.1, 0.1))
+par(mar=c(4.1, 4.1, 1.1, 0.1))
 image(x=test.sigma, y=test.mu, z=t(Lmat),
       breaks=brks, col=cols,
       xlab=expression(sigma),
       ylab=expression(mu))
 
 # color legend
-par(mar=c(1.1, 1, 1.1, 4))
+par(mar=c(0.1, 0.1, 0.1, 4))
 
 image(
   x=1,
@@ -344,14 +344,14 @@ cols <- topo.colors(20)
 layout(matrix(c(1, 2), nrow=1), widths=c(5, 1))
 
 # likelihood surface
-par(mar=c(5.1, 5.1, 1.1, 0.1))
+par(mar=c(4.1, 4.1, 1.1, 0.1))
 image(x=test.sigma2, y=test.mu2, z=t(Lmat2),
       breaks=brks2, col=cols,
       xlab=expression(sigma),
       ylab=expression(mu))
 
 # color legend
-par(mar=c(1.1, 1, 1.1, 4))
+par(mar=c(0.1, 0.1, 0.1, 4))
 
 image(
   x=1,
@@ -372,7 +372,7 @@ And we could keep going until we get a region we are happy with. Just as with th
 Here is the likelihood *surface*:
 
 ```{r}
-#| fig-cap: "The log-likelihood surface for a model with 2 parameters, $mu$ and $sigma$."
+#| fig-cap: "The likelihood surface for a model with 2 parameters, $mu$ and $sigma$."
 #| label: fig-surface1
 
 par(mar=c(2,2,1,1))
@@ -580,17 +580,54 @@ If the search grid was sufficiently precise, we could have also normalized these
 
 ### MCMC and Metropolis-Hastings {#sec-intro-bayes-mcmc}
 
-In practice, calculating posterior distributions of many parameters simultaneously is computationally difficult. Instead, we can take a shortcut with a method such as Markov chain Monte Carlo (MCMC). A Markov chain is a sequence of values, where each value depends only on the value before it.  The Monte Carlo part refers to a European city famous for its casinos.
+In practice, calculating posterior distributions of many parameters simultaneously is computationally difficult. The surface of possible values and their joint likelihoods (@fig-surface1), defined by Bayes' theorem, often can't be defined explicitly. Instead, we can use different techniques to explore the surface. That is, to **sample from the posterior distributions**.
 
+One strategy for sampling from the posterior distribution is really a family of techniques known as **Markov chain Monte Carlo (MCMC)**. A **Markov chain** is a sequence of values, where each value depends only on the value before it.  The **Monte Carlo** part refers to a European city famous for its casinos. So, MCMC involves a series or *chain* of values that involves at least some random number generation. One of the most common MCMC algorithms is the **Metropolis-Hastings** algorithm.
+
+Suppose we are using a Markov chain to explore the posterior distributions of the parameters in a model. At the current step, the chain is at state $\theta$. Using some process (it doesn't matter what), a proposed new set of parameter values $\theta^\prime$. Whether $\theta^\prime$ is an improvement depends on the ratio
+
+$$\frac{p\left(\theta^\prime|y\right)}{p\left(\theta|y\right)}$$
+
+Substitute the expressions for $p\left(\theta^\prime|y\right)$ and $p\left(\theta|y\right)$ that we get from Bayes' theorem:
+
+$$\frac{p\left(y|\theta^\prime\right)p\left(\theta^\prime\right)/p\left(y\right)}{p\left(y|\theta\right)p\left(\theta\right)/p\left(y\right)}$$
+
+The $1/p\left(y\right)$ terms cancel, leaving us with:
+
+$$\frac{p\left(y|\theta^\prime\right)p\left(\theta^\prime\right)}{p\left(y|\theta\right)p\left(\theta\right)}$$
+
+If the proposed parameters in $\theta^\prime$ have higher posterior density than those in $\theta$, the algorithm can accept them. If they have lower posterior density, the algorithm *sometimes* accepts them, with a probability equal to that posterior density ratio. 
+
+After enough iterations, the chain will spend more time in some regions of the parameter space than in other parts. The amount of time it spends in each region is proportional to the posterior probability densities for the parameters.
+
+So that's the connection:
+
+> Bayes' theorem **constructs** the posterior surface. MCMC is how we **explore** that surface.
+
+MCMC with Metropolis-Hastings is just one algorithm for sampling from posterior distributions. A variant called **Gibbs sampling** omits the accept/reject step. More modern algorithms like HMC/NUTS are more sophisticated still, but they solve the same basic problem: efficiently sampling a posterior distribution defined by a prior distribution and a likelihood. And unlike MLE estimates, which we use to make inferences about parameters, posterior samples literally are the inferential result. Summaries of the posterior draws, like their mean, median, SD, and so on, tell us about the parameters and their uncertainties.
 
 ### Credible intervals {#sec-intro-bayes-cri}
 
-Besides its epistemological neatness, another advantage of Bayesian inference in practice is that parameters in Bayesian models (e.g, slopes, intercepts, etc.) are estimated with **credible intervals (CRI)**, not **confidence intervals (CI)**. 
+The distinction between MLE estimates and posterior draws becomes especially important when we construct intervals around parameter estimates to express our uncertainty about them. In frequentist inference, the parameter is treated as fixed but unknown. Because the parameter value is fixed, we cannot use probability to describe uncertainty about the parameter (because definitionally, there is none). Instead, we can construct a **95% confidence interval (CI)** to describe uncertainty that arises from how we arrived at the estimate. If we repeatedly collected data and constructed intervals in the same way, 95% of those intervals would contain the true parameter value. We *cannot* say that the 95% CI is 95% certain to contain the true parameter value.
 
-- A frequentist 95% confidence interval is a statement about the long run performance of a series of repeated experiments. If we repeatedly collected new samples and calculated intervals the same way, about 95% of those intervals would contain the true parameter. This is not the same as saying that there is a 95% probability that the true parameter value lies within out estimated CI.
+In Bayesian inference, the posterior draws are our sample of the posterior distribution. Given enough draws, we can calculate a **95% credible interval (CRI)** that contains 95% of the posterior probability for that parameter. Given the model, prior, and observed data, we *can* say that there is a 95% probability that the parameter lies within the 95% CRI. For example, given a set of 10,000 draws for an unknown population mean $\mu$:
+
+$$\mu_{\left(1\right)},\mu_{\left(2\right)},\mu_{\left(3\right)},\ldots,\mu_{\left(10000\right)}$$
+
+we can calculate the 2.5 and 97.5 percentiles:
+
+```{r}
+#| eval: false
+
+quantile(mu.draws, c(0.025, 0.975))
+```
+
+If that command returns $\left[64.2, 67.8\right]$, then the 95% of the posterior distribution lies between 64.2 and 67.8 and we could legitimately say "There is 95% probability that $\mu$ lies between 64.2 and 67.8".
+
+This point is worth reiterating: 
+
+- A frequentist 95% confidence interval is a statement about the long run performance of a series of repeated experiments. If we repeatedly collected new samples and calculated intervals the same way, about 95% of those intervals would contain the true parameter.
 - A Bayesian 95% credible interval is a statement about the parameter itself. Given the data, model, and prior, there is a 95% probability that the parameter lies within the interval. That is, a credible interval does what most people mistakenly think the confidence interval does!
-
-
 
 ### Conclusions {#sec-intro-bayes-conc}
 

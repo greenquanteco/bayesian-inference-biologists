@@ -111,7 +111,6 @@
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \usepackage{longtable,booktabs,array}
-\newcounter{none} % for unnumbered tables
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -154,6 +153,22 @@
 \usepackage{setspace}
 \usepackage{microtype}
 \emergencystretch=3em
+\makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\@ifpackageloaded{fontawesome5}{}{\usepackage{fontawesome5}}
+\definecolor{quarto-callout-color}{HTML}{909090}
+\definecolor{quarto-callout-note-color}{HTML}{0758E5}
+\definecolor{quarto-callout-important-color}{HTML}{CC1914}
+\definecolor{quarto-callout-warning-color}{HTML}{EB9113}
+\definecolor{quarto-callout-tip-color}{HTML}{00A047}
+\definecolor{quarto-callout-caution-color}{HTML}{FC5300}
+\definecolor{quarto-callout-color-frame}{HTML}{acacac}
+\definecolor{quarto-callout-note-color-frame}{HTML}{4582ec}
+\definecolor{quarto-callout-important-color-frame}{HTML}{d9534f}
+\definecolor{quarto-callout-warning-color-frame}{HTML}{f0ad4e}
+\definecolor{quarto-callout-tip-color-frame}{HTML}{02b875}
+\definecolor{quarto-callout-caution-color-frame}{HTML}{fd7e14}
+\makeatother
 \makeatletter
 \@ifpackageloaded{bookmark}{}{\usepackage{bookmark}}
 \makeatother
@@ -214,12 +229,13 @@
 
 \title{Bayesian Inference for Biologists}
 \author{Nick Green}
-\date{August 15, 2026}
+\date{August 25, 2026}
 \begin{document}
 \maketitle
 
 \renewcommand*\contentsname{Table of contents}
 {
+\hypersetup{linkcolor=}
 \setcounter{tocdepth}{2}
 \tableofcontents
 }
@@ -262,12 +278,41 @@ The book is organized into three parts:
   methods really shine, like mark-recapture and state space models.
 \end{enumerate}
 
+\section*{Work in progress warning!}\label{work-in-progress-warning}
+\addcontentsline{toc}{section}{Work in progress warning!}
+
+\markright{Work in progress warning!}
+
 This book is always a work in progress and I welcome constructive
 criticism and feedback. You can get in touch with me by
 \href{mailto:ngreen62@kennesaw.edu}{email}, on
 \href{https://bsky.app/profile/greenquanteco.bsky.social}{Bluesky
 ({[}at{]}greenquanteco)}, and \href{https://x.com/GreenQuantEco}{Twitter
 ({[}at{]}GreenQuantEco)}.
+
+\section*{Suggested reading}\label{suggested-reading}
+\addcontentsline{toc}{section}{Suggested reading}
+
+\markright{Suggested reading}
+
+There is no required textbook for this course, but if you want a book to
+help you on your Bayesian journey you could do worse than the following:
+
+Kéry M. 2010. Introduction to WinBUGS for Ecologists. Academic Press,
+Burlington, Massachusetts, USA. \emph{This was my first Bayesian book,
+and I can't recommend it highly enough. Even if you are not an
+ecologist, the exposition and example code in this book is clear and
+easy to follow.}
+
+Kéry M, Kellner KF. 2024. Applied Statistical Modelling for Ecologists.
+Academic Press, Burlington, Massachusetts, USA. \emph{I just learned
+about this (August 2026) and will be buying it soon. If it is as good as
+the other books in the series, it'll go into my regular rotation.}
+
+\section*{Get in touch!}\label{get-in-touch}
+\addcontentsline{toc}{section}{Get in touch!}
+
+\markright{Get in touch!}
 
 Visit the \href{https://greenquanteco.github.io/}{lab website} for more
 information about Dr.~Green's other courses and QuantEco lab research!
@@ -279,15 +324,1415 @@ If it feels backwards, that's because it is.
 \chapter{Introduction: Modes of inference}\label{sec-intro}
 
 \section{Motivation: hypothesis testing in
-biology}\label{motivation-hypothesis-testing-in-biology}
+biology}\label{sec-intro-motiv}
+
+Biology, like all sciences, depends on the \textbf{scientific method}.
+This means testing proposed explanations, or \textbf{hypotheses},
+against the data to see if the data support the hypothesis or not. That
+critical step, of deciding whether observations support or refute a
+hypothesis, is the domain of \textbf{statistics}: the branch of
+mathematics concerned with finding and interpreting patterns in data.
+
+Many biologists traditionally think of ``biology'' and ``data analysis''
+as two completely separate enterprises, with statistics being like a
+special wrench that a mechanic pulls out of the toolbox so infrequently
+that its use is unfamiliar. I think this is a mistake. As the figure
+below shows, every part of the scientific method can benefit from some
+knowledge of statistics. This includes experimental design, data
+collection, and interpreting the findings.
+
+\begin{figure}[H]
+
+\caption{Statistics and thinking about data is part of the entire
+scientific process, not just a single stage.}
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/01_01.jpg}}
+
+}
+
+\end{figure}%
+
+So why do we, as biologists, need statistics? Some common answers might
+include:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  ``To tell us whether the patterns we see in our data are real''
+\item
+  ``To tell whether the patterns in our data are due to chance or not.''
+\item
+  ``To prove our hypotheses.''
+\end{enumerate}
+
+All 3 of these are completely wrong. \textbf{1} is wrong because
+confirming reality requires observation and experiment, not calculating.
+\textbf{2} is a common misconception. \emph{Any} pattern in data could
+be cause by chance. Statistics can help you estimate that probability,
+but cannot tell you for sure. Finally, \textbf{3} is wrong because
+that's not how science works. Hypotheses can be supported or not
+supported. No amount of statistical analysis will ever completely rule
+out chance.
+
+Strange as it may seem, though, \textbf{2} actually has a lot to do with
+how most statistical analysis in biology is done, and has for most of
+the last century.
 
 \section{\texorpdfstring{Null hypothesis significance testing and
-\emph{p}-values}{Null hypothesis significance testing and p-values}}\label{null-hypothesis-significance-testing-and-p-values}
+\emph{p}-values}{Null hypothesis significance testing and p-values}}\label{sec-intro-nhst}
 
-\section{Maximum likelihood estimation
-(MLE)}\label{maximum-likelihood-estimation-mle}
+\subsection{Introduction}\label{sec-intro-nhst-intro}
 
-\section{Bayes' Theorem}\label{bayes-theorem}
+When scientists design experiments, they are testing one or more
+hypotheses, or proposed explanations for a phenomenon. Contrary to
+popular belief, the statistical analysis of experimental results usually
+does not test a researcher's hypotheses directly. Instead, statistical
+analysis of experimental results focuses on comparing experimental
+results to the results that \emph{might have occurred} if there was no
+effect of the factor under investigation.
+
+In other words, traditional statistics sets up the following:
+
+\begin{itemize}
+\item
+  \textbf{Null hypothesis or} \(H_0\): default assumption that some
+  effect (or quantity, or relationship, etc.) is zero and does not
+  affect the experimental results.
+\item
+  \textbf{Alternative hypothesis or} \(H_a\): assumption that the null
+  hypothesis is false. Usually this is the researcher's scientific
+  hypothesis, or proposed explanation for a phenomenon. Also sometimes
+  called \(H_1\).
+\end{itemize}
+
+In (slightly) more concrete terms, if researchers want to test the
+hypothesis that some factor \(X\) has an effect on measurement \(Y\),
+then they set up an experiment comparing observations of \(Y\) across
+different values of \(X\). They would then have the following set up:
+
+\begin{itemize}
+\item
+  \textbf{Null hypothesis:} Factor \(X\) does not affect \(Y\).
+\item
+  \textbf{Alternative hypothesis:} Factor \(X\) does affect \(Y\)
+\end{itemize}
+
+Notice that the alternative hypothesis is the \textbf{logical negation}
+of the null hypothesis: the alternatives ``does not affect'' and ``does
+affect'' cover all possibilities. There is no ``sort of affects''.
+
+\begin{figure}[H]
+
+\caption{Affect or affect not. There is no try.}
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/affect-or-affect.jpg}}
+
+}
+
+\end{figure}%
+
+The alternative hypothesis is also \textbf{\emph{not}} a statement about
+another variable (e.g., ``Factor \(Z\) affects \(Y\)''). This is an easy
+mistake to make and one of the weaknesses of NHST: the word
+``hypothesis'' in the phrase ``null hypothesis'' is not being used in
+the sense that scientists usually use it. This unfortunate choice of
+vocabulary is responsible for generations of confusion among
+researchers\footnote{Not to mention among generations of students taking
+  statistics courses, myself included.}.
+
+In order to test an ``alternative hypothesis'', what need is to
+\emph{estimate} how likely the data would be if the null hypothesis were
+true. If a pattern seen in the data is highly unlikely, this is taken as
+evidence that the null hypothesis should be rejected in favor of the
+alternative hypothesis. This is not the same as ``accepting'' or
+``proving'' the alternative hypothesis.
+
+The null hypothesis is usually translated to a prediction like one of
+the following:
+
+\begin{itemize}
+\tightlist
+\item
+  The mean of \(Y\) is the same for all levels of \(X\).
+\item
+  The mean of \(Y\) does not differ between observations exposed to
+  \(X\) and observations not exposed to \(X\).
+\item
+  Outcome \(Y\) is equally likely to occur when \(X\) occurs as it is
+  when \(X\) does not occur.
+\item
+  Rank order of \(Y\) values does not differ between levels of \(X\).
+\end{itemize}
+
+All of these predictions have something in common: \(Y\) is
+\textbf{independent} of \(X\). That's what the null hypothesis means. To
+test the predictions of the null hypothesis, we need a way to calculate
+what the data \emph{might have looked like if the null hypothesis was
+correct}. Once we calculate that, we can compare the data to those
+calculations to see how ``unlikely'' the actual data were. Data that are
+sufficiently unlikely under the assumption that the null hypothesis is
+correct---a pattern that is \textbf{statistically significant}---are a
+kind of evidence that the null hypothesis is false. If this sounds
+convoluted, that's because it is.
+
+This kind of analysis is referred to as \textbf{Null Hypothesis
+Significance Testing (NHST)} and is one of the most important paradigms
+in modern science. Whether or not this is a good thing is a subject of
+fierce debate among scientists, statisticians, and philosophers of
+science. For better or worse, NHST is all but the \emph{de facto}
+standard of inference in scientific publishing, so regardless of its
+merits in your particular case you will need to be able to use it. The
+purpose of this course module is to encourage you to use it correctly.
+
+The \emph{p}-value allows us to make binary distinctions, in a
+systematic way, between situations where a null hypothesis is true and
+no pattern is present, and situations where the null hypothesis is
+highly unlikely to be true and thus a pattern might be present. Any
+binary decision process has four possible outcomes:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{True positive}: declare a pattern is present when it is
+  present.
+\item
+  \textbf{True negative}: declare a pattern is absent, when it is
+  absent.
+\item
+  \textbf{False positive}: declare a pattern is present, when it is
+  actually absent. Also called a \textbf{Type I error}.
+\item
+  \textbf{False negative}: declare a pattern is absent, when it is
+  actually present. Also called a \textbf{Type II error}.
+\end{enumerate}
+
+These outcomes can be summarized as shown below. Statisticians are
+particularly concerned with the probabilities of false positives
+(\(\alpha\)) and false negatives (\(\beta\)). The false positive
+probability \(\alpha\) is the standard against which experimental
+\emph{p}-values are compared. This is largely because we humans are
+inordinately prone to finding patterns even when no patterns are
+present--i.e., committing type I errors.
+
+\begin{figure}[H]
+
+\caption{Relationship between the null hypothesis and our decision about
+experimental results. Type I and II errors result when we reject a true
+null hypothesis and when we fail to reject a false null. The false
+discovery rate, or Type I error rate, defined by \(\alpha\) is a very
+important value in our approach to science.}
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/01_02.jpg}}
+
+}
+
+\end{figure}%
+
+Why have we evolved this way? Finding patterns in noisy data has helped
+us discover virtually everything we know. So, pattern recognition must
+be a powerful cognitive tool. But there is another interpretation, that
+in our ancestral lifestyle life false positives were far less costly
+than false negatives. Imagine you are an Australopithecine or an early
+\emph{Homo erectus} (or \emph{H. sapiens}, for that matter), wandering
+through the savanna of what will someday be modern Ethiopia, looking for
+food. You hear a rustle in the tall grass a few meters ahead. Is that
+rustle just the wind? Or is it a dangerous animal that will kill and
+possibly eat you? Here are your choices and their consequences:
+
+\begin{figure}[H]
+
+\caption{Illustration of the consequences of Type I and Type II errors,
+and why human minds may be so prone to Type I errors.}
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/01_03.jpg}}
+
+}
+
+\end{figure}%
+
+Notice that of your choices, only the type II error has immediate
+evolutionary consequences. In terms of fitness, the difference between a
+type II error and a true positive (death vs.~survival) is much greater
+than the difference between a true negative and a false positive (a bit
+more food vs.~a mild inconvenience).
+
+What does this have to do with statistics in biology? Our human minds
+have evolved to find patterns in noisy data, and we are so good at it
+that we frequently ``find'' patterns that aren't really there. So, we
+use the scientific method and statistical analysis as tools to help
+mitigate our bias toward pattern-finding.
+
+\subsection{Example}\label{sec-intro-nhst-example}
+
+Let's do a quick example of null hypothesis significance testing. We'll
+use the famous \texttt{iris} dataset, which is built into R. It contains
+measurements of 4 different parts of 150 \emph{Iris} flowers, with 50
+from each of three species (\emph{I. setosa}, \emph{I. versicolor}, and
+\emph{I. virginica}). We are going to use NHST to investigate whether
+the three species have different petal lengths.
+
+\begin{figure}[H]
+
+\caption{Three species of purple iris. From left to right, \emph{Iris
+setosa}, \emph{I. versicolor}, and \emph{I. virginica}. The petal is one
+of the flowery parts.}
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/01-iris.jpg}}
+
+}
+
+\end{figure}%
+
+Our research question is:
+
+\textbf{Do different species of \emph{Iris} differ in their petal
+lengths?}
+
+Since we already have the measurements, one good first step would be a
+make a plot of the petal sizes in each species. The best tool for this
+kind of question is a \textbf{boxplot}, or \textbf{box-and-whiskers
+plot}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{boxplot}\NormalTok{(Petal.Length}\SpecialCharTok{\textasciitilde{}}\NormalTok{Species, }\AttributeTok{data=}\NormalTok{iris)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+\caption{\label{fig-iris1}Variation in petal length among 3 species of
+\emph{Iris}}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/01-introduction_files/figure-pdf/fig-iris1-1.pdf}}
+
+}
+
+\end{figure}%
+
+The boxplot shows us that petal lengths for \emph{I. setosa} are
+clustered around 1.5 cm, about 4.5 cm for \emph{I. versicolor}, and
+about 6 cm for \emph{I. virginica}. Can we conclude that petal lengths
+differ between species?
+
+No, not yet. Obviously, there is some intraspecific (within-species)
+variation in petal length, and some interspecific variation. And, it
+sure looks like \emph{I. setosa} is quite a bit smaller than the other
+two species. \emph{I. versicolor} and \emph{I. virginica} look like they
+might be different, but there is some overlap. So no, we can't answer
+our question just by eyeballing the figure.
+
+If you think about it for a while, you might think of another question:
+what does it even mean for the species to have different petal lengths?
+No overlap in size at all? Only 1\% overlap? Only 2\%? What is the
+threshold? And even if you could think of a threshold, how would you
+defend it against other scientists who have other ideas about flower
+petal lengths?
+
+To answer that question, what does ``different'' even mean, we have to
+realize that these 150 flowers are not all of the flowers. They are a
+sample of millions or billions of flowers. And even if we could measure
+every single \emph{Iris} flower on Earth, those untold billions are an
+infinitesimally tiny fraction of all of the \emph{Iris} flowers that
+there ever could have been. So, the means of our three species of
+flowers are not the true, underlying, eternal Platonic ideal means of
+all \emph{Iris}. They are the means of a \emph{sample} of \emph{Iris}:
+\textbf{sample means}, often labeld \(\bar{x}\). That unknown,
+unobservable quantity that underlies the samples is the
+\textbf{population mean}: the mean of all possible flowers. The
+population mean is usually denoted \(\mu\). We can obtain a sample mean,
+but only ever estimate the population mean. Likewise, each species
+appears to have a sample SD calculated from the data, \(s\), and a
+population SD \(\sigma\) that we can only estimate.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# estimate the sample mean of petal length}
+\FunctionTok{aggregate}\NormalTok{(Petal.Length}\SpecialCharTok{\textasciitilde{}}\NormalTok{Species, }\AttributeTok{data=}\NormalTok{iris, mean)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+     Species Petal.Length
+1     setosa        1.462
+2 versicolor        4.260
+3  virginica        5.552
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# calculate sample SD of petal length}
+\FunctionTok{aggregate}\NormalTok{(Petal.Length}\SpecialCharTok{\textasciitilde{}}\NormalTok{Species, }\AttributeTok{data=}\NormalTok{iris, sd)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+     Species Petal.Length
+1     setosa    0.1736640
+2 versicolor    0.4699110
+3  virginica    0.5518947
+\end{verbatim}
+
+With that in mind, we now have a way to define a ``difference'' between
+species in terms of petal length: could we collect a sample of these 3
+species, assuming they had the same \(\mu\) and \(\sigma\), and observe
+a difference between groups as large as the one we saw in
+Figure~\ref{fig-iris1}? If the population means are the same, then
+observing a consistent difference should be very, very unlikely. If it
+is so unlikely that we reject that possibility, then we can tentatively
+accept the alternative: that the population means are not the same, and
+are different.
+
+So, our question of ``Do different species of \emph{Iris} differ in
+their petal lengths?'' can be rephrased into a statistical question:
+
+\textbf{Do different speceies of \emph{Iris} have different population
+means?}
+
+Our research hypothesis is that they do. Thus, the null hypothesis, the
+hypothesis of no effect, must be:
+
+\(H_0\): The three species of \emph{Iris} have the same population mean.
+
+and for \(H_1\) to cover all possibilities:
+
+\(H_1\): At least one species of iris must have a different population
+mean than the other species.
+
+That \(H_1\) covers the possibilities of 1 pairwise difference in
+\(\mu\), 2 pairwise differences in \(\mu\), and 3 pairwise differences
+in \(\mu\). That is, all cases other than 0 pairwise differences.
+
+The test for this situation is \textbf{analysis of variance (ANOVA)}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod1 }\OtherTok{\textless{}{-}} \FunctionTok{aov}\NormalTok{(Petal.Length}\SpecialCharTok{\textasciitilde{}}\NormalTok{Species, }\AttributeTok{data=}\NormalTok{iris)}
+\FunctionTok{summary}\NormalTok{(mod1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+             Df Sum Sq Mean Sq F value Pr(>F)    
+Species       2  437.1  218.55    1180 <2e-16 ***
+Residuals   147   27.2    0.19                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+The result of \texttt{summary()} is the \textbf{ANOVA table}. the ANOVA
+table shows us that the factor \texttt{Species} uses 2 degrees of
+freedom (variously abbreviated as DF, Df, or d.f.) to account for 437.10
+of the squared errors; the residuals use 147 d.f. to account for 27.22
+of the squared errors. The ratio of the mean squared error per d.f.
+associated with each source, 218.551 / 0.185 = 1180.2, is the test
+statistic \(F\). This is used to calculate the \emph{p}-value. Like most
+test statistics such as \(t\) or \(\chi^2\), \(F\) follows a particular
+distribution defined by DF, which allows \(p(F)\) to be calculated.
+
+Under the assumption of no difference in popuation means, we would
+expect a random dataset to display an \(F\) statistics of 1180 very,
+very rarely: a proportion so small that R rounds it off to
+0.00000000000000022 (\texttt{\textless{}2e-16} or
+\(p<2.2\times10^{-16}\)), or 0.0000000000000022\% of the time. In
+biology we can round this off to \(p<0.001\) or \(p<0.01\). How unlikely
+is \(p<2.2\times10^{-16}\)?
+
+\begin{itemize}
+\tightlist
+\item
+  An event with probability has about 1 chance in \(4.55\times10^{15}\),
+  or 1 to 4550000000000000 against.
+\item
+  The odds of winning the Powerball average around 1 in
+  \(2.92\times10^{8}\). This means that under the null hypothesis an
+  \(F\) statistic this large is about 15 million times less likely than
+  winning the Powerball.
+\item
+  If you flipped a coin every second with
+  \(p\left(Heads\right)=2.2\times10^{-6}\), you would wait on, on
+  average, about 144 million years until the coin came up heads.
+  Flipping the coin that many times (\(4.5\times10^{15}\)) would
+  probably wear the coin down to nothing through erosion. That's so
+  long, that by that time the length of a day (Earth's rotation) will
+  have changed. That is so long ago, that you would find yourself
+  surrounded by non-avian dinosaurs, but would be safe from
+  \emph{Tyrannosaurus rex} because it would not evolve for another 70
+  million years!
+\end{itemize}
+
+\subsection{Conclusions}\label{sec-intro-nhst-conc}
+
+The point is, what this \emph{p}-value tells us is that the pattern we
+see in these data would be absurdly unlikely if the null hypothesis was
+true, and the populations means of the \emph{Iris} species did not
+differ. Not impossible, but so astronomically unlikely that we can
+provisionally \emph{reject} the null hypothesis. Note that we do not
+automatically \emph{accept} the alternative hypothesis, because the
+probability of the pattern under the null is not 0. This is close to
+what Stephen Jay Gould meant when he wrote,
+
+\begin{quote}
+In science, ``fact'' can only mean ``confirmed to such a degree that it
+would be perverse to withhold provisional assent.'' I suppose that
+apples might start to rise tomorrow, but the possibility does not merit
+equal time in physics classrooms (Gould 1983).
+\end{quote}
+
+So at the end of this analysis, we have not established that the
+hypothesis is true. Instead, we have collected evidence that would have
+been very unlikely if the hypothesis was not true. In other words, we
+have quantified that \(p\left(E|\lnot H\right)\) is very small.
+
+\[\underbrace{p\left(E|\lnot H\right)}_{\text{p-value}}\qquad\neq\qquad \underbrace{p\left(H|E\right)}_{\text{what we actually want to know}}\]
+
+\begin{tcolorbox}[enhanced jigsaw, rightrule=.15mm, opacitybacktitle=0.6, breakable, colbacktitle=quarto-callout-note-color!10!white, left=2mm, colframe=quarto-callout-note-color-frame, colback=white, titlerule=0mm, bottomrule=.15mm, bottomtitle=1mm, coltitle=black, leftrule=.75mm, toptitle=1mm, toprule=.15mm, arc=.35mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, opacityback=0]
+
+Technically, the \(E\) here is not the evidence, but ``a pattern at
+least as extreme as that observed'', which is a close enough
+approximation for the point I'm making.
+
+\end{tcolorbox}
+
+\section{Maximum likelihood estimation (MLE)}\label{sec-intro-mle}
+
+\subsection{Introduction}\label{sec-intro-mle-intro}
+
+Much of modern statistics is based on fitting models by \textbf{maximum
+likelihood estimation} or **MLE*. This revolves around finding model
+parameters that maximize the \textbf{likelihood function} of the model
+given the data. The likelihood describes how well different possible
+parameter values are supported by the observed data under a particular
+statistical model. A statistical model specifies the mathematical
+relationships among variables and the probability distribution of the
+observations; examples include a linear regression model or a Poisson
+GLM.
+
+In symbols, we can write the likelihood function as:
+
+\[\mathcal{L}\left(\theta|x\right)\]
+
+where \(x\) represents the observed data and \(\theta\) represents one
+or more unobserved parameters. For the data we actually observed, the
+likelihood function asks: which possible values of \(\theta\) would make
+these data more or less plausible?
+
+Importantly, likelihood is \textbf{\emph{not}} the probability that a
+particular parameter value or model is correct. Although
+\(\mathcal{L}\left(\theta|x\right)\) is written with the parameters to
+the left of the vertical bar, it is based on the probability of the data
+given the parameters, \(p\left(x|\theta\right)\), not the probability of
+the parameters given the data, \(p\left(\theta|x\right)\). The latter is
+a Bayesian posterior probability (which we will explore in
+Section~\ref{sec-intro-bayes}).
+
+The takeaway is that probability asks about data when the model is
+known, while likelihood asks about parameter values after the data have
+been observed.
+
+\subsection{Example}\label{sec-intro-mle-example}
+
+Here's a quick example: imagine you have measured 5 squirrel femurs and
+found lengths of 63.6, 66.5, 64.2, 67.6, and 68.3 mm, yielding an
+observed sample mean and SD of \(66.0\pm2.1\) mm. What estimate of the
+population mean \(\mu\) that makes this set of measurements most
+plausible?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{a }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FloatTok{63.6}\NormalTok{, }\FloatTok{66.5}\NormalTok{, }\FloatTok{64.2}\NormalTok{, }\FloatTok{67.6}\NormalTok{, }\FloatTok{68.3}\NormalTok{)}
+\FunctionTok{mean}\NormalTok{(a)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 66.04
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sd}\NormalTok{(a)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 2.067124
+\end{verbatim}
+
+Consider 3 candidates for \(\mu\): 64, 66, and 68. For any proposed
+value of \(\mu\), \texttt{dnorm()} tells us the probability density of
+observing each femur length under a normal distribution with that mean:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{samp.sd }\OtherTok{\textless{}{-}} \FloatTok{2.1}
+\FunctionTok{dnorm}\NormalTok{(a, }\AttributeTok{mean=}\DecValTok{64}\NormalTok{, }\AttributeTok{sd=}\NormalTok{samp.sd)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.18655737 0.09352817 0.18911291 0.04370627 0.02334791
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{dnorm}\NormalTok{(a, }\AttributeTok{mean=}\DecValTok{66}\NormalTok{, }\AttributeTok{sd=}\NormalTok{samp.sd)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.09887122 0.18466340 0.13156914 0.14211406 0.10428277
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{dnorm}\NormalTok{(a, }\AttributeTok{mean=}\DecValTok{68}\NormalTok{, }\AttributeTok{sd=}\NormalTok{samp.sd)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.02115483 0.14719781 0.03695464 0.18655737 0.18804388
+\end{verbatim}
+
+Because we observed more than 1 measurement, and assume that they are
+independent, the joint likelihood is the product of their densities:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{prod}\NormalTok{(}\FunctionTok{dnorm}\NormalTok{(a, }\AttributeTok{mean=}\DecValTok{64}\NormalTok{, }\AttributeTok{sd=}\NormalTok{samp.sd))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 3.367191e-06
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{prod}\NormalTok{(}\FunctionTok{dnorm}\NormalTok{(a, }\AttributeTok{mean=}\DecValTok{66}\NormalTok{, }\AttributeTok{sd=}\NormalTok{samp.sd))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 3.560036e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{prod}\NormalTok{(}\FunctionTok{dnorm}\NormalTok{(a, }\AttributeTok{mean=}\DecValTok{68}\NormalTok{, }\AttributeTok{sd=}\NormalTok{samp.sd))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 4.036932e-06
+\end{verbatim}
+
+It looks like 66 has the greatest joint likelihood across all observed
+data. But we can get a fuller picture if we test more values:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# series of possible mu to test}
+\NormalTok{test.mu }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\DecValTok{60}\NormalTok{, }\DecValTok{72}\NormalTok{, }\AttributeTok{by=}\FloatTok{0.01}\NormalTok{)}
+
+\CommentTok{\# number of possible mu}
+\NormalTok{n }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(test.mu)}
+
+\CommentTok{\# set up vector to hold likelihood}
+\CommentTok{\# function of each candidate mu}
+\NormalTok{lik }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{(n)}
+
+\CommentTok{\# calculate likelihoods of mu\textquotesingle{}s in a loop}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{n)\{lik[i] }\OtherTok{\textless{}{-}} \FunctionTok{prod}\NormalTok{(}\FunctionTok{dnorm}\NormalTok{(a, test.mu[i], }\AttributeTok{sd=}\NormalTok{samp.sd))\}}\CommentTok{\#i}
+
+\CommentTok{\# now plot the likelihood function vs. mu}
+\FunctionTok{plot}\NormalTok{(test.mu, lik, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{,}
+     \AttributeTok{xlab=}\FunctionTok{expression}\NormalTok{(mu),}
+     \AttributeTok{ylab=}\StringTok{"Likelihood"}\NormalTok{)}
+\FunctionTok{abline}\NormalTok{(}\AttributeTok{v=}\FunctionTok{mean}\NormalTok{(a), }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{, }\AttributeTok{lty=}\DecValTok{2}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+\FunctionTok{text}\NormalTok{(}\FloatTok{66.2}\NormalTok{, }\FloatTok{0.5e{-}5}\NormalTok{, }\FunctionTok{expression}\NormalTok{(}\FunctionTok{bar}\NormalTok{(x)}\SpecialCharTok{==}\FloatTok{66.04}\NormalTok{), }\AttributeTok{adj=}\DecValTok{0}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+\FunctionTok{abline}\NormalTok{(}\AttributeTok{h=}\NormalTok{lik[}\FunctionTok{which.max}\NormalTok{(lik)], }\AttributeTok{lty=}\DecValTok{2}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{, }\AttributeTok{col=}\StringTok{"blue"}\NormalTok{)}
+\FunctionTok{text}\NormalTok{(}\FloatTok{67.5}\NormalTok{, }\FloatTok{3.4e{-}5}\NormalTok{, }\FunctionTok{expression}\NormalTok{(}\FunctionTok{hat}\NormalTok{(mu)}\SpecialCharTok{==}\FloatTok{66.04}\NormalTok{), }\AttributeTok{adj=}\DecValTok{0}\NormalTok{, }\AttributeTok{col=}\StringTok{"blue"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/01-introduction_files/figure-pdf/unnamed-chunk-12-1.pdf}}
+
+In this case, the sample mean \(\bar{x}=66.04\) (\texttt{mean(a)}) is
+the same as the \(\mu\) value that maximized the joint likelihood of the
+5 observed values, \(\hat{\mu}=66.04\)
+(\texttt{test.mu{[}which.max(lik){]}}). But, the code above only worked
+because we held the SD to be known and the same as the sample SD. If we
+didn't, we would have to search over a range of possible SD values, and
+find the combination of \(\hat{\mu}\) and \(\hat{\sigma}\) that
+maximized the likelihood. In that case, the profile of likelihoods would
+have been a surface, not a line.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# range of population means to test}
+\NormalTok{test.mu }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\DecValTok{62}\NormalTok{, }\DecValTok{70}\NormalTok{, }\AttributeTok{length=}\DecValTok{100}\NormalTok{)}
+
+\CommentTok{\# range of population SDs to test}
+\NormalTok{test.sigma }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{5}\NormalTok{, }\AttributeTok{length=}\DecValTok{100}\NormalTok{)}
+
+\CommentTok{\# matrix to hold likelihood values}
+\NormalTok{Lmat }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\ConstantTok{NA}\NormalTok{, }\AttributeTok{nrow=}\DecValTok{100}\NormalTok{, }\AttributeTok{ncol=}\DecValTok{100}\NormalTok{)}
+
+\CommentTok{\# fill LMat in a loop}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{100}\NormalTok{)\{}
+\NormalTok{  mu.i }\OtherTok{\textless{}{-}}\NormalTok{ test.mu[i]}
+  \ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{100}\NormalTok{)\{}
+\NormalTok{    sigma.j }\OtherTok{\textless{}{-}}\NormalTok{ test.sigma[j]}
+\NormalTok{    Lmat[i,j] }\OtherTok{\textless{}{-}} \FunctionTok{prod}\NormalTok{(}\FunctionTok{dnorm}\NormalTok{(a, }\AttributeTok{mean=}\NormalTok{mu.i, }\AttributeTok{sd=}\NormalTok{sigma.j))}
+\NormalTok{  \}}\CommentTok{\#j}
+\NormalTok{\}}\CommentTok{\#i}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# make the heatmap}
+
+\DocumentationTok{\#\# sequence of breaks}
+\NormalTok{brks }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(Lmat), }\FunctionTok{max}\NormalTok{(Lmat), }\AttributeTok{length=}\DecValTok{21}\NormalTok{)}
+
+\DocumentationTok{\#\# colors (length of brks {-} 1)}
+\NormalTok{cols }\OtherTok{\textless{}{-}} \FunctionTok{topo.colors}\NormalTok{(}\DecValTok{20}\NormalTok{)}
+
+\CommentTok{\# wide panel for plot, narrow panel for legend}
+\FunctionTok{layout}\NormalTok{(}\FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{), }\AttributeTok{nrow=}\DecValTok{1}\NormalTok{), }\AttributeTok{widths=}\FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+
+\CommentTok{\# likelihood surface}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{4.1}\NormalTok{, }\FloatTok{4.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{0.1}\NormalTok{))}
+\FunctionTok{image}\NormalTok{(}\AttributeTok{x=}\NormalTok{test.sigma, }\AttributeTok{y=}\NormalTok{test.mu, }\AttributeTok{z=}\FunctionTok{t}\NormalTok{(Lmat),}
+      \AttributeTok{breaks=}\NormalTok{brks, }\AttributeTok{col=}\NormalTok{cols,}
+      \AttributeTok{xlab=}\FunctionTok{expression}\NormalTok{(sigma),}
+      \AttributeTok{ylab=}\FunctionTok{expression}\NormalTok{(mu))}
+
+\CommentTok{\# color legend}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{0.1}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\DecValTok{4}\NormalTok{))}
+
+\FunctionTok{image}\NormalTok{(}
+  \AttributeTok{x=}\DecValTok{1}\NormalTok{,}
+  \AttributeTok{y=}\NormalTok{brks,}
+  \AttributeTok{z=}\FunctionTok{matrix}\NormalTok{(brks[}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{], }\AttributeTok{nrow=}\DecValTok{1}\NormalTok{),}
+  \AttributeTok{breaks=}\NormalTok{brks,}
+  \AttributeTok{col=}\NormalTok{cols,}
+  \AttributeTok{xaxt=}\StringTok{"n"}\NormalTok{, }\AttributeTok{yaxt=}\StringTok{"n"}\NormalTok{,}
+  \AttributeTok{xlab=}\StringTok{""}\NormalTok{,}
+  \AttributeTok{ylab=}\StringTok{"Likelihood"}
+\NormalTok{)}
+\FunctionTok{axis}\NormalTok{(}\DecValTok{4}\NormalTok{, }\AttributeTok{las=}\DecValTok{1}\NormalTok{)}
+\FunctionTok{mtext}\NormalTok{(}\StringTok{"Likelihood"}\NormalTok{, }\AttributeTok{side=}\DecValTok{4}\NormalTok{, }\AttributeTok{line=}\FloatTok{2.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+\caption{\label{fig-heat1}The likelihood surface of a model with 2
+parameters, \(mu\) and \(sigma\) resulting from a wide parameter search
+space, shown as a heatmap with \texttt{image()}.}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/01-introduction_files/figure-pdf/fig-heat1-1.pdf}}
+
+}
+
+\end{figure}%
+
+The surface above shows that the joint likelihood peaks at around
+\(\hat{\mu}=66\) and \(\hat{\sigma}=2\). We can zoom in a bit and narrow
+our search:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# range of population means to test}
+\NormalTok{test.mu2 }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FloatTok{65.8}\NormalTok{, }\FloatTok{66.2}\NormalTok{, }\AttributeTok{length=}\DecValTok{100}\NormalTok{)}
+
+\CommentTok{\# range of population SDs to test}
+\NormalTok{test.sigma2 }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FloatTok{1.8}\NormalTok{, }\FloatTok{2.2}\NormalTok{, }\AttributeTok{length=}\DecValTok{100}\NormalTok{)}
+
+\CommentTok{\# matrix to hold likelihood values}
+\NormalTok{Lmat2 }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\ConstantTok{NA}\NormalTok{, }\AttributeTok{nrow=}\DecValTok{100}\NormalTok{, }\AttributeTok{ncol=}\DecValTok{100}\NormalTok{)}
+
+\CommentTok{\# fill LMat in a loop}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{100}\NormalTok{)\{}
+\NormalTok{  mu.i }\OtherTok{\textless{}{-}}\NormalTok{ test.mu2[i]}
+  \ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{100}\NormalTok{)\{}
+\NormalTok{    sigma.j }\OtherTok{\textless{}{-}}\NormalTok{ test.sigma2[j]}
+\NormalTok{    Lmat2[i,j] }\OtherTok{\textless{}{-}} \FunctionTok{prod}\NormalTok{(}\FunctionTok{dnorm}\NormalTok{(a, }\AttributeTok{mean=}\NormalTok{mu.i, }\AttributeTok{sd=}\NormalTok{sigma.j))}
+\NormalTok{  \}}\CommentTok{\#j}
+\NormalTok{\}}\CommentTok{\#i}
+
+\CommentTok{\# make the heatmap}
+
+\DocumentationTok{\#\# sequence of breaks}
+\NormalTok{brks2 }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(Lmat2), }\FunctionTok{max}\NormalTok{(Lmat2), }\AttributeTok{length=}\DecValTok{21}\NormalTok{)}
+
+\DocumentationTok{\#\# colors (length of brks {-} 1)}
+\NormalTok{cols }\OtherTok{\textless{}{-}} \FunctionTok{topo.colors}\NormalTok{(}\DecValTok{20}\NormalTok{)}
+
+\CommentTok{\# wide panel for plot, narrow panel for legend}
+\FunctionTok{layout}\NormalTok{(}\FunctionTok{matrix}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{), }\AttributeTok{nrow=}\DecValTok{1}\NormalTok{), }\AttributeTok{widths=}\FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+
+\CommentTok{\# likelihood surface}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{4.1}\NormalTok{, }\FloatTok{4.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{0.1}\NormalTok{))}
+\FunctionTok{image}\NormalTok{(}\AttributeTok{x=}\NormalTok{test.sigma2, }\AttributeTok{y=}\NormalTok{test.mu2, }\AttributeTok{z=}\FunctionTok{t}\NormalTok{(Lmat2),}
+      \AttributeTok{breaks=}\NormalTok{brks2, }\AttributeTok{col=}\NormalTok{cols,}
+      \AttributeTok{xlab=}\FunctionTok{expression}\NormalTok{(sigma),}
+      \AttributeTok{ylab=}\FunctionTok{expression}\NormalTok{(mu))}
+
+\CommentTok{\# color legend}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{0.1}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\DecValTok{4}\NormalTok{))}
+
+\FunctionTok{image}\NormalTok{(}
+  \AttributeTok{x=}\DecValTok{1}\NormalTok{,}
+  \AttributeTok{y=}\NormalTok{brks,}
+  \AttributeTok{z=}\FunctionTok{matrix}\NormalTok{(brks2[}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{], }\AttributeTok{nrow=}\DecValTok{1}\NormalTok{),}
+  \AttributeTok{breaks=}\NormalTok{brks2,}
+  \AttributeTok{col=}\NormalTok{cols,}
+  \AttributeTok{xaxt=}\StringTok{"n"}\NormalTok{, }\AttributeTok{yaxt=}\StringTok{"n"}\NormalTok{,}
+  \AttributeTok{xlab=}\StringTok{""}\NormalTok{,}
+  \AttributeTok{ylab=}\StringTok{"Likelihood"}
+\NormalTok{)}
+\FunctionTok{axis}\NormalTok{(}\DecValTok{4}\NormalTok{, }\AttributeTok{las=}\DecValTok{1}\NormalTok{)}
+\FunctionTok{mtext}\NormalTok{(}\StringTok{"Likelihood"}\NormalTok{, }\AttributeTok{side=}\DecValTok{4}\NormalTok{, }\AttributeTok{line=}\FloatTok{2.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+\caption{\label{fig-heat2}The likelihood surface of a model with 2
+parameters, \(mu\) and \(sigma\), with a narrowed parameter search
+space, shhown as a heatmap with \texttt{image()}.}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/01-introduction_files/figure-pdf/fig-heat2-1.pdf}}
+
+}
+
+\end{figure}%
+
+And we could keep going until we get a region we are happy with. Just as
+with the 1-d example, we would want the point where the likelihood
+surface \emph{peaks}, and we could express the 95\% confidence interval
+for the parameters as the ranges of \(\hat{\mu}\) and \(\hat{\sigma}\)
+where 95\% of the volume under the surface is found.
+
+Here is the likelihood \emph{surface}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\FunctionTok{persp}\NormalTok{(}
+\NormalTok{  test.sigma, test.mu, }\FunctionTok{t}\NormalTok{(Lmat),}
+  \AttributeTok{xlab=}\FunctionTok{expression}\NormalTok{(sigma),}
+  \AttributeTok{ylab=}\FunctionTok{expression}\NormalTok{(mu),}
+  \AttributeTok{zlab=}\StringTok{"Likelihood"}\NormalTok{,}
+  \AttributeTok{theta=}\DecValTok{35}\NormalTok{,}
+  \AttributeTok{phi=}\DecValTok{30}\NormalTok{,}
+  \AttributeTok{expand=}\FloatTok{0.8}\NormalTok{,}
+  \AttributeTok{ticktype=}\StringTok{"detailed"}\NormalTok{,}
+  \AttributeTok{shade=}\FloatTok{0.4}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+\caption{\label{fig-surface1}The likelihood surface for a model with 2
+parameters, \(mu\) and \(sigma\).}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/01-introduction_files/figure-pdf/fig-surface1-1.pdf}}
+
+}
+
+\end{figure}%
+
+The maximum likelihood estimates for something like a linear regression
+model, or a Poisson GLM, are found by similar procedure, but with more
+than 2 parameters the resulting surface is 3-dimensional, or
+4-dimensional, making the profiling much more complicated.
+
+\subsection{Negative log-likelihood}\label{sec-intro-mle-neglog}
+
+In practice, modern MLE seeks not to maximize the likelihood but to
+minimize the negative log-likelihood. That turns the surface in the
+previous figure into this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{NLL }\OtherTok{\textless{}{-}} \SpecialCharTok{{-}}\DecValTok{1} \SpecialCharTok{*} \FunctionTok{log}\NormalTok{(}\FunctionTok{t}\NormalTok{(Lmat))}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\FunctionTok{persp}\NormalTok{(}
+\NormalTok{  test.sigma, test.mu, NLL,}
+  \AttributeTok{xlab=}\FunctionTok{expression}\NormalTok{(sigma),}
+  \AttributeTok{ylab=}\FunctionTok{expression}\NormalTok{(mu),}
+  \AttributeTok{zlab=}\StringTok{"Likelihood"}\NormalTok{,}
+  \AttributeTok{theta=}\SpecialCharTok{{-}}\DecValTok{45}\NormalTok{,}
+  \AttributeTok{phi=}\SpecialCharTok{{-}}\DecValTok{10}\NormalTok{,}
+  \AttributeTok{expand=}\FloatTok{0.8}\NormalTok{,}
+  \AttributeTok{ticktype=}\StringTok{"detailed"}\NormalTok{,}
+  \AttributeTok{shade=}\FloatTok{0.4}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+\caption{\label{fig-surface2}The log-likelihood surface for a model with
+2 parameters, \(mu\) and \(sigma\).}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/01-introduction_files/figure-pdf/fig-surface2-1.pdf}}
+
+}
+
+\end{figure}%
+
+Why the negative log-likelihood? First, taking the logarithm makes
+likelihood calculations computationally easier: products become sums,
+and very small likelihoods are less likely to cause numerical problems
+(i.e., very small values won't unexpectedly round to 0). Because the
+logarithm is a strictly increasing function, the parameter values that
+maximize the likelihood also maximize the log-likelihood. Multiplying by
+\(-1\) then turns this into an equivalent \textbf{minimization} problem.
+
+For reasons outside the scope of this course, minimization problems are
+more convenient to solve numerically than maximization problems. At a
+smooth minimum, the slope of the negative log-likelihood function is 0,
+so finding the minimum can be approached as finding a root of its
+derivative (i.e., a place in the parameter space where the derivative of
+the negative log-likelihood function is 0). One classic approach is the
+\href{https://en.wikipedia.org/wiki/Newton\%27s_method}{Newton-Raphson
+algorithm}, which iteratively uses derivatives to move toward such a
+point. Modern software has many optimization algorithms, but the basic
+goal is the same: find the parameter values that produce the smallest
+negative log-likelihood, and therefore the largest likelihood.
+
+\subsection{Conclusions}\label{sec-intro-mle-conc}
+
+So at the end of the MLE analysis, we have still not established that a
+hypothesis is true. Instead, we have found how compatible our observed
+data (evidence) are with different possible values of the model
+parameters. We choose the parameter values under which the observed data
+have the greatest likelihood. In the language we will introduce shortly
+for Bayes' theorem, we have made \(p\left(E|H\right)\) (or more
+precisely, the corresponding probability density) as large as possible.
+We still have not calculated or even mentioned \(p\left(H|E\right)\):
+the probability that our hypothesis is correct given the available
+evidence. In other words:
+
+\[\underbrace{p\left(E|H\right)}_{\text{likelihood}}\qquad\neq\qquad \underbrace{p\left(H|E\right)}_{\text{what we actually want to know}}\]
+
+\section{Bayes' Theorem}\label{sec-intro-bayes}
+
+\subsection{Introduction}\label{sec-intro-bayes-intro}
+
+So far, we have established that both classical and modern statistical
+practice are very good at two things: \emph{p}-values, which are
+basically but not quite \(p\left(E|\lnot H\right)\); and likelihoods,
+which are \(p\left(H|E\right)\). But,
+
+\[\underbrace{p\left(E|\lnot H\right)}_{\text{p-value}}\qquad\neq\qquad \underbrace{p\left(H|E\right)}_{\text{what we actually want to know}}\]
+
+and
+
+\[\underbrace{p\left(E|H\right)}_{\text{likelihood}}\qquad\neq\qquad \underbrace{p\left(H|E\right)}_{\text{what we actually want to know}}\]
+
+Getting at what we really want to know, the probability of a hypothesis
+being true given the available evidence, is not really possible under
+classical or \textbf{frequentist} inference. It is, however, possible
+under \textbf{Bayesian inference}. The key difference between Bayesian
+and classical inference is that classical inference treats data as
+conditional on hypotheses, whereas Bayesian inference treats hypotheses
+conditional on evidence. The way that Bayesian inference closes the
+loop, philosophically, is to consider not just the probability of the
+evidence conditional on the hypothesis, but also the
+\emph{unconditional} probability of observing the evidence. That
+unconditional probability, called the \textbf{prior}, is an important
+part of \textbf{Bayes' theorem}:
+
+\[p\left(A|B\right)=\frac{p\left(B|A\right)p\left(A\right)}{p\left(B\right)}\]
+
+This theorem relates several important probabilities:
+
+\begin{itemize}
+\tightlist
+\item
+  \(p\left(A|B\right)\) is the \textbf{posterior probability}: the
+  probability of event A occurring when B is true.
+\item
+  \(p\left(B|A\right)\) is the \textbf{likelihood}: the probability of
+  event B occurring that A is true.
+\item
+  \(p\left(A\right)\) is the \textbf{prior probability}: the
+  unconditional probability of event A. ``Unconditional'' here means
+  ``without considering B''.
+\item
+  \(p\left(B\right)\) is the \textbf{marginal probability}: the
+  unconditional probability of event B.
+\end{itemize}
+
+\subsection{The language of evidence}\label{sec-intro-bayes-evidence}
+
+In a scientific investigation, we are interested in the probability of a
+hypothesis being true, or \(p\left(H\right)\). Now we have a way to
+relate \(p\left(A\right)\) to the evidence \(E\), which has its own set
+of probabilities. Just rewrite Bayes' theorem in the language of
+evidence and hypotheses:
+
+\[p\left(H|E\right)=\frac{p\left(E|H\right)p\left(H\right)}{p\left(E\right)}\]
+
+Now we have a relatively simple expression for what we really want: the
+probability that our hypothesis is correct given the evidence we have
+observed. We just need to know:
+
+\begin{itemize}
+\tightlist
+\item
+  \(p\left(E|H\right)\) is the \textbf{likelihood}: the probability of
+  the evidence occurring if the hypothesis is true. You might recall
+  that this is what we calculated in \href{sec-intro-mle}{the previous
+  section}.
+\item
+  \(p\left(H\right)\) is the \textbf{prior probability}: the
+  unconditional probability of the hypothesis being true. This is the
+  probability we place on a hypothesis before seeing any evidence and
+  can be very large or very small.
+\item
+  \(p\left(E\right)\) is the \textbf{marginal probability}: the
+  probability of observing the evidence whether or not the hypothesis is
+  true.
+\end{itemize}
+
+The likelihood can be calculated from the data. The prior probability
+can be assigned arbitrarily or based on previous literature or evidence.
+However, the denominator is a bit trickier. We can make it easier by
+splitting \(p\left(E\right)\) into two cases: \(p\left(E|H\right)\) (the
+likelihood) and \(p\left(E|\lnot H\right)\). That give us:
+
+\[p\left(H|E\right)=\frac{p\left(E|H\right)p\left(H\right)}{p\left(E|H\right)p\left(H\right)+p\left(E|\lnot H\right)p\left(\lnot H\right)}\]
+
+Because observing \(E|H\) is requires \(H\) and observing \(E|\lnot H\)
+requires \(\lnot H\) (that is why those probabilities occur as
+coefficients in the denominator). And now we can see that part of the
+denominator is the \emph{p}-value, another piece we already know
+(Section~\ref{sec-intro-nhst-conc}), and also realize that
+\(p\left(\lnot H\right)=1-p\left(H\right)\).
+
+Putting it all together:
+
+\[
+\underbrace{p\left(H|E\right)}_{\text{what we want to know}}
+=
+\frac{
+  \overbrace{p\left(E|H\right)}^{\text{likelihood}}
+  \overbrace{p\left(H\right)}^{\text{prior}}
+}{
+  \underbrace{p\left(E|H\right)}_{\text{likelihood}}
+  \underbrace{p\left(H\right)}_{\text{prior}}
+  +
+  \underbrace{p\left(E|\lnot H\right)}_{\text{p-value}}
+  \underbrace{\left(1-p\left(H\right)\right)}_{\text{1 - prior}}
+}
+\]
+
+In practice, and for reasons beyond the scope of this course,
+calculating the denominator for a statistical model can require
+evaluating integrals in many dimensions (those reasons are related to
+finding the ``area'' or rather hypervolume beneath a likelihood surface
+in many dimensions\ldots which makes ``beneath'' seem imprecise). We'll
+discuss the consequences of that in the next module.
+
+\subsection{Example}\label{sec-intro-bayes-example}
+
+Let's consider a quick example of using Baye's theorem to evaluate the
+probability that a hypothesis is true given some evidence.
+
+Here is a quick example of Bayesian reasoning. Imagine you go to the
+doctor and get tested for a rare condition,
+\href{https://medlineplus.gov/genetics/condition/niemann-pick-disease/}{Niemann-Pick
+disease}. Your doctor tells you that this disease affects about 1 in
+250000 people. Unfortunately, you test positive. But, the doctor tells
+you not to worry because the test is only 99\% reliable. Why is the
+doctor so sanguine, and what is the probability that you have
+Niemann-Pick disease?
+
+The probability of having this disease can be estimated using Bayes'
+theorem. First, use what you know to assemble the terms:
+
+\begin{itemize}
+\tightlist
+\item
+  The overall incidence is 1 in 250000 people, or 0.0004\%. So, the
+  prior probability \(P\left(H\right)\) is 0.000004.
+\item
+  The probability of a positive test given that you have the disease,
+  \(P\left(E|H\right)\), is 0.99 because the test is 99\% reliable. This
+  is also called the \textbf{sensitivity} of the test.
+\item
+  The probability of a positive test if someone does \emph{not} have the
+  disease, \(p\left(E|\neg H\right)\), 1\% because if 99\% of positives
+  are true positives, the remainder must be false positives.
+\item
+  The denominator, \(P\left(E\right)\), is the unconditional probability
+  of a positive test.
+\end{itemize}
+
+The denominator includes two possibilities: either a positive test when
+someone has the disease, or a positive test when someone doesn't have
+the disease. That is, the probability of a true positive \emph{or} a
+false positive. This can be calculated as:
+
+\[\left(E|H\right)p\left(H\right)+p\left(E|\lnot H\right)p\left(\lnot H\right)\]
+
+The first term is the \textbf{sensitivity}, or probability of a true
+positive (\(p\left(E|H\right)\)) scaled by the probability of having the
+disease (the prior \(p\left(H\right)\)). The second addend is the
+probability of a false positive (\(p\left(E|\lnot H\right)\)) scaled by
+the probability of not having the disease (\(p\left(\lnot H\right)\)).
+We can simplify a bit by reasoning that \(p\left(\lnot H\right)\) is
+really \(1-p\left(H\right)\).
+
+Plug every thing into Bayes' theorem:
+
+\[\underbrace{p\left(H|E\right)}_{posterior}=\frac{\overbrace{\left(0.99\right)}^{likelihood}\overbrace{\left(0.000004\right)}^{prior}}{\underbrace{\left(0.99\right)}_{likelihood}\underbrace{\left(0.000004\right)}_{prior}+\underbrace{\left(0.01\right)}_{p\left(E|\lnot H\right)}\underbrace{\left(0.999996\right)}_{1-prior}}\]
+and simplify:
+
+\[p\left(H|E\right)=\frac{0.00000396}{0.01000392}=0.000396\]
+
+A 0.04\% probability that you have the disease is not very worrying! In
+this example, the evidence from a 99\% reliable test can't overcome the
+fact that the disease is so rare to begin with. In other words, even
+among people who get a positive test, it's far more likely that you
+don't have the disease but got a false positive than that you have the
+disease and got a true positive. This is an example of a very strong
+prior being more influential than the evidence.
+
+This might be easier to see if we imagine a representative population of
+1 million people:
+
+\begin{itemize}
+\tightlist
+\item
+  The prior probability is still 0.000004, so
+  \(0.000004\times1000000=4\) people have the disease.
+\item
+  The false positive rate is 1\%, so we expect that
+  \(0.01\times999996\approx10000\) people without the disease will test
+  positive.
+\item
+  The true positive rate is 99\%, so let's assume that all 4 people with
+  the disease test positive.
+\end{itemize}
+
+So, the doctor should explain that, all things being equal, we should
+assume that it's more likely you are in the false positive group (10000
+out of 1000000 or 1\%) than in the positive group (4 out of 1000000 or
+0.0004\%). In fact, despite the positive test you are still 2500 times
+more likely to not have the disease than to have it. The good evidence
+(99\% reliable) cannot overcome the extremely small prevalence of the
+disease.
+
+But, there's an issue with this calculation. The prior probability of
+0.000004 was based on the assumption that the test was conducted on a
+random person from the population. Do physicians conduct expensive tests
+for vanishingly rare diseases on random people? Of course not. Maybe the
+physician only orders this test if they think that there is a 10\%
+chance that you really have the disease. This might be because, in their
+experience, 10\% of people with your symptoms turn out to have the
+disease. In that case, the calculation becomes:
+
+\[\left(H|E\right)=\frac{\left(0.99\right)\left(0.1\right)}{\left(0.99\right)\left(0.1\right)+\left(0.01\right)\left(0.9\right)}\]
+
+which simplifies to:
+
+\[p\left(H|E\right)=\frac{0.099}{0.108}=0.916\]
+
+91.6\% is a lot more worrying than 0.0004\%. This example shows that the
+prior probability can have a huge effect on the posterior probability.
+
+One way to visualize Bayes' rule is to think of the entire probability
+space as occupying a square with area 1. The square has 4 sections:
+
+\begin{figure}[H]
+
+\caption{Bayes theorem helps us reason about the relative probabilities
+of observing a piece of evidence E or not when a hypothesis H is true or
+not true. The area of all four sections must add up to 1. According to
+Bayes' theorem, the probability of a hypothesis H being true, given
+evidence E, is the ratio of \(P\left(E|H\right)\) to
+\(P\left(E|H\right)+P\left(E|lnot H\right)\).}
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/01-bayes1.jpg}}
+
+}
+
+\end{figure}%
+
+Notice that the prior probability \(p\left(\ldots|H\right)\) (the two
+left, blue sections) is much smaller than the probability of \(\lnot H\)
+(the two right, red and pink sections with
+\(p\left(\ldots|\lnot H\right)\)). Bayes' rule restricts our focus to
+the cases where we observe the evidence--the bottom two sections with
+\(p\left(E|\ldots\right)\). Given that the evidence was observed, the
+sections with \(\lnot E\) are irrelevant. The calculation then becomes:
+
+\begin{figure}[H]
+
+\caption{In Bayesian inference, the probability of the hypothesis being
+true given the observed evidence is the ratio of cases where the
+evidence is observed \emph{and} the hypothesis is true, to all cases
+where the evidence is observed.}
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/01-bayes2.jpg}}
+
+}
+
+\end{figure}%
+
+\subsection{Estimating models under Bayesian
+inference}\label{sec-intro-bayes-est}
+
+At this point you might be thinking, ``Wait a minute! NHST and maximum
+likelihood were estimating parameters of models, but all you did with
+Bayesian inference was calculate probabilities!'' And that's true. We
+still need to build the bridge from Bayes' theorem to model fitting.
+
+Another way to look at the posteriors in Bayes theorem,
+\(p\left(H|E\right)\), is \(p\left(\theta|y\right)\), where \(\theta\)
+is the set of parameters in some model. The parameters in \(\theta\) are
+here serving as a statement of the hypothesis. This might--and
+should--remind you of the likelihood function
+\(\mathcal{L}\left(\theta|x\right)\) that we saw
+\href{@sec-intro-mle-intro}{earlier}. Bayes theorem makes this:
+
+\[p\left(\theta|y\right)=\frac{p\left(y|\theta\right)p\left(\theta\right)}{p\left(y\right)}\]
+
+Because we're trying to make inferences about \(\theta\), we can just
+write
+
+\[p\left(\theta|y\right)\propto p\left(y|\theta\right)p\left(\theta\right)\]
+
+because \(p\left(y\right)\) doesn't depend on \(\theta\). And here is
+the connection to model fitting. For every proposed value of the
+parameters in \(\theta\), we can use the prior to calculate:
+
+\[\underbrace{p\left(y|\theta\right)}_{likelihood}\times\underbrace{p\left(\theta\right)}_{prior}=\underbrace{\text{something proportional to}~p\left(\theta|y\right)}_{posterior}\]
+
+The denominator from earlier, \(p\left(y\right)\), is difficult to
+calculate. But, we don't have to. Because the same \(p\left(y\right)\)
+occurs everywhere, we can ignore it and instead compare the
+\textbf{relative posterior density of different parameter values}. In
+other words, we use Bayes' theorem to help us estimate a
+\textbf{posterior distribution} for each model parameter.
+
+In a problem like the \href{@sec-intro-mle-example}{MLE example above},
+with a small number of parameters, this is feasible through a brute
+force grid search. Instead of just calculating the likelihood function
+of the data in \texttt{a} as
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Lmat[i,j] }\OtherTok{\textless{}{-}} \FunctionTok{prod}\NormalTok{(}\FunctionTok{dnorm}\NormalTok{(a, }\AttributeTok{mean=}\NormalTok{mu.i, }\AttributeTok{sd=}\NormalTok{sd.sigma.j))}
+\end{Highlighting}
+\end{Shaded}
+
+we could have also specified priors and calculated a posterior
+probability density for each combination of \(\mu\) and \(\sigma\) up to
+a proportionality constant as
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{posterior.matrix[i,j] }\OtherTok{\textless{}{-}} \FunctionTok{prod}\NormalTok{(}
+  \FunctionTok{dnorm}\NormalTok{(a, }\AttributeTok{mean=}\NormalTok{mu.i, }\AttributeTok{sd=}\NormalTok{sd.sigma.j)) }\SpecialCharTok{*} 
+  \FunctionTok{dnorm}\NormalTok{(mu.i, ...) }\SpecialCharTok{*}   \CommentTok{\# prior on mu}
+  \FunctionTok{dgamma}\NormalTok{(sigma.j, ...) }\CommentTok{\# prior on sigma}
+\end{Highlighting}
+\end{Shaded}
+
+If the search grid was sufficiently precise, we could have also
+normalized these values so that they integrated to 1, which by
+definition would make them a probability distribution--the posterior
+distribution.
+
+\subsection{MCMC and Metropolis-Hastings}\label{sec-intro-bayes-mcmc}
+
+In practice, calculating posterior distributions of many parameters
+simultaneously is computationally difficult. The surface of possible
+values and their joint likelihoods (Figure~\ref{fig-surface1}), defined
+by Bayes' theorem, often can't be defined explicitly. Instead, we can
+use different techniques to explore the surface. That is, to
+\textbf{sample from the posterior distributions}.
+
+One strategy for sampling from the posterior distribution is really a
+family of techniques known as \textbf{Markov chain Monte Carlo (MCMC)}.
+A \textbf{Markov chain} is a sequence of values, where each value
+depends only on the value before it. The \textbf{Monte Carlo} part
+refers to a European city famous for its casinos. So, MCMC involves a
+series or \emph{chain} of values that involves at least some random
+number generation. One of the most common MCMC algorithms is the
+\textbf{Metropolis-Hastings} algorithm.
+
+Suppose we are using a Markov chain to explore the posterior
+distributions of the parameters in a model. At the current step, the
+chain is at state \(\theta\). Using some process (it doesn't matter
+what), a proposed new set of parameter values \(\theta^\prime\). Whether
+\(\theta^\prime\) is an improvement depends on the ratio
+
+\[\frac{p\left(\theta^\prime|y\right)}{p\left(\theta|y\right)}\]
+
+Substitute the expressions for \(p\left(\theta^\prime|y\right)\) and
+\(p\left(\theta|y\right)\) that we get from Bayes' theorem:
+
+\[\frac{p\left(y|\theta^\prime\right)p\left(\theta^\prime\right)/p\left(y\right)}{p\left(y|\theta\right)p\left(\theta\right)/p\left(y\right)}\]
+
+The \(1/p\left(y\right)\) terms cancel, leaving us with:
+
+\[\frac{p\left(y|\theta^\prime\right)p\left(\theta^\prime\right)}{p\left(y|\theta\right)p\left(\theta\right)}\]
+
+If the proposed parameters in \(\theta^\prime\) have higher posterior
+density than those in \(\theta\), the algorithm can accept them. If they
+have lower posterior density, the algorithm \emph{sometimes} accepts
+them, with a probability equal to that posterior density ratio.
+
+After enough iterations, the chain will spend more time in some regions
+of the parameter space than in other parts. The amount of time it spends
+in each region is proportional to the posterior probability densities
+for the parameters.
+
+So that's the connection:
+
+\begin{quote}
+Bayes' theorem \textbf{constructs} the posterior surface. MCMC is how we
+\textbf{explore} that surface.
+\end{quote}
+
+MCMC with Metropolis-Hastings is just one algorithm for sampling from
+posterior distributions. A variant called \textbf{Gibbs sampling} omits
+the accept/reject step. More modern algorithms like HMC/NUTS are more
+sophisticated still, but they solve the same basic problem: efficiently
+sampling a posterior distribution defined by a prior distribution and a
+likelihood. And unlike MLE estimates, which we use to make inferences
+about parameters, posterior samples literally are the inferential
+result. Summaries of the posterior draws, like their mean, median, SD,
+and so on, tell us about the parameters and their uncertainties.
+
+\subsection{Credible intervals}\label{sec-intro-bayes-cri}
+
+The distinction between MLE estimates and posterior draws becomes
+especially important when we construct intervals around parameter
+estimates to express our uncertainty about them. In frequentist
+inference, the parameter is treated as fixed but unknown. Because the
+parameter value is fixed, we cannot use probability to describe
+uncertainty about the parameter (because definitionally, there is none).
+Instead, we can construct a \textbf{95\% confidence interval (CI)} to
+describe uncertainty that arises from how we arrived at the estimate. If
+we repeatedly collected data and constructed intervals in the same way,
+95\% of those intervals would contain the true parameter value. We
+\emph{cannot} say that the 95\% CI is 95\% certain to contain the true
+parameter value.
+
+In Bayesian inference, the posterior draws are our sample of the
+posterior distribution. Given enough draws, we can calculate a
+\textbf{95\% credible interval (CRI)} that contains 95\% of the
+posterior probability for that parameter. Given the model, prior, and
+observed data, we \emph{can} say that there is a 95\% probability that
+the parameter lies within the 95\% CRI. For example, given a set of
+10,000 draws for an unknown population mean \(\mu\):
+
+\[\mu_{\left(1\right)},\mu_{\left(2\right)},\mu_{\left(3\right)},\ldots,\mu_{\left(10000\right)}\]
+
+we can calculate the 2.5 and 97.5 percentiles:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{quantile}\NormalTok{(mu.draws, }\FunctionTok{c}\NormalTok{(}\FloatTok{0.025}\NormalTok{, }\FloatTok{0.975}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+If that command returns \(\left[64.2, 67.8\right]\), then the 95\% of
+the posterior distribution lies between 64.2 and 67.8 and we could
+legitimately say ``There is 95\% probability that \(\mu\) lies between
+64.2 and 67.8''.
+
+This point is worth reiterating:
+
+\begin{itemize}
+\tightlist
+\item
+  A frequentist 95\% confidence interval is a statement about the long
+  run performance of a series of repeated experiments. If we repeatedly
+  collected new samples and calculated intervals the same way, about
+  95\% of those intervals would contain the true parameter.
+\item
+  A Bayesian 95\% credible interval is a statement about the parameter
+  itself. Given the data, model, and prior, there is a 95\% probability
+  that the parameter lies within the interval. That is, a credible
+  interval does what most people mistakenly think the confidence
+  interval does!
+\end{itemize}
+
+\subsection{Conclusions}\label{sec-intro-bayes-conc}
+
+\textbf{Bayesian inference} is a framework for evaluating evidence and
+\emph{updating beliefs based on evidence}. When conducting Bayesian
+inference, researchers start with some initial idea about their model
+system: a \textbf{prior}. They then collect evidence (data), and update
+their idea based on the evidence. The updated idea is called the
+\textbf{posterior}.
+
+\begin{itemize}
+\tightlist
+\item
+  When the prior is strong, or the evidence weak, their ideas will not
+  be updated much and the posterior will be strongly influenced by the
+  prior.
+\item
+  When the evidence is strong, or the prior weak, the posterior will be
+  updated more and thus less influenced by the prior.
+\end{itemize}
+
+Some researchers prefer to use naïve or uninformative priors, so that
+their conclusions are influenced mostly by the evidence. Bayesian
+statistical methods will return essentially the same parameter estimates
+(e.g., differences in means or slopes) as other methods when
+uninformative priors are used. This means that almost any traditional
+statistical analysis can be replaced with an equivalent Bayesian one.
+The statistical models that are fit, such as linear regression or ANOVA,
+are the same. All that really changes is how the researcher interprets
+the relationship between the model and the data.
+
+In frequentist inference, researchers consider parameters like slopes,
+intercepts, effect sizes, etc., as fixed, unknown parameters and
+consider the data to occur stochastically following probability
+distributions. Bayesian inference flips that script, treating the data
+as fixed, and assuming that the model parameters are unknown quantities
+following probability distributions.
+
+Bayesian inference is attractive to many biologists because it mimics
+the way that scientists actually think: starting with one idea (a
+prior), collecting evidence, then updating that idea (posterior). Part
+of the Bayesian calculation is \(p\left(H|E\right)\), or the probability
+of the hypothesis being true given the evidence that is observed.
+Contrast this with the frequentist \emph{p}-value, which is
+\(p\left(E|\lnot H\right)\). Most people instinctively want the first,
+but have to settle with the almost backwards logic of the
+\emph{p}-value.
+
+\section{Literature cited}\label{literature-cited}
+
+Gould SJ. 1983. Hen's teeth and horse's toes. W.W. Norton, New York.
 
 \chapter{Probability and Bayes' theorem}\label{sec-bayes}
 
@@ -416,109 +1861,10 @@ them. Each version of R installed on your machine has its own library,
 or folder containing add-on packages. If you update R, you will need to
 reinstall any add-on packages.
 
-\section{Markov chain Monte Carlo sampling
-(MCMC)}\label{markov-chain-monte-carlo-sampling-mcmc}
-
-\subsection{Integral calculus is hard}\label{integral-calculus-is-hard}
-
-In frequentist inference, most statistical models can be fitted by
-calculating model parameters that produce the best fit to the data. For
-example, for ordinary linear models, there is always a way to solve for
-the values of the coefficients that minimize the sum of squared errors.
-For other models, there is typically a closed-form solution or a robust
-approximation algorithm for finding optimal parameter values. In most
-programs for statistical analysis, including R, these calculations take
-place internally and the user has little, if any, exposure to them.
-
-In modern statistical programs (including R), many models are fit by a
-method called \textbf{maximum likelihood}: finding the parameter values
-that result in the greatest value of the likelihood function. The
-likelihood function is an expression of how likely the observed data are
-conditional on the parameter values. In practice, most software actually
-minimizes the negative of the logarithm of the likelihood function (the
-``negative log-likelihood''). This is more convenient mathematically,
-and doesn't really matter for the end user.
-
-The take home message of the above paragraphs is that in frequentist
-inference, the model parameters are found by maximum likelihood (ML),
-also known as maximum likelihood estimation (MLE). MLE works by solving
-or approximating a solution to find optimal parameter values.
-
-In Bayesian inference, it is rarely possible to solve for model
-parameters. The equations that would have to be solved usually have no
-closed-form solution, and are computationally intractable. These usually
-take the form of high-dimensional integrals. Given Bayes' theorem:
-
-\[p\left(\theta|x\right)=\frac{p\left(x|\theta\right)p\left(\theta\right)}{p\left(x\right)}\]
-
-where \(\theta\) is the set of model parameters (i.e., the hypothesis
-\(H\)) and \(x\) is the data (i.e., the evidence \(E\)), the numerator
-is usually straightforward to calculate (it is the likelihood function
-time scaled by the prior probability of the parameter values).
-
-The denominator, however, is actually very hard to calculate. It is
-defined as an integral over as many dimensions as there are parameters,
-which has to be computed over all possible parameter values, for all
-parameters, which can't be done in a closed form way except for the
-simplest models. This means that optimization methods such as
-Newton-Raphson, which work well for finding a single best-fitting
-parameter value, cannot generally be used to solve the Bayesian problem
-because Bayesian inference requires integrating over the entire
-posterior distribution rather than finding a single optimum.
-
-The solution for fitting Bayesian models is to use a process called
-\textbf{Markov chain Monte Carlo (MCMC)}. This is a class of methods
-that combine \textbf{Markov chains} (a kind of sequence generating
-process) with random sampling (the Monte Carlo part, named after a
-European city famous for its casinos). These methods use probabilistic
-sampling to avoid having to compute that integral explicitly and instead
-approximate the posterior distributions by sampling from them.
-
-A Markov chain is a stochastic process where some state (like a
-parameter value) changes over time according to probabilistic rules.
-Usually ``time'' is considered to be discrete, so the chain proceeds in
-``steps''. In a Markov chain, the state at the next step depends only on
-the state at the current step. In this way, the chain has a very weak
-memory and thus states at steps that are very far apart are usually
-considered to be nearly independent (usually).
-
-\subsection{Gibbs sampling}\label{gibbs-sampling}
-
-There are many kinds of MCMC algorithms. One of the most common is a
-method called \textbf{Gibbs sampling}. It is the ``GS'' in ``BUGS'' and
-``JAGS''. Gibbs sampling is actually a special case of a broader class
-of methods called Metropolis-Hastings methods. So, Gibbs sampling is a
-subset of Metropolis-Hastings sampling, which is a subset of MCMC
-methods, which are an alternative to maximum likelihood).
-
-The basic procedure is as follows:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Start with an initial value for each parameter in the set of
-  parameters \(\theta\).
-\item
-  Update the value of each parameter, conditional on the current value
-  of the other parameters. This updating is done by drawing from the
-  full conditional posterior distribution of the data given the other
-  parameter values (despite using the phrase ``maxmizes the
-  likelihood'', this is NOT MLE).
-\item
-  Use the updated values as the starting point for the next step.
-\item
-  Repeat many, many times until the chain converged to the joint
-  posterior distribution.
-\end{enumerate}
-
-This basic procedure is a very simplified explanation, and glosses over
-a lot of math. But, it gives you the basic idea. The full details are
-not necessary to use MCMC, and are beyond the scope of this course.
-
-\subsection{What you need to know about
+\section{What you need to know about
 MCMC}\label{what-you-need-to-know-about-mcmc}
 
+We introduced the basics of MCMC in Section~\ref{sec-intro-bayes-mcmc}.
 The more practical things you need to know are about MCMC are:
 
 \textbf{Chains can take many steps to find the posterior distribution}
@@ -597,7 +1943,7 @@ plotting, and interpretation.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio,alt={Flowchart showing the workflow for fitting Bayesian models in JAGS using R. A dataset is imported into R, where pre-processing includes formatting the data, defining initial values, and specifying MCMC parameters. These inputs are passed to the `jags()` function, while a model written in the JAGS language is supplied separately. JAGS fits the model using Markov chain Monte Carlo and returns a results object to R. The results are then used for convergence diagnostics, model selection, plotting, and biological interpretation.}]{chapters/../images/04-01.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-01.jpg}}
 
 }
 
@@ -662,7 +2008,7 @@ different set of starting parameter values.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio,alt={Diagram illustrating the structure of the initial values object passed to JAGS. The outer object is a list whose elements correspond to MCMC chains ({[}{[}1{]}{]}, {[}{[}2{]}{]}, ..., {[}{[}k{]}{]}). Each chain contains a named list with one entry for each model parameter (for example, param1 and param2), specifying the initial values used to start that chain. The structure emphasizes that each chain has its own complete set of initial parameter values.}]{chapters/../images/04-02.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-02.jpg}}
 
 }
 
@@ -882,7 +2228,7 @@ deviation \(\sigma_{res}\).}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio,alt={Directed acyclic graph representing a Bayesian linear regression model. Circular nodes represent model parameters and square nodes represent observed variables. The intercept parameter beta-zero, slope parameter beta-one, and predictor x-sub-i all point to the expected response E of y-sub-i. The expected response then points to the observed response y-sub-i, which also depends on the residual standard deviation sigma-sub-res. The arrows indicate the dependency structure used to define the model.}]{chapters/../images/04-03.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-03.jpg}}
 
 }
 
@@ -1119,7 +2465,7 @@ model object to the R console to see the output.
 \begin{verbatim}
 Inference for Bugs model at "jags_ttest_01.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 3.23 secs
+ n.sims = 1200 iterations saved. Running time = 2.27 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 effect     9.276   1.427   6.379   8.360   9.286  10.225  11.950 1.007   280
 mu[1]     10.421   0.691   9.047   9.983  10.439  10.882  11.733 1.006   350
@@ -1278,7 +2624,7 @@ posterior distribution.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio,alt={Trace plot showing the sampled values of a single model parameter over 400 MCMC iterations for three independent chains, shown in red, green, and blue. All three chains fluctuate randomly around a value of approximately 9 to 10 without long-term upward or downward trends. The chains overlap substantially and explore the same region of parameter space, illustrating good mixing and convergence.}]{chapters/../images/04-04.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-04.jpg}}
 
 }
 
@@ -1352,7 +2698,7 @@ prior information with the observed data.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio,alt={Histogram of posterior samples for the residual standard deviation parameter, sigma. Most posterior values lie between approximately 2.3 and 3.2, with a peak near 2.7. The distribution is unimodal and slightly right-skewed, indicating that values near 2.7 are most strongly supported by the data while larger values remain possible but progressively less probable.}]{chapters/../images/04-05.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-05.jpg}}
 
 }
 
@@ -1384,7 +2730,7 @@ reflect the uncertainty in each parameter estimate.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio,alt={Kernel density plot showing the posterior distributions of two model parameters. The posterior distribution for mu-one is shown as a black curve centered near 10, and the posterior distribution for mu-two is shown as a red curve centered near 20. Both distributions are approximately symmetric and bell-shaped with relatively little overlap, indicating that the two parameter estimates are well separated and estimated with relatively high precision.}]{chapters/../images/04-06.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-06.jpg}}
 
 }
 
@@ -2155,7 +3501,7 @@ mean within-individual change differs from zero.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio,alt={Diagram comparing a two-sample and a paired t-test. The left panel shows independent groups of mice measured before and after treatment, with the two-sample t-test comparing the group means. The right panel shows the same mice measured before and after treatment, with each mouse paired to itself. Individual differences (d1--d4) are calculated for each mouse, and the paired t-test tests whether the mean of these differences equals zero.}]{chapters/../images/06-01.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/06-01.jpg}}
 
 }
 
@@ -3321,7 +4667,7 @@ calculate model predictions and their 95\% confidence interval (CI).}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio,alt={Figure showing the relationship between the objects used to calculate the predicted values from a linear regression from the matrix of posterior draws of each parameter in sims.array, a vector px of new x values, and a data frame prx that contains predictors and model parameters across model posteriors.}]{chapters/../images/06-02.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/06-02.jpg}}
 
 }
 
@@ -4441,7 +5787,7 @@ coordinates and the corresponding R code needed to draw the polygon.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio,alt={Diagram illustrating how the R function `polygon()` creates a filled polygon. The left panel shows a shaded polygon traced by first supplying x-coordinates and upper y-coordinates from left to right, then the x-coordinates in reverse order together with the lower y-coordinates in reverse order to close the shape. The right panel shows a four-vertex example with coordinates (1,3), (3,4), (3,0), and (1,0), along with the corresponding R code defining the x and y vectors used to draw the polygon.}]{chapters/../images/06-03.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/06-03.jpg}}
 
 }
 
@@ -4988,7 +6334,7 @@ State space state space state space\ldots{}
 
 \markboth{References}{References}
 
-\protect\phantomsection\label{refs}
+\phantomsection\label{refs}
 
 
 

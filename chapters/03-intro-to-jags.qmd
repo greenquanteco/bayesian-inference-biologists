@@ -52,45 +52,9 @@ These packages will be installed to your personal R library. This means that the
 These packages are also specific to the version of R used to install them. Each version of R installed on your machine has its own library, or folder containing add-on packages. If you update R, you will need to reinstall any add-on packages.
 
 
-## Markov chain Monte Carlo sampling (MCMC)
+## What you need to know about MCMC
 
-### Integral calculus is hard
-
-In frequentist inference, most statistical models can be fitted by calculating model parameters that produce the best fit to the data. For example, for ordinary linear models, there is always a way to solve for the values of the coefficients that minimize the sum of squared errors. For other models, there is typically a closed-form solution or a robust approximation algorithm for finding optimal parameter values. In most programs for statistical analysis, including R, these calculations take place internally and the user has little, if any, exposure to them.
-
-In modern statistical programs (including R), many models are fit by a method called **maximum likelihood**: finding the parameter values that result in the greatest value of the likelihood function. The likelihood function is an expression of how likely the observed data are conditional on the parameter values. In practice, most software actually minimizes the negative of the logarithm of the likelihood function (the "negative log-likelihood"). This is more convenient mathematically, and doesn’t really matter for the end user.
-
-The take home message of the above paragraphs is that in frequentist inference, the model parameters are found by maximum likelihood (ML), also known as maximum likelihood estimation (MLE). MLE works by solving or approximating a solution to find optimal parameter values.
-
-In Bayesian inference, it is rarely possible to solve for model parameters. The equations that would have to be solved usually have no closed-form solution, and are computationally intractable. These usually take the form of high-dimensional integrals. Given Bayes’ theorem:
-
-$$p\left(\theta|x\right)=\frac{p\left(x|\theta\right)p\left(\theta\right)}{p\left(x\right)}$$
-
-where $\theta$ is the set of model parameters (i.e., the hypothesis $H$) and $x$ is the data (i.e., the evidence $E$), the numerator is usually straightforward to calculate (it is the likelihood function time scaled by the prior probability of the parameter values).
-
-The denominator, however, is actually very hard to calculate. It is defined as an integral over as many dimensions as there are parameters, which has to be computed over all possible parameter values, for all parameters, which can’t be done in a closed form way except for the simplest models. This means that optimization methods such as Newton-Raphson, which work well for finding a single best-fitting parameter value, cannot generally be used to solve the Bayesian problem because Bayesian inference requires integrating over the entire posterior distribution rather than finding a single optimum.
-
-The solution for fitting Bayesian models is to use a process called **Markov chain Monte Carlo (MCMC)**. This is a class of methods that combine **Markov chains** (a kind of sequence generating process) with random sampling (the Monte Carlo part, named after a European city famous for its casinos). These methods use probabilistic sampling to avoid having to compute that integral explicitly and instead approximate the posterior distributions by sampling from them.
-
-A Markov chain is a stochastic process where some state (like a parameter value) changes over time according to probabilistic rules. Usually “time” is considered to be discrete, so the chain proceeds in “steps”. In a Markov chain, the state at the next step depends only on the state at the current step. In this way, the chain has a very weak memory and thus states at steps that are very far apart are usually considered to be nearly independent (usually).
-
-### Gibbs sampling
-
-There are many kinds of MCMC algorithms. One of the most common is a method called **Gibbs sampling**. It is the "GS" in "BUGS" and "JAGS". Gibbs sampling is actually a special case of a broader class of methods called Metropolis-Hastings methods. So, Gibbs sampling is a subset of Metropolis-Hastings sampling, which is a subset of MCMC methods, which are an alternative to maximum likelihood). 
-
-The basic procedure is as follows:
-
-1. Start with an initial value for each parameter in the set of parameters $\theta$. 
-1. Update the value of each parameter, conditional on the current value of the other parameters. This updating is done by drawing from the full conditional posterior distribution of the data given the other parameter values (despite using the phrase "maxmizes the likelihood", this is NOT MLE). 
-1. Use the updated values as the starting point for the next step.
-1. Repeat many, many times until the chain converged to the joint posterior distribution.
-
-This basic procedure is a very simplified explanation, and glosses over a lot of math. But, it gives you the basic idea. The full details are not necessary to use MCMC, and are beyond the scope of this course.
-
-
-### What you need to know about MCMC
-
-The more practical things you need to know are about MCMC are:
+We introduced the basics of MCMC in @sec-intro-bayes-mcmc. The more practical things you need to know are about MCMC are:
 
 **Chains can take many steps to find the posterior distribution**
 

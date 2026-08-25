@@ -2,16 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>3&nbsp; Introduction to JAGS and MCMC – Bayesian Inference for Biologists</title>
 <style>
-/* Default styles provided by pandoc.
-** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -72,14 +69,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../chapters/02-bayesian.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-9e3e5b9121e68b3f077afb32f2c64d95.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -110,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <style>html{ scroll-behavior: smooth; }</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -163,7 +161,9 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Bayesian Inference for Biologists</a> 
         <div class="sidebar-tools-main">
@@ -306,12 +306,7 @@ window.Quarto = {
   <li><a href="#install-jags" id="toc-install-jags" class="nav-link" data-scroll-target="#install-jags"><span class="header-section-number">3.2.2</span> Install JAGS</a></li>
   <li><a href="#installing-r-packages" id="toc-installing-r-packages" class="nav-link" data-scroll-target="#installing-r-packages"><span class="header-section-number">3.2.3</span> Installing R packages</a></li>
   </ul></li>
-  <li><a href="#markov-chain-monte-carlo-sampling-mcmc" id="toc-markov-chain-monte-carlo-sampling-mcmc" class="nav-link" data-scroll-target="#markov-chain-monte-carlo-sampling-mcmc"><span class="header-section-number">3.3</span> Markov chain Monte Carlo sampling (MCMC)</a>
-  <ul class="collapse">
-  <li><a href="#integral-calculus-is-hard" id="toc-integral-calculus-is-hard" class="nav-link" data-scroll-target="#integral-calculus-is-hard"><span class="header-section-number">3.3.1</span> Integral calculus is hard</a></li>
-  <li><a href="#gibbs-sampling" id="toc-gibbs-sampling" class="nav-link" data-scroll-target="#gibbs-sampling"><span class="header-section-number">3.3.2</span> Gibbs sampling</a></li>
-  <li><a href="#what-you-need-to-know-about-mcmc" id="toc-what-you-need-to-know-about-mcmc" class="nav-link" data-scroll-target="#what-you-need-to-know-about-mcmc"><span class="header-section-number">3.3.3</span> What you need to know about MCMC</a></li>
-  </ul></li>
+  <li><a href="#what-you-need-to-know-about-mcmc" id="toc-what-you-need-to-know-about-mcmc" class="nav-link" data-scroll-target="#what-you-need-to-know-about-mcmc"><span class="header-section-number">3.3</span> What you need to know about MCMC</a></li>
   <li><a href="#jags-workflow" id="toc-jags-workflow" class="nav-link" data-scroll-target="#jags-workflow"><span class="header-section-number">3.4</span> JAGS workflow</a>
   <ul class="collapse">
   <li><a href="#step-1-data-import" id="toc-step-1-data-import" class="nav-link" data-scroll-target="#step-1-data-import"><span class="header-section-number">3.4.1</span> Step 1: Data import</a></li>
@@ -395,35 +390,9 @@ window.Quarto = {
 <p>These packages are also specific to the version of R used to install them. Each version of R installed on your machine has its own library, or folder containing add-on packages. If you update R, you will need to reinstall any add-on packages.</p>
 </section>
 </section>
-<section id="markov-chain-monte-carlo-sampling-mcmc" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="markov-chain-monte-carlo-sampling-mcmc"><span class="header-section-number">3.3</span> Markov chain Monte Carlo sampling (MCMC)</h2>
-<section id="integral-calculus-is-hard" class="level3" data-number="3.3.1">
-<h3 data-number="3.3.1" class="anchored" data-anchor-id="integral-calculus-is-hard"><span class="header-section-number">3.3.1</span> Integral calculus is hard</h3>
-<p>In frequentist inference, most statistical models can be fitted by calculating model parameters that produce the best fit to the data. For example, for ordinary linear models, there is always a way to solve for the values of the coefficients that minimize the sum of squared errors. For other models, there is typically a closed-form solution or a robust approximation algorithm for finding optimal parameter values. In most programs for statistical analysis, including R, these calculations take place internally and the user has little, if any, exposure to them.</p>
-<p>In modern statistical programs (including R), many models are fit by a method called <strong>maximum likelihood</strong>: finding the parameter values that result in the greatest value of the likelihood function. The likelihood function is an expression of how likely the observed data are conditional on the parameter values. In practice, most software actually minimizes the negative of the logarithm of the likelihood function (the “negative log-likelihood”). This is more convenient mathematically, and doesn’t really matter for the end user.</p>
-<p>The take home message of the above paragraphs is that in frequentist inference, the model parameters are found by maximum likelihood (ML), also known as maximum likelihood estimation (MLE). MLE works by solving or approximating a solution to find optimal parameter values.</p>
-<p>In Bayesian inference, it is rarely possible to solve for model parameters. The equations that would have to be solved usually have no closed-form solution, and are computationally intractable. These usually take the form of high-dimensional integrals. Given Bayes’ theorem:</p>
-<p><span class="math display">\[p\left(\theta|x\right)=\frac{p\left(x|\theta\right)p\left(\theta\right)}{p\left(x\right)}\]</span></p>
-<p>where <span class="math inline">\(\theta\)</span> is the set of model parameters (i.e., the hypothesis <span class="math inline">\(H\)</span>) and <span class="math inline">\(x\)</span> is the data (i.e., the evidence <span class="math inline">\(E\)</span>), the numerator is usually straightforward to calculate (it is the likelihood function time scaled by the prior probability of the parameter values).</p>
-<p>The denominator, however, is actually very hard to calculate. It is defined as an integral over as many dimensions as there are parameters, which has to be computed over all possible parameter values, for all parameters, which can’t be done in a closed form way except for the simplest models. This means that optimization methods such as Newton-Raphson, which work well for finding a single best-fitting parameter value, cannot generally be used to solve the Bayesian problem because Bayesian inference requires integrating over the entire posterior distribution rather than finding a single optimum.</p>
-<p>The solution for fitting Bayesian models is to use a process called <strong>Markov chain Monte Carlo (MCMC)</strong>. This is a class of methods that combine <strong>Markov chains</strong> (a kind of sequence generating process) with random sampling (the Monte Carlo part, named after a European city famous for its casinos). These methods use probabilistic sampling to avoid having to compute that integral explicitly and instead approximate the posterior distributions by sampling from them.</p>
-<p>A Markov chain is a stochastic process where some state (like a parameter value) changes over time according to probabilistic rules. Usually “time” is considered to be discrete, so the chain proceeds in “steps”. In a Markov chain, the state at the next step depends only on the state at the current step. In this way, the chain has a very weak memory and thus states at steps that are very far apart are usually considered to be nearly independent (usually).</p>
-</section>
-<section id="gibbs-sampling" class="level3" data-number="3.3.2">
-<h3 data-number="3.3.2" class="anchored" data-anchor-id="gibbs-sampling"><span class="header-section-number">3.3.2</span> Gibbs sampling</h3>
-<p>There are many kinds of MCMC algorithms. One of the most common is a method called <strong>Gibbs sampling</strong>. It is the “GS” in “BUGS” and “JAGS”. Gibbs sampling is actually a special case of a broader class of methods called Metropolis-Hastings methods. So, Gibbs sampling is a subset of Metropolis-Hastings sampling, which is a subset of MCMC methods, which are an alternative to maximum likelihood).</p>
-<p>The basic procedure is as follows:</p>
-<ol type="1">
-<li>Start with an initial value for each parameter in the set of parameters <span class="math inline">\(\theta\)</span>.</li>
-<li>Update the value of each parameter, conditional on the current value of the other parameters. This updating is done by drawing from the full conditional posterior distribution of the data given the other parameter values (despite using the phrase “maxmizes the likelihood”, this is NOT MLE).</li>
-<li>Use the updated values as the starting point for the next step.</li>
-<li>Repeat many, many times until the chain converged to the joint posterior distribution.</li>
-</ol>
-<p>This basic procedure is a very simplified explanation, and glosses over a lot of math. But, it gives you the basic idea. The full details are not necessary to use MCMC, and are beyond the scope of this course.</p>
-</section>
-<section id="what-you-need-to-know-about-mcmc" class="level3" data-number="3.3.3">
-<h3 data-number="3.3.3" class="anchored" data-anchor-id="what-you-need-to-know-about-mcmc"><span class="header-section-number">3.3.3</span> What you need to know about MCMC</h3>
-<p>The more practical things you need to know are about MCMC are:</p>
+<section id="what-you-need-to-know-about-mcmc" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="what-you-need-to-know-about-mcmc"><span class="header-section-number">3.3</span> What you need to know about MCMC</h2>
+<p>We introduced the basics of MCMC in <a href="01-introduction.html#sec-intro-bayes-mcmc" class="quarto-xref"><span>Section 1.4.5</span></a>. The more practical things you need to know are about MCMC are:</p>
 <p><strong>Chains can take many steps to find the posterior distribution</strong></p>
 <p>MCMC chains often start at initial parameter values that are essentially random and not representative of the posterior distribution. So, we discard the first part of a chain as burn-in. Many people use 10% or 20% as burn-in, but there is no universally agreed-upon rule. MCMC chains often need to be very long, many thousands of steps, to find robust approximations of the posterior distributions of all the parameters. In my own work I usually use <span class="math inline">\(\geq\)</span> 100,000 steps, or <span class="math inline">\(\geq\)</span> 250,000 for complicated models.</p>
 <p><strong>Chains are autocorrelated</strong></p>
@@ -437,7 +406,6 @@ window.Quarto = {
 <p><strong>One chain or many chains?</strong></p>
 <p>Some people argue that you should use 1 very long chain instead of 3 shorter chains. For example, 1 chain of 300,000 iterations instead of 3 chains of 100,000 iterations. Both approaches would get you the same number of posterior samples. In my own work I prefer the multiple chain approach, mostly because this helps avoid issues related to the choice of initial value.</p>
 </div>
-</section>
 </section>
 <section id="jags-workflow" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="jags-workflow"><span class="header-section-number">3.4</span> JAGS workflow</h2>
@@ -724,7 +692,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_ttest_01.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 3.25 secs
+ n.sims = 1200 iterations saved. Running time = 3.54 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 effect     9.276   1.427   6.379   8.360   9.286  10.225  11.950 1.007   280
 mu[1]     10.421   0.691   9.047   9.983  10.439  10.882  11.733 1.006   350

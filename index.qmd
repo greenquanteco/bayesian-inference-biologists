@@ -12,6 +12,17 @@ The book is organized into three parts:
 1. Bayesian analyses in R and JAGS: demonstrates Bayesian versions of common models for biology like linear models, GLMs, and nonlinear models.
 1. Special applications: demonstrates some situations where Bayesian methods really shine, like mark-recapture and state space models.
 
+## Work in progress warning!
+
 This book is always a work in progress and I welcome constructive criticism and feedback. You can get in touch with me by [email](mailto:ngreen62@kennesaw.edu), on [Bluesky ([at]greenquanteco)](https://bsky.app/profile/greenquanteco.bsky.social), and [Twitter ([at]GreenQuantEco)](https://x.com/GreenQuantEco).
 
+## Suggested reading
+
+There is no required textbook for this course, but if you want a book to help you on your Bayesian journey you could do worse than the following:
+
+Kéry M. 2010. Introduction to WinBUGS for Ecologists. Academic Press, Burlington, Massachusetts, USA. *This was my first Bayesian book, and I can't recommend it highly enough. Even if you are not an ecologist, the exposition and example code in this book is clear and easy to follow.*
+
+Kéry M, Kellner KF. 2024. Applied Statistical Modelling for Ecologists. Academic Press, Burlington, Massachusetts, USA. *I just learned about this (August 2026) and will be buying it soon. If it is as good as the other books in the series, it'll go into my regular rotation.*
+
+## Get in touch!
 Visit the [lab website](https://greenquanteco.github.io/) for more information about Dr. Green's other courses and QuantEco lab research!
