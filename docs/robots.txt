@@ -1,1 +1,1 @@
-Sitemap: https://greenquanteco.github.io/bayesian-inference-for-biologists/sitemap.xml
+Sitemap: https://greenquanteco.github.io/bayesian-inference-biologists/sitemap.xml

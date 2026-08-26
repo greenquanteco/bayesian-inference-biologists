@@ -3,8 +3,8 @@ project:
   output-dir: docs
 
 book:
-  site-url: "https://greenquanteco.github.io/bayesian-inference-for-biologists/"
-  repo-url: "https://github.com/greenquanteco/bayesian-inference-for-biologists"
+  site-url: "https://greenquanteco.github.io/bayesian-inference-biologists/"
+  repo-url: "https://github.com/greenquanteco/bayesian-inference-biologists"
   repo-actions: [edit, issue]
   cover-image: images/lab_logo_02.jpg
   

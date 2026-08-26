@@ -1,63 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/01-introduction.html</loc>
-    <lastmod>2026-08-25T20:21:46.810Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/index.html</loc>
+    <lastmod>2026-08-26T12:07:32.840Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/part-01.html</loc>
-    <lastmod>2026-08-20T19:28:46.649Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/part-01.html</loc>
+    <lastmod>2026-08-15T17:21:15.295Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/02-bayesian.html</loc>
-    <lastmod>2026-08-20T19:28:46.441Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/01-introduction.html</loc>
+    <lastmod>2026-08-26T12:07:32.773Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/03-intro-to-jags.html</loc>
-    <lastmod>2026-08-25T20:01:34.632Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/02-bayesian.html</loc>
+    <lastmod>2026-08-15T17:13:36.214Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/part-02.html</loc>
-    <lastmod>2026-08-20T19:28:46.649Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/03-intro-to-jags.html</loc>
+    <lastmod>2026-08-26T12:07:32.773Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/04-linear-models.html</loc>
-    <lastmod>2026-08-20T19:28:46.445Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/part-02.html</loc>
+    <lastmod>2026-08-15T17:30:00.854Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/05-glm-01-counts.html</loc>
-    <lastmod>2026-08-20T19:28:46.581Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/04-linear-models.html</loc>
+    <lastmod>2026-08-15T18:14:07.929Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/06-glm-02-logistic.html</loc>
-    <lastmod>2026-08-20T19:28:46.582Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/05-glm-01-counts.html</loc>
+    <lastmod>2026-08-15T17:23:59.409Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/07-glm-03-gamma.html</loc>
-    <lastmod>2026-08-20T19:28:46.641Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/06-glm-02-logistic.html</loc>
+    <lastmod>2026-08-15T17:23:59.533Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/08-nonlinear.html</loc>
-    <lastmod>2026-08-20T19:28:46.642Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/07-glm-03-gamma.html</loc>
+    <lastmod>2026-08-15T17:23:59.644Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/09-mixed-models.html</loc>
-    <lastmod>2026-08-20T19:28:46.643Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/08-nonlinear.html</loc>
+    <lastmod>2026-08-15T17:24:30.076Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/part-03.html</loc>
-    <lastmod>2026-08-20T19:28:46.649Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/09-mixed-models.html</loc>
+    <lastmod>2026-08-15T17:24:52.726Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/10-mark-recapture.html</loc>
-    <lastmod>2026-08-20T19:28:46.643Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/part-03.html</loc>
+    <lastmod>2026-08-15T17:30:00.917Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/chapters/11-state-space.html</loc>
-    <lastmod>2026-08-20T19:28:46.644Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/10-mark-recapture.html</loc>
+    <lastmod>2026-07-23T17:28:30.011Z</lastmod>
   </url>
   <url>
-    <loc>https://greenquanteco.github.io/bayesian-inference-for-biologists/references.html</loc>
-    <lastmod>2026-08-20T19:28:46.822Z</lastmod>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/chapters/11-state-space.html</loc>
+    <lastmod>2026-08-15T17:25:10.028Z</lastmod>
+  </url>
+  <url>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/references.html</loc>
+    <lastmod>2026-07-23T15:10:20.667Z</lastmod>
+  </url>
+  <url>
+    <loc>https://greenquanteco.github.io/bayesian-inference-biologists/Bayesian-Inference-for-Biologists.pdf</loc>
+    <lastmod>2026-08-26T12:16:35.390Z</lastmod>
   </url>
 </urlset>

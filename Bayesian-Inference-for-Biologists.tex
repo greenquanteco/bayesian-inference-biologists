@@ -111,6 +111,7 @@
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -229,13 +230,12 @@
 
 \title{Bayesian Inference for Biologists}
 \author{Nick Green}
-\date{August 25, 2026}
+\date{August 26, 2026}
 \begin{document}
 \maketitle
 
 \renewcommand*\contentsname{Table of contents}
 {
-\hypersetup{linkcolor=}
 \setcounter{tocdepth}{2}
 \tableofcontents
 }
@@ -425,7 +425,7 @@ affect'' cover all possibilities. There is no ``sort of affects''.
 
 \caption{Affect or affect not. There is no try.}
 
-{\centering \pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/affect-or-affect.jpg}}
+{\centering \pandocbounded{\includegraphics[keepaspectratio,alt={Master Yoda reminds us that the null hypothesis and the alternative hypothesis must cover all logical possibilities.}]{chapters/../images/affect-or-affect.jpg}}
 
 }
 
@@ -789,7 +789,7 @@ have quantified that \(p\left(E|\lnot H\right)\) is very small.
 
 \[\underbrace{p\left(E|\lnot H\right)}_{\text{p-value}}\qquad\neq\qquad \underbrace{p\left(H|E\right)}_{\text{what we actually want to know}}\]
 
-\begin{tcolorbox}[enhanced jigsaw, rightrule=.15mm, opacitybacktitle=0.6, breakable, colbacktitle=quarto-callout-note-color!10!white, left=2mm, colframe=quarto-callout-note-color-frame, colback=white, titlerule=0mm, bottomrule=.15mm, bottomtitle=1mm, coltitle=black, leftrule=.75mm, toptitle=1mm, toprule=.15mm, arc=.35mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-note-color!10!white, colframe=quarto-callout-note-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
 
 Technically, the \(E\) here is not the evidence, but ``a pattern at
 least as extreme as that observed'', which is a close enough
@@ -1943,7 +1943,7 @@ plotting, and interpretation.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-01.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Flowchart showing the workflow for fitting Bayesian models in JAGS using R. A dataset is imported into R, where pre-processing includes formatting the data, defining initial values, and specifying MCMC parameters. These inputs are passed to the `jags()` function, while a model written in the JAGS language is supplied separately. JAGS fits the model using Markov chain Monte Carlo and returns a results object to R. The results are then used for convergence diagnostics, model selection, plotting, and biological interpretation.}]{chapters/../images/04-01.jpg}}
 
 }
 
@@ -2008,7 +2008,7 @@ different set of starting parameter values.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-02.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Diagram illustrating the structure of the initial values object passed to JAGS. The outer object is a list whose elements correspond to MCMC chains ({[}{[}1{]}{]}, {[}{[}2{]}{]}, ..., {[}{[}k{]}{]}). Each chain contains a named list with one entry for each model parameter (for example, param1 and param2), specifying the initial values used to start that chain. The structure emphasizes that each chain has its own complete set of initial parameter values.}]{chapters/../images/04-02.jpg}}
 
 }
 
@@ -2228,7 +2228,7 @@ deviation \(\sigma_{res}\).}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-03.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Directed acyclic graph representing a Bayesian linear regression model. Circular nodes represent model parameters and square nodes represent observed variables. The intercept parameter beta-zero, slope parameter beta-one, and predictor x-sub-i all point to the expected response E of y-sub-i. The expected response then points to the observed response y-sub-i, which also depends on the residual standard deviation sigma-sub-res. The arrows indicate the dependency structure used to define the model.}]{chapters/../images/04-03.jpg}}
 
 }
 
@@ -2624,7 +2624,7 @@ posterior distribution.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-04.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Trace plot showing the sampled values of a single model parameter over 400 MCMC iterations for three independent chains, shown in red, green, and blue. All three chains fluctuate randomly around a value of approximately 9 to 10 without long-term upward or downward trends. The chains overlap substantially and explore the same region of parameter space, illustrating good mixing and convergence.}]{chapters/../images/04-04.jpg}}
 
 }
 
@@ -2698,7 +2698,7 @@ prior information with the observed data.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-05.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Histogram of posterior samples for the residual standard deviation parameter, sigma. Most posterior values lie between approximately 2.3 and 3.2, with a peak near 2.7. The distribution is unimodal and slightly right-skewed, indicating that values near 2.7 are most strongly supported by the data while larger values remain possible but progressively less probable.}]{chapters/../images/04-05.jpg}}
 
 }
 
@@ -2730,7 +2730,7 @@ reflect the uncertainty in each parameter estimate.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/04-06.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Kernel density plot showing the posterior distributions of two model parameters. The posterior distribution for mu-one is shown as a black curve centered near 10, and the posterior distribution for mu-two is shown as a red curve centered near 20. Both distributions are approximately symmetric and bell-shaped with relatively little overlap, indicating that the two parameter estimates are well separated and estimated with relatively high precision.}]{chapters/../images/04-06.jpg}}
 
 }
 
@@ -3501,7 +3501,7 @@ mean within-individual change differs from zero.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/06-01.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Diagram comparing a two-sample and a paired t-test. The left panel shows independent groups of mice measured before and after treatment, with the two-sample t-test comparing the group means. The right panel shows the same mice measured before and after treatment, with each mouse paired to itself. Individual differences (d1--d4) are calculated for each mouse, and the paired t-test tests whether the mean of these differences equals zero.}]{chapters/../images/06-01.jpg}}
 
 }
 
@@ -4667,7 +4667,7 @@ calculate model predictions and their 95\% confidence interval (CI).}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/06-02.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Figure showing the relationship between the objects used to calculate the predicted values from a linear regression from the matrix of posterior draws of each parameter in sims.array, a vector px of new x values, and a data frame prx that contains predictors and model parameters across model posteriors.}]{chapters/../images/06-02.jpg}}
 
 }
 
@@ -5787,7 +5787,7 @@ coordinates and the corresponding R code needed to draw the polygon.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/../images/06-03.jpg}}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Diagram illustrating how the R function `polygon()` creates a filled polygon. The left panel shows a shaded polygon traced by first supplying x-coordinates and upper y-coordinates from left to right, then the x-coordinates in reverse order together with the lower y-coordinates in reverse order to close the shape. The right panel shows a four-vertex example with coordinates (1,3), (3,4), (3,0), and (1,0), along with the corresponding R code defining the x and y vectors used to draw the polygon.}]{chapters/../images/06-03.jpg}}
 
 }
 
@@ -6334,7 +6334,7 @@ State space state space state space\ldots{}
 
 \markboth{References}{References}
 
-\phantomsection\label{refs}
+\protect\phantomsection\label{refs}
 
 
 

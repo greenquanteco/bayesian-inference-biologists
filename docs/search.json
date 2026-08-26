@@ -1,5 +1,65 @@
 [
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Bayesian Inference for Biologists",
+    "section": "",
+    "text": "Welcome\nThese notes accompany BIOL 7950: Bayesian Inference for Biologists at Kennesaw State University.\nThe goal of this course is to introduce Bayesian statistical thinking and modern Bayesian analysis for biological data.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#course-organization",
+    "href": "index.html#course-organization",
+    "title": "Bayesian Inference for Biologists",
+    "section": "Course organization",
+    "text": "Course organization\nThe book is organized into three parts:\n\nFoundations: introduces the basic ideas behind Bayesian inference, Bayes’ rule, and how Bayesian inference differs from frequentist inference. Also introduces some key aspects of working with Bayesian models in R and JAGS.\nBayesian analyses in R and JAGS: demonstrates Bayesian versions of common models for biology like linear models, GLMs, and nonlinear models.\nSpecial applications: demonstrates some situations where Bayesian methods really shine, like mark-recapture and state space models.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#work-in-progress-warning",
+    "href": "index.html#work-in-progress-warning",
+    "title": "Bayesian Inference for Biologists",
+    "section": "Work in progress warning!",
+    "text": "Work in progress warning!\nThis book is always a work in progress and I welcome constructive criticism and feedback. You can get in touch with me by email, on Bluesky ([at]greenquanteco), and Twitter ([at]GreenQuantEco).",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#suggested-reading",
+    "href": "index.html#suggested-reading",
+    "title": "Bayesian Inference for Biologists",
+    "section": "Suggested reading",
+    "text": "Suggested reading\nThere is no required textbook for this course, but if you want a book to help you on your Bayesian journey you could do worse than the following:\nKéry M. 2010. Introduction to WinBUGS for Ecologists. Academic Press, Burlington, Massachusetts, USA. This was my first Bayesian book, and I can’t recommend it highly enough. Even if you are not an ecologist, the exposition and example code in this book is clear and easy to follow.\nKéry M, Kellner KF. 2024. Applied Statistical Modelling for Ecologists. Academic Press, Burlington, Massachusetts, USA. I just learned about this (August 2026) and will be buying it soon. If it is as good as the other books in the series, it’ll go into my regular rotation.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#get-in-touch",
+    "href": "index.html#get-in-touch",
+    "title": "Bayesian Inference for Biologists",
+    "section": "Get in touch!",
+    "text": "Get in touch!\nVisit the lab website for more information about Dr. Green’s other courses and QuantEco lab research!",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "chapters/part-01.html",
+    "href": "chapters/part-01.html",
+    "title": "Introduction to Bayesian inference",
+    "section": "",
+    "text": "If it feels backwards, that’s because it is.",
+    "crumbs": [
+      "Introduction to Bayesian inference"
+    ]
+  },
+  {
     "objectID": "chapters/01-introduction.html",
     "href": "chapters/01-introduction.html",
     "title": "1  Introduction: Modes of inference",
@@ -74,16 +134,6 @@
     "crumbs": [
       "Introduction to Bayesian inference",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction: Modes of inference</span>"
-    ]
-  },
-  {
-    "objectID": "chapters/part-01.html",
-    "href": "chapters/part-01.html",
-    "title": "Introduction to Bayesian inference",
-    "section": "",
-    "text": "If it feels backwards, that’s because it is.",
-    "crumbs": [
-      "Introduction to Bayesian inference"
     ]
   },
   {
