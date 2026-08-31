@@ -2,9 +2,56 @@
 
 ## Bayesian thinking
 
+Most of the time when we fit a model in R, we need to supply the software with enough information to specify which model to fit, what variables to include, and where to find those variables. All the rest--i.e., the machinery of sums of squares or maximum likelihood--takes place under the hood. Once you specify, say, a logistic regression model, there really isn't much else to do. For example:
+
+```{r}
+#| eval: FALSE
+
+# fit a logistic regression model
+mod1 <- glm(y~x1, data=my.data, family=binomial(link="logit"))
+```
+
+fits a logistic regression model, and the command is very concise:
+
+- `mod1` is (or will be?) the fitted model object.
+- `glm()` is the command that fits GLMs.
+- `y~x1` is the model formula, such that `y` is the response variable and `x1` is the predictor variable.
+- `my.data` is the data frame that contains all of the variables in the model.
+- `binomal()` is the response distribution (i.e., the `family` of the GLM).
+- `"logit"` is the link function.
+
+You don't need to specify a distribution for the intercept or slope: those are baked into the GLM. Likewise, you don't need to make a decision about when the gradient descent methods have reached a valid solution. That too is baked into `glm()`. 
+
+The same is not true when using Bayesian inference. Note that I said, "Bayesian inference" and not "Bayesian models". There isn't really such a thing as a "Bayesian model", only a Bayesian approach to testing a model. 
+
+When working in Bayesian, we need to specify more pieces of the model upfront, and we need to make more decisions on the back end. 
+
 ### Priors
 
+#### Role in Bayesian inference
+
+As we saw in @sec-intro-bayes, the prior $p\left(H\right)$ is an important part of Bayes' theorem:
+
+$$p\left(H|E\right)=\frac{p\left(E|H\right)p\left(H\right)}{p\left(E\right)}$$
+
+The prior is used to scale the ratio of the likelihood $p\left(E|H\right)$ to the probability. This means that priors can exert varying degrees of influence: when the prior is strong, the prior dominates the calculation. When the prior is weak or uninformative, the data dominate. 
+
+#### Informative priors
+
+An **informative** prior is a prior that contains a lot of information, or a very strong guess, about a parameter or a model. For example, if you were building a model to predict the body mass of an animal a weak ahead, your prior distribution might be centered on the animal's current weight with a variance equal to the historical average of week-to-week body mass fluctuations. Or, you could use a distribution of body masses for animals of that precise age.
+
+Using informative priors is using *pre-existing knowledge* to help fit your model. This does not necessarily mean that your prior distribution will determine the fitted model. It means that more evidence will be needed to find an outcome that is very unlikely under the prior distribution. Put another way, informative priors can help you reach a robust conclusion with fewer additional data. The latter reason is part of why Bayesian methods are becoming more and more common in clinical trials.
+
+For example, if a drug developer is testing a new, higher dose of a medicine (say, 10 mg instead of 5 mg), there is no reason to start from the assumption that the 10 mg version will have 0 effect if the 5 mg version is already known to be clinically efficacious. They could set their prior for the effect of the 10 mg version to slightly larger than the known effect of the 5 mg version, and obtain tiral results with fewer data. 
+
+A less dramatic example is to use informative priors when the sign of a coefficient is known. In a [recent study published here at KSU](https://doi.org/10.1016/j.foreco.2024.122372), a student used Bayesian path analysis models to explore how environmental conditions affected fire behavior. After consultation with his PI (and me), he defined the prior distributions of some parameters to be either positive or negative based on strong evidence from the literature. This gave his analysis a boost in power that allowed him to discover some neat effects--without having to waste sample units eliminating possibilities that were already known to be false.
+
+#### Uninformative (vague) priors
+
+#### Conjugate priors
 ### Evidence (Data)
+
+### Convergence
 
 ### Posteriors
 
