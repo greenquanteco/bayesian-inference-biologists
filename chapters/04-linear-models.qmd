@@ -24,9 +24,9 @@ library(rjags)
 library(R2jags)
 ```
 
-## Linear models refresher
+## Linear models refresher  {#sec-linear}
 
-### Enter the matrix
+### Enter the matrix  {#sec-linear-matrix}
 
 **Linear models** are called linear models because they assume **linearity**. This means that a change in some response variable $Y$ is described by an additive change in some predictor $X$ multiplied by a constant called the **slope**. The slope encodes the change in in $Y$ resulting from adding 1 to $X$.
 

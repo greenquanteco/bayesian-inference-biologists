@@ -272,7 +272,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/10-mark-recapture.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">10-mark-recapture.html</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Mark-recapture analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -299,9 +299,9 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#linear-models-refresher" id="toc-linear-models-refresher" class="nav-link active" data-scroll-target="#linear-models-refresher"><span class="header-section-number">4.1</span> Linear models refresher</a>
+  <li><a href="#sec-linear" id="toc-sec-linear" class="nav-link active" data-scroll-target="#sec-linear"><span class="header-section-number">4.1</span> Linear models refresher</a>
   <ul class="collapse">
-  <li><a href="#enter-the-matrix" id="toc-enter-the-matrix" class="nav-link" data-scroll-target="#enter-the-matrix"><span class="header-section-number">4.1.1</span> Enter the matrix</a></li>
+  <li><a href="#sec-linear-matrix" id="toc-sec-linear-matrix" class="nav-link" data-scroll-target="#sec-linear-matrix"><span class="header-section-number">4.1.1</span> Enter the matrix</a></li>
   <li><a href="#straight-lines-somehow" id="toc-straight-lines-somehow" class="nav-link" data-scroll-target="#straight-lines-somehow"><span class="header-section-number">4.1.2</span> Straight lines (somehow)</a></li>
   <li><a href="#other-details-and-assumptions" id="toc-other-details-and-assumptions" class="nav-link" data-scroll-target="#other-details-and-assumptions"><span class="header-section-number">4.1.3</span> Other details and assumptions</a></li>
   </ul></li>
@@ -371,10 +371,10 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjags)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(R2jags)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<section id="linear-models-refresher" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="linear-models-refresher"><span class="header-section-number">4.1</span> Linear models refresher</h2>
-<section id="enter-the-matrix" class="level3" data-number="4.1.1">
-<h3 data-number="4.1.1" class="anchored" data-anchor-id="enter-the-matrix"><span class="header-section-number">4.1.1</span> Enter the matrix</h3>
+<section id="sec-linear" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="sec-linear"><span class="header-section-number">4.1</span> Linear models refresher</h2>
+<section id="sec-linear-matrix" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="sec-linear-matrix"><span class="header-section-number">4.1.1</span> Enter the matrix</h3>
 <p><strong>Linear models</strong> are called linear models because they assume <strong>linearity</strong>. This means that a change in some response variable <span class="math inline">\(Y\)</span> is described by an additive change in some predictor <span class="math inline">\(X\)</span> multiplied by a constant called the <strong>slope</strong>. The slope encodes the change in in <span class="math inline">\(Y\)</span> resulting from adding 1 to <span class="math inline">\(X\)</span>.</p>
 <p><span class="math display">\[Y=f\left(X\right)\]</span></p>
 <p><span class="math display">\[f\left(X+1\right)=f\left(X\right)+\beta_1\]</span></p>
@@ -1389,7 +1389,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_anova2way_means.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 9.93 secs
+ n.sims = 1200 iterations saved. Running time = 10.28 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 mu[1,1]   16.416   1.005  14.441  15.734  16.450  17.110  18.233 1.004   550
 mu[2,1]   30.378   0.994  28.510  29.673  30.373  31.028  32.372 1.004   680

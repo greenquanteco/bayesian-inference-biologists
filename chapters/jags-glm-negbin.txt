@@ -1,0 +1,16 @@
+
+    model{
+        # priors
+        beta0 ~ dnorm(0, 1)
+        beta1 ~ dnorm(0, 1)
+        r ~ dgamma(0.1, 0.1)
+
+        # likelihood
+        for(i in 1:n){
+            y[i] ~ dnegbin(pi[i],r)
+            pi[i] <- r/(r+mu[i])
+            log(mu[i]) <- beta0 + beta1 * x[i]
+            
+        }#i
+    }#model
+

@@ -23,6 +23,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -74,6 +109,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -208,7 +272,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/10-mark-recapture.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">10-mark-recapture.html</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Mark-recapture analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -239,7 +303,8 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#priors" id="toc-priors" class="nav-link" data-scroll-target="#priors"><span class="header-section-number">2.1.1</span> Priors</a></li>
   <li><a href="#evidence-data" id="toc-evidence-data" class="nav-link" data-scroll-target="#evidence-data"><span class="header-section-number">2.1.2</span> Evidence (Data)</a></li>
-  <li><a href="#posteriors" id="toc-posteriors" class="nav-link" data-scroll-target="#posteriors"><span class="header-section-number">2.1.3</span> Posteriors</a></li>
+  <li><a href="#convergence" id="toc-convergence" class="nav-link" data-scroll-target="#convergence"><span class="header-section-number">2.1.3</span> Convergence</a></li>
+  <li><a href="#posteriors" id="toc-posteriors" class="nav-link" data-scroll-target="#posteriors"><span class="header-section-number">2.1.4</span> Posteriors</a></li>
   </ul></li>
   <li><a href="#updating-beliefs-and-bayes-factors" id="toc-updating-beliefs-and-bayes-factors" class="nav-link" data-scroll-target="#updating-beliefs-and-bayes-factors"><span class="header-section-number">2.2</span> Updating beliefs and Bayes’ factors</a></li>
   </ul>
@@ -269,14 +334,53 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="bayesian-thinking" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="bayesian-thinking"><span class="header-section-number">2.1</span> Bayesian thinking</h2>
+<p>Most of the time when we fit a model in R, we need to supply the software with enough information to specify which model to fit, what variables to include, and where to find those variables. All the rest–i.e., the machinery of sums of squares or maximum likelihood–takes place under the hood. Once you specify, say, a logistic regression model, there really isn’t much else to do. For example:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit a logistic regression model</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(y<span class="sc">~</span>x1, <span class="at">data=</span>my.data, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"logit"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>fits a logistic regression model, and the command is very concise:</p>
+<ul>
+<li><code>mod1</code> is (or will be?) the fitted model object.</li>
+<li><code>glm()</code> is the command that fits GLMs.</li>
+<li><code>y~x1</code> is the model formula, such that <code>y</code> is the response variable and <code>x1</code> is the predictor variable.</li>
+<li><code>my.data</code> is the data frame that contains all of the variables in the model.</li>
+<li><code>binomal()</code> is the response distribution (i.e., the <code>family</code> of the GLM).</li>
+<li><code>"logit"</code> is the link function.</li>
+</ul>
+<p>You don’t need to specify a distribution for the intercept or slope: those are baked into the GLM. Likewise, you don’t need to make a decision about when the gradient descent methods have reached a valid solution. That too is baked into <code>glm()</code>.</p>
+<p>The same is not true when using Bayesian inference. Note that I said, “Bayesian inference” and not “Bayesian models”. There isn’t really such a thing as a “Bayesian model”, only a Bayesian approach to testing a model.</p>
+<p>When working in Bayesian, we need to specify more pieces of the model upfront, and we need to make more decisions on the back end.</p>
 <section id="priors" class="level3" data-number="2.1.1">
 <h3 data-number="2.1.1" class="anchored" data-anchor-id="priors"><span class="header-section-number">2.1.1</span> Priors</h3>
+<section id="role-in-bayesian-inference" class="level4" data-number="2.1.1.1">
+<h4 data-number="2.1.1.1" class="anchored" data-anchor-id="role-in-bayesian-inference"><span class="header-section-number">2.1.1.1</span> Role in Bayesian inference</h4>
+<p>As we saw in <a href="01-introduction.html#sec-intro-bayes" class="quarto-xref"><span>Section 1.4</span></a>, the prior <span class="math inline">\(p\left(H\right)\)</span> is an important part of Bayes’ theorem:</p>
+<p><span class="math display">\[p\left(H|E\right)=\frac{p\left(E|H\right)p\left(H\right)}{p\left(E\right)}\]</span></p>
+<p>The prior is used to scale the ratio of the likelihood <span class="math inline">\(p\left(E|H\right)\)</span> to the probability. This means that priors can exert varying degrees of influence: when the prior is strong, the prior dominates the calculation. When the prior is weak or uninformative, the data dominate.</p>
+</section>
+<section id="informative-priors" class="level4" data-number="2.1.1.2">
+<h4 data-number="2.1.1.2" class="anchored" data-anchor-id="informative-priors"><span class="header-section-number">2.1.1.2</span> Informative priors</h4>
+<p>An <strong>informative</strong> prior is a prior that contains a lot of information, or a very strong guess, about a parameter or a model. For example, if you were building a model to predict the body mass of an animal a weak ahead, your prior distribution might be centered on the animal’s current weight with a variance equal to the historical average of week-to-week body mass fluctuations. Or, you could use a distribution of body masses for animals of that precise age.</p>
+<p>Using informative priors is using <em>pre-existing knowledge</em> to help fit your model. This does not necessarily mean that your prior distribution will determine the fitted model. It means that more evidence will be needed to find an outcome that is very unlikely under the prior distribution. Put another way, informative priors can help you reach a robust conclusion with fewer additional data. The latter reason is part of why Bayesian methods are becoming more and more common in clinical trials.</p>
+<p>For example, if a drug developer is testing a new, higher dose of a medicine (say, 10 mg instead of 5 mg), there is no reason to start from the assumption that the 10 mg version will have 0 effect if the 5 mg version is already known to be clinically efficacious. They could set their prior for the effect of the 10 mg version to slightly larger than the known effect of the 5 mg version, and obtain tiral results with fewer data.</p>
+<p>A less dramatic example is to use informative priors when the sign of a coefficient is known. In a <a href="https://doi.org/10.1016/j.foreco.2024.122372">recent study published here at KSU</a>, a student used Bayesian path analysis models to explore how environmental conditions affected fire behavior. After consultation with his PI (and me), he defined the prior distributions of some parameters to be either positive or negative based on strong evidence from the literature. This gave his analysis a boost in power that allowed him to discover some neat effects–without having to waste sample units eliminating possibilities that were already known to be false.</p>
+</section>
+<section id="uninformative-vague-priors" class="level4" data-number="2.1.1.3">
+<h4 data-number="2.1.1.3" class="anchored" data-anchor-id="uninformative-vague-priors"><span class="header-section-number">2.1.1.3</span> Uninformative (vague) priors</h4>
+</section>
+<section id="conjugate-priors" class="level4" data-number="2.1.1.4">
+<h4 data-number="2.1.1.4" class="anchored" data-anchor-id="conjugate-priors"><span class="header-section-number">2.1.1.4</span> Conjugate priors</h4>
+</section>
 </section>
 <section id="evidence-data" class="level3" data-number="2.1.2">
 <h3 data-number="2.1.2" class="anchored" data-anchor-id="evidence-data"><span class="header-section-number">2.1.2</span> Evidence (Data)</h3>
 </section>
-<section id="posteriors" class="level3" data-number="2.1.3">
-<h3 data-number="2.1.3" class="anchored" data-anchor-id="posteriors"><span class="header-section-number">2.1.3</span> Posteriors</h3>
+<section id="convergence" class="level3" data-number="2.1.3">
+<h3 data-number="2.1.3" class="anchored" data-anchor-id="convergence"><span class="header-section-number">2.1.3</span> Convergence</h3>
+</section>
+<section id="posteriors" class="level3" data-number="2.1.4">
+<h3 data-number="2.1.4" class="anchored" data-anchor-id="posteriors"><span class="header-section-number">2.1.4</span> Posteriors</h3>
 </section>
 </section>
 <section id="updating-beliefs-and-bayes-factors" class="level2" data-number="2.2">

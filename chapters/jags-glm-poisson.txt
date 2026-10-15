@@ -1,0 +1,15 @@
+
+    model{
+        # priors
+        # reasonable ranges...extreme values may cause
+        # numerical overflow. Use some number sense!
+        beta0 ~ dnorm(0, 1)
+        beta1 ~ dnorm(0, 1)
+
+        # likelihood
+        for(i in 1:n){
+            y[i] ~ dpois(lambda[i])
+            log(lambda[i]) <- beta0 + beta1 * x[i]
+        }#i
+    }#model
+

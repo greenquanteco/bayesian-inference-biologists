@@ -23,7 +23,62 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 1em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -74,6 +129,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -208,7 +292,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/10-mark-recapture.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">10-mark-recapture.html</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Mark-recapture analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -230,8 +314,30 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#glm-refresher" id="toc-glm-refresher" class="nav-link active" data-scroll-target="#glm-refresher"><span class="header-section-number">5.1</span> GLM refresher</a></li>
+  <li><a href="#sec-glm1-pois" id="toc-sec-glm1-pois" class="nav-link" data-scroll-target="#sec-glm1-pois"><span class="header-section-number">5.2</span> Poisson GLM for counts</a>
+  <ul class="collapse">
+  <li><a href="#sec-glm1-pois-def" id="toc-sec-glm1-pois-def" class="nav-link" data-scroll-target="#sec-glm1-pois-def"><span class="header-section-number">5.2.1</span> Definition</a></li>
+  <li><a href="#sec-glm1-pois-ex" id="toc-sec-glm1-pois-ex" class="nav-link" data-scroll-target="#sec-glm1-pois-ex"><span class="header-section-number">5.2.2</span> Example</a></li>
+  <li><a href="#sec-glm1-pois-num" id="toc-sec-glm1-pois-num" class="nav-link" data-scroll-target="#sec-glm1-pois-num"><span class="header-section-number">5.2.3</span> A note on numeracy (number sense)</a></li>
+  </ul></li>
+  <li><a href="#sec-glm1-nb" id="toc-sec-glm1-nb" class="nav-link" data-scroll-target="#sec-glm1-nb"><span class="header-section-number">5.3</span> Negative binomial GLM for overdispersed counts</a>
+  <ul class="collapse">
+  <li><a href="#sec-glm1-nb-def" id="toc-sec-glm1-nb-def" class="nav-link" data-scroll-target="#sec-glm1-nb-def"><span class="header-section-number">5.3.1</span> Definition</a></li>
+  <li><a href="#sec-glm1-nb-ex" id="toc-sec-glm1-nb-ex" class="nav-link" data-scroll-target="#sec-glm1-nb-ex"><span class="header-section-number">5.3.2</span> Example</a></li>
+  </ul></li>
+  <li><a href="#sec-glm1-zi" id="toc-sec-glm1-zi" class="nav-link" data-scroll-target="#sec-glm1-zi"><span class="header-section-number">5.4</span> Counts with zero-inflation</a>
+  <ul class="collapse">
+  <li><a href="#sec-glm1-zi-def" id="toc-sec-glm1-zi-def" class="nav-link" data-scroll-target="#sec-glm1-zi-def"><span class="header-section-number">5.4.1</span> Definition</a></li>
+  <li><a href="#sec-glm1-zi-ex" id="toc-sec-glm1-zi-ex" class="nav-link" data-scroll-target="#sec-glm1-zi-ex"><span class="header-section-number">5.4.2</span> Example</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/edit/main/chapters/05-glm-01-counts.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -255,8 +361,736 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>Over the next two modules we will extend our JAGS language knowledge and our statistical skills to another important class of statistical methods: <strong>generalized linear models (GLM)</strong>. GLMs are an indispensable tool in the modern biologist’s toolbox. The GLM framework includes all linear models, as well as a wide variety of other techniques:</p>
+<ul>
+<li>Gamma GLM for overdispersed continuous data</li>
+<li>Poisson and negative binomial models for counts</li>
+<li>Logistic regression for binary outcomes</li>
+<li>Binomial regression for proportional data</li>
+<li>And many more.</li>
+</ul>
+<p>These models may appear different on the surface, and take different kinds of data as inputs, but are actually the same kind of model. This is much more apparent when fitting models in JAGS than in R.</p>
+<p>This module explores GLMs for <strong>count</strong> data. Count data are exactly what they sound like: values resulting from counting things. Count data take the form of non-negative integers. Non-negative integers, however, are not necessarily count data. For example, summer temperatures in Georgia can be rounded to the nearest integer, but they will not be counts.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="About this module">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>About this module
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For this module you will need a recent versions of R, JAGS, and the R packages rjags and R2jags (<span class="citation" data-cites="plummer2003jags">Plummer (<a href="../references.html#ref-plummer2003jags" role="doc-biblioref">2003</a>)</span>, <span class="citation" data-cites="plummer2021">Plummer (<a href="../references.html#ref-plummer2021" role="doc-biblioref">2021</a>)</span>, <span class="citation" data-cites="rcore2025">R Core Team (<a href="../references.html#ref-rcore2025" role="doc-biblioref">2025</a>)</span>, <span class="citation" data-cites="su2021">Su and Masanao Yajima (<a href="../references.html#ref-su2021" role="doc-biblioref">2021</a>)</span>). This module and all code examples were developed and tested using R version 4.5.1, JAGS 4.3.1, rjags version 4-17, and R2jags version 0.8-9.</p>
+</div>
+</div>
+<section id="glm-refresher" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="glm-refresher"><span class="header-section-number">5.1</span> GLM refresher</h2>
+<p>Generalized linear models (GLM) extend the <a href="{@sec-linear}">linear model</a> by relaxing two assumptions:</p>
+<ol type="1">
+<li>GLM allows response distributions other than the normal distribution</li>
+<li>GLM allows the linear predictor to be on a scale other than the scale that the data are on; the data and linear predictor scales are related by a link function.</li>
+</ol>
+<p>So, while a linear model is written as:</p>
+<p><span class="math display">\[\text{Stochastic part}:y\sim \text{Normal}\left(E\left(y\right),\sigma_{res}\right)\]</span></p>
+<p><span class="math display">\[\text{Linear predictor}:E\left(y\right)=\boldsymbol{\beta}\mathbf{x}\]</span></p>
+<p>Here we use matrix shorthand for the linear predictor to indicate that <span class="math inline">\(\boldsymbol{\beta}\)</span> is a vector of coefficients (<span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_2\)</span>, and so on), and <span class="math inline">\(\mathbf{x}\)</span> is the design matrix that contains the predictor variables (<span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, and so on; see <a href="04-linear-models.html#sec-linear-matrix" class="quarto-xref"><span>Section 4.1.1</span></a>).</p>
+<p>A GLM is written as:</p>
+<p><span class="math display">\[\text{Stochastic part}:y\sim \text{SomeDistribution}\left(E\left(y\right),\theta\right)\]</span></p>
+<p><span class="math display">\[\text{Linear predictor}:\eta=\boldsymbol{\beta}\mathbf{x}\]</span></p>
+<p>where <span class="math inline">\(\theta\)</span> stands in for other parameters of the response distribution (if there are any), and <span class="math inline">\(\eta\)</span> (“eta”) is the expected value on the scale of the linear predictor–which may or may not be the same scale as <span class="math inline">\(y\)</span> and <span class="math inline">\(E\left(y\right)\)</span>. We relate <span class="math inline">\(E\left(y\right)\)</span> and <span class="math inline">\(\eta\)</span> via a <strong>link function</strong>:</p>
+<p><span class="math display">\[\text{Link function}:f\left(E\left(y\right)\right)=\eta\]</span></p>
+<div class="callout callout-style-default callout-note callout-titled" title="GLM response distributions">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>GLM response distributions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Technically, the response distribution in a GLM must be one of the <a href="https://en.wikipedia.org/wiki/Exponential_family">exponential family</a>. This family includes a huge variety: the normal, exponential, gamma, beta, Poisson, and geometric. Under certain conditions, the binomial, negative binomial, and multinomial can be included as well.</p>
+</div>
+</div>
+<p>This means that linear regression itself is a special case of GLM, with a normal response distribution and the identity link function (the identity function of any value is that value itself).</p>
+<p><span class="math display">\[\text{Stochastic part}:y\sim \text{Normal}\left(E\left(y\right),\sigma_{res}\right)\]</span></p>
+<p><span class="math display">\[\text{Link function}:E\left(y\right)=\eta\]</span> <span class="math display">\[\text{Linear predictor}:\eta=\boldsymbol{\beta}\mathbf{x}\]</span></p>
+<p>If you are unfamiliar with GLM, check out the <a href="https://greenquanteco.github.io/appl-biol-data-analysis/chapters/ch18.html">notes to my data anlysis course</a> for a more in-depth explanation.</p>
+</section>
+<section id="sec-glm1-pois" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="sec-glm1-pois"><span class="header-section-number">5.2</span> Poisson GLM for counts</h2>
+<section id="sec-glm1-pois-def" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="sec-glm1-pois-def"><span class="header-section-number">5.2.1</span> Definition</h3>
+<p>The Poisson GLM models the logarithm of expected count <span class="math inline">\(\lambda\)</span> as a linear function of predictors <span class="math inline">\(\boldsymbol{\beta}\mathbf{x}\)</span>. Here we use matrix shorthand for the linear predictor to indicate that <span class="math inline">\(\boldsymbol{\beta}\)</span> is a vector of coefficients (<span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_2\)</span>, and so on), and <span class="math inline">\(\mathbf{x}\)</span> is the design matrix that contains the predictor variables (<span class="math inline">\(x_1\)</span>, <span class="math inline">\(x_2\)</span>, and so on). Instead of saying that the Poisson GLM “models the logarithm of the expected count”, we could also say that it uses a log link function.</p>
+<p><span class="math display">\[\text{Stochastic part}:y\sim Poisson\left(\lambda\right)\]</span></p>
+<p><span class="math display">\[\text{Link function}:\log\left(\lambda\right)=\eta\]</span></p>
+<p><span class="math display">\[\text{Linear predictor}:\eta=\boldsymbol{\beta}\mathbf{x}\]</span></p>
+<p>Notice that the Poisson distribution has only one parameter, <span class="math inline">\(\lambda\)</span> (“lambda”), which is both the mean and variance of the distribution. This means that we should not be surprised or concerned if a scatterplot suggests heteroscedasticity with variance increasing with the expected value. This property of the Poisson distribution and the log link function means that a “cone” of points on a scatterplot does not necessarily imply heteroscedasticity or overdispersion. <strong>Overdispersion</strong> means that the data contain more variance than would be expected under a Poisson distribution. If overdispersion is suspected, you can try a negative binomial GLM instead of a Poisson GLM (<a href="#sec-glm1-nb" class="quarto-xref"><span>Section 5.3</span></a>).</p>
+</section>
+<section id="sec-glm1-pois-ex" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="sec-glm1-pois-ex"><span class="header-section-number">5.2.2</span> Example</h3>
+<section id="sec-glm1-pois-ex-sim" class="level4" data-number="5.2.2.1">
+<h4 data-number="5.2.2.1" class="anchored" data-anchor-id="sec-glm1-pois-ex-sim"><span class="header-section-number">5.2.2.1</span> Data simulation</h4>
+<p>Let’s simulate a dataset and analyze it.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># random number seed for reproducibility</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sample size</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># coefficients</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>beta0 <span class="ot">&lt;-</span> <span class="fl">1.5</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>beta1 <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># x values</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n, <span class="dv">0</span>, <span class="dv">10</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># linear predictor</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>eta <span class="ot">&lt;-</span> beta0 <span class="sc">+</span> beta1 <span class="sc">*</span> x</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># inverse link function</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="fu">exp</span>(eta)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># response variable</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rpois</span>(n, lambda)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># put everything in a data frame</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span>x,<span class="at">y=</span>y)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># make the plot</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="fl">5.1</span>, <span class="fl">5.1</span>, <span class="fl">1.1</span>, <span class="fl">1.1</span>))</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x,y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-glm-01-counts_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The relationship between <span class="math inline">\(y\)</span> and <span class="math inline">\(x\)</span> looks almost linear, but because we are clever biologists, we know that linear models are not appropriate for two reasons. First, linear models predict continuous responses, and counts are not continuous (they are discrete). Second, linear models can predict negative responses, and counts cannot be negative. So, we will try Poisson regression.</p>
+</section>
+<section id="sec-glm1-pois-ex-freq" class="level4" data-number="5.2.2.2">
+<h4 data-number="5.2.2.2" class="anchored" data-anchor-id="sec-glm1-pois-ex-freq"><span class="header-section-number">5.2.2.2</span> Frequentist analysis</h4>
+<p>We could fit a Poisson GLM of y vs.&nbsp;x in R with this command:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mod01 <span class="ot">&lt;-</span> <span class="fu">glm</span>(y<span class="sc">~</span>x, <span class="at">data=</span>dx, <span class="at">family=</span>poisson)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># model summary:</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod01)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = y ~ x, family = poisson, data = dx)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  1.46480    0.07144    20.5   &lt;2e-16 ***
+x            0.21025    0.01011    20.8   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 552.212  on 99  degrees of freedom
+Residual deviance:  75.704  on 98  degrees of freedom
+AIC: 513.17
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>The frequentist analysis gets pretty close to the real coefficients, and the model <a href="https://greenquanteco.github.io/appl-biol-data-analysis/chapters/ch18.html#sec-glm1-lik-pseudo">reduced the deviance</a> by an impressive 86%.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span>mod01<span class="sc">$</span>deviance<span class="sc">/</span>mod01<span class="sc">$</span>null.deviance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8629071</code></pre>
+</div>
+</div>
+</section>
+<section id="sec-glm1-pois-ex-jags" class="level4" data-number="5.2.2.3">
+<h4 data-number="5.2.2.3" class="anchored" data-anchor-id="sec-glm1-pois-ex-jags"><span class="header-section-number">5.2.2.3</span> Bayesian analysis with JAGS</h4>
+<p>Now let’s repeat the analysis in JAGS. The analysis takes a little more work in JAGS, but it might be worth it.</p>
+<p>First, define a model file for the Poisson GLM.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Poisson GLM with one predictor x</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mod.name <span class="ot">&lt;-</span> <span class="st">"jags-glm-poisson.txt"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(mod.name)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="st">    model{</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="st">        # priors</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="st">        # reasonable ranges...extreme values may cause</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="st">        # numerical overflow. Use some number sense!</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="st">        beta0 ~ dnorm(0, 1)</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="st">        beta1 ~ dnorm(0, 1)</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="st">        # likelihood</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">        for(i in 1:n){</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="st">            y[i] ~ dpois(lambda[i])</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="st">            log(lambda[i]) &lt;- beta0 + beta1 * x[i]</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="st">        }#i</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="st">    }#model</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">fill=</span><span class="cn">TRUE</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then, set up the usual MCMC parameters for JAGS and tell JAGS what parameters to monitor.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># parameters to monitor</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"beta0"</span>, <span class="st">"beta1"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># MCMC parameters</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>n.iter <span class="ot">&lt;-</span> <span class="fl">5e4</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>n.burnin <span class="ot">&lt;-</span> <span class="fl">1e4</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>n.thin <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>nchains <span class="ot">&lt;-</span> <span class="dv">3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>As always, we need a function to define initial values for the MCMC chains. Remember that EVERY parameter in the model defined as a stochastic node needs an initial value. This means any variable that is ever on the left side of a ~ symbol.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function to define initial values for MCMC chains</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>init.fun <span class="ot">&lt;-</span> <span class="cf">function</span>(nc){</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output will be a list with one element per chain</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length=</span>nc)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fill in a for loop over chains</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nc){</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># note that </span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    res[[i]] <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">beta0=</span><span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">beta1=</span><span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  }<span class="co">#i</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(res)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># generate the intial values</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>inits <span class="ot">&lt;-</span> <span class="fu">init.fun</span>(nchains)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Package up the data for JAGS</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># package data for JAGS</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>in.data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">x=</span>dx<span class="sc">$</span>x, <span class="at">y=</span>dx<span class="sc">$</span>y, <span class="at">n=</span>n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>And run the model.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(R2jags)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjags)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mod02 <span class="ot">&lt;-</span> <span class="fu">jags</span>(<span class="at">data=</span>in.data, <span class="at">inits=</span>inits,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">parameters.to.save=</span>params,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">model.file=</span>mod.name,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">n.chains=</span>nchains, <span class="at">n.iter=</span>n.iter,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">n.burnin=</span>n.burnin, <span class="at">n.thin=</span>n.thin)<span class="co">#jags</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 100
+   Unobserved stochastic nodes: 2
+   Total graph size: 505
+
+Initializing model</code></pre>
+</div>
+</div>
+<p>And inspect the results:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>mod02</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Inference for Bugs model at "jags-glm-poisson.txt", fit using jags,
+ 3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
+ n.sims = 1200 iterations saved. Running time = 58.27 secs
+         mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+beta0      1.456    0.07   1.327   1.410   1.455   1.500   1.596 1.001  1200
+beta1      0.211    0.01   0.192   0.205   0.212   0.217   0.230 1.000  1200
+deviance 511.122    2.01 509.212 509.699 510.528 511.821 516.818 1.000  1200
+
+For each parameter, n.eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor (at convergence, Rhat=1).
+
+DIC info (using the rule: pV = var(deviance)/2)
+pV = 2.0 and DIC = 513.1
+DIC is an estimate of expected predictive error (lower deviance is better).</code></pre>
+</div>
+</div>
+<p>The model converged, and the estimated values for <code>beta0</code> and <code>beta1</code> are pretty close to the truth…and, to the estimates from the frequentist version of the model.</p>
+<p>Just as with linear models, the best way to present the results of your Poisson GLM is to plot the model predictions against the data. Plotting the expected value <span class="math inline">\(\lambda\)</span> against the data is easy. What’s tricky is plotting the uncertainty. We will plot uncertainty as the 95% credible interval (CRI) of the predicted value <span class="math inline">\(\lambda\)</span>. Unless you think carefully about what you’re doing, it’s easy to confuse plotting uncertainty about the expected values with plotting uncertainty about the observable values. In frequentist terms, the former is a confidence interval (CI) and the latter is a prediction interval (PI).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set up x values at which to predict</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>pn <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>px <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">min</span>(dx<span class="sc">$</span>x), <span class="fu">max</span>(dx<span class="sc">$</span>x), <span class="at">length=</span>pn)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>prx <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span>px)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># extract permuted posteriors for</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># model parameters</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>mx <span class="ot">&lt;-</span> mod02<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.matrix</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>npost <span class="ot">&lt;-</span> <span class="fu">nrow</span>(mx)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># make matrix to hold model predictions</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow=</span><span class="fu">nrow</span>(prx), <span class="at">ncol=</span><span class="fu">nrow</span>(mx))</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co"># fill matrix in a loop</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>npost){</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    pred[,i] <span class="ot">&lt;-</span> mx[i,<span class="st">"beta0"</span>] <span class="sc">+</span> mx[i,<span class="st">"beta1"</span>] <span class="sc">*</span> prx<span class="sc">$</span>x</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>}<span class="co">#i</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize across columns of pred to</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="co"># get predicted values and 95% credible interval</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>prx<span class="sc">$</span>lo <span class="ot">&lt;-</span> <span class="fu">apply</span>(pred, <span class="dv">1</span>, quantile, <span class="fl">0.025</span>)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>prx<span class="sc">$</span>mn <span class="ot">&lt;-</span> <span class="fu">apply</span>(pred, <span class="dv">1</span>, quantile, <span class="fl">0.5</span>)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>prx<span class="sc">$</span>up <span class="ot">&lt;-</span> <span class="fu">apply</span>(pred, <span class="dv">1</span>, quantile, <span class="fl">0.975</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The values in <code>prx</code> are still on the link scale, where the linear predictor lives. So, we need to apply the inverse link function to get values on the data scale.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>prx<span class="sc">$</span>lo <span class="ot">&lt;-</span> <span class="fu">exp</span>(prx<span class="sc">$</span>lo)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>prx<span class="sc">$</span>mn <span class="ot">&lt;-</span> <span class="fu">exp</span>(prx<span class="sc">$</span>mn)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>prx<span class="sc">$</span>up <span class="ot">&lt;-</span> <span class="fu">exp</span>(prx<span class="sc">$</span>up)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now we can construct our plot:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dx<span class="sc">$</span>x, dx<span class="sc">$</span>y, <span class="at">type=</span><span class="st">"n"</span>, </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab=</span><span class="st">"x variable"</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab=</span><span class="st">"y variable (count)"</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(prx<span class="sc">$</span>x, prx<span class="sc">$</span>mn, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(prx<span class="sc">$</span>x, prx<span class="sc">$</span>lo, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(prx<span class="sc">$</span>x, prx<span class="sc">$</span>up, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(dx<span class="sc">$</span>x, dx<span class="sc">$</span>y, <span class="at">pch=</span><span class="dv">16</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-glm-01-counts_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The interval plotted is the 95% <strong>credible interval (CRI)</strong>, not a confidence interval. Remember that a credible interval is calculated from samples of the posterior distribution, not estimated from a fitted function like a frequentist confidence interval (CI) (see <a href="01-introduction.html#sec-intro-bayes-cri" class="quarto-xref"><span>Section 1.4.6</span></a>). That means we can say, “we are 95% certain that the true expected value lies within the interval shown by the dashed lines.</p>
+<p>A CRI is often similar in width to a CI, but they are not the same.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare to CI</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>predf <span class="ot">&lt;-</span> <span class="fu">predict</span>(mod01, <span class="at">newdata=</span>prx,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type=</span><span class="st">"link"</span>, <span class="at">se.fit=</span><span class="cn">TRUE</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>prx<span class="sc">$</span>lof <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">qnorm</span>(<span class="fl">0.025</span>, predf<span class="sc">$</span>fit, predf<span class="sc">$</span>se.fit))</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>prx<span class="sc">$</span>mnf <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">qnorm</span>(<span class="fl">0.5</span>, predf<span class="sc">$</span>fit, predf<span class="sc">$</span>se.fit))</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>prx<span class="sc">$</span>upf <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">qnorm</span>(<span class="fl">0.975</span>, predf<span class="sc">$</span>fit, predf<span class="sc">$</span>se.fit))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dx<span class="sc">$</span>x, dx<span class="sc">$</span>y, <span class="at">type=</span><span class="st">"n"</span>, </span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab=</span><span class="st">"x variable"</span>,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab=</span><span class="st">"y variable (count)"</span>)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(prx<span class="sc">$</span>x, prx<span class="sc">$</span>mn, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(prx<span class="sc">$</span>x, prx<span class="sc">$</span>lo, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(prx<span class="sc">$</span>x, prx<span class="sc">$</span>up, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(prx<span class="sc">$</span>x, prx<span class="sc">$</span>lof, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">col=</span><span class="st">"blue"</span>, <span class="at">lty=</span><span class="dv">3</span>)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(prx<span class="sc">$</span>x, prx<span class="sc">$</span>upf, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">col=</span><span class="st">"blue"</span>, <span class="at">lty=</span><span class="dv">3</span>)</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(dx<span class="sc">$</span>x, dx<span class="sc">$</span>y, <span class="at">pch=</span><span class="dv">16</span>)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>,</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend=</span><span class="fu">c</span>(<span class="st">"Bayesian CRI"</span>, <span class="st">"Frequentist CI"</span>),</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>), <span class="at">lwd=</span><span class="dv">3</span>,</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">col=</span><span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"blue"</span>),</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">bty=</span><span class="st">"n"</span>, <span class="at">cex=</span><span class="fl">1.3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-glm-01-counts_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-glm1-pois-num" class="level3" data-number="5.2.3">
+<h3 data-number="5.2.3" class="anchored" data-anchor-id="sec-glm1-pois-num"><span class="header-section-number">5.2.3</span> A note on numeracy (number sense)</h3>
+<p>It may have been tempting to put a very wide prior on the intercept and slope, like we did for coefficients in a linear model. But, this can be a bad idea when working on the log scale. In the linear models in the last module, we usually used priors like <span class="math inline">\(Normal\left(0,\ 100\right)\)</span> for <code>beta0</code> and <code>beta1</code> terms. This was fine for linear models, where the response variable and linear predictor were on the same scale. For our Poisson GLM, however, the parameters are on the logarithmic scale because of the log link function. Because the linear predictor (<span class="math inline">\(\beta_0+\beta_1x\)</span>) is exponentiated in the model likelihood, calculations like the following might occur:</p>
+<p><span class="math display">\[\log{\left(\lambda\right)}=200+1500x\]</span></p>
+<p>which really means</p>
+<p><span class="math display">\[\lambda=e^{200+1500x}\]</span></p>
+<p>which even for a small value like <span class="math inline">\(x=1\)</span> would evaluate to an absurdly large number, too large to be represented in R or JAGS. R can represent values with an absolute value up to about <span class="math inline">\(1.79\times10^{308}\)</span>. Anything larger returns <code>Inf</code> (or <code>-Inf</code>, for negative numbers).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>.Machine<span class="sc">$</span>double.xmax</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.797693e+308</code></pre>
+</div>
+</div>
+<p>which is approximately <span class="math inline">\(10^{228}\)</span> times greater than the number of atoms in the universe. Similarly, R can only represent numbers as small as about <span class="math inline">\(2.2\times10^{-308}\)</span>. So, even if R and JAGS could represent those numbers, would they really be relevant to your analysis? Probably not.</p>
+<p>Any of these could cause inappropriately large or small values of _i within JAGS. Values that are too large cannot be represented in JAGS and may be treated as infinity…which will cause an error. Values that are too small will be arbitrarily close to 0, and may be treated as 0…which will also cause an error. When you try to feed a JAGS distribution function with an illegitimate input, such as a negative or 0 value for <code>dpois()</code>, you will get the dreaded “Node inconsistent with parents” error. This error can be very hard to track down, because it is not possible to see current parameter values within JAGS. This means you have to examine each node and work out if extreme values of any of its inputs could lead to illegitimate values.</p>
+<p>In JAGS, the expected value of a Poisson distribution must be finite and strictly positive. So, we need to be careful to set up the model in such a way as to avoid these kinds of numerical issues.</p>
+<p>There are two takeaways from this digression. First, you need to be smart about what numbers you are implying in your JAGS models. Your model might have the correct relationships, but if the numbers lead to illegitimate values, it is all for naught. Try rewriting the model above with the extremely broad priors and see what happens.</p>
+<p>Second, sometimes you need to think like a programmer instead of a biologist or statistician. There’s an old saying: “If it’s stupid and its works, then it’s not stupid.” Many people might opt to relate <code>x</code> and <code>y</code> with a construction like this in their JAGS code:</p>
+<pre><code># stochastic part as usual
+y[i] ~ dpois(lambda[i])
+
+# limit lambda to [0.0001, 9999]
+lambda[i] &lt;- max(0.0001, min(9999, exp(eta[i])))
+
+# calculate log scale expected value eta
+eta[i] &lt;- exp(beta0 + beta1 * x[i])</code></pre>
+<p>What does this do? By separating the value of the linear predictor <code>eta[i]</code> from the expected value of the Poisson distribution <code>lambda[i]</code>, this code allows us to limit the values that go into <code>dpois()</code>. This practice is less elegant than choosing appropriate prior values, but it’s not wrong. In fact, this practice is explicitly recommended for some GLMs by Kéry (2010). We’ll use it below when we get to logistic regression (see <a href="06-glm-02-logistic.html#sec-glm2-logistic" class="quarto-xref"><span>Section 6.1</span></a>).</p>
+<p>Some might argue that putting this kind of limit in your JAGS model might bias the parameter estimates. In my experience, however, this is not the case. As long as you don’t make the acceptable interval too narrow, the MCMC algorithm will probably still find the right solution. The only issue I’ve ever had is when the “true” coefficient value might be very close to one of the limits. In that case, the parameter estimates can be biased high if the correct value is just above a limit, or biased low if the correct value is just below a limit.</p>
+<p>Another option might be to simply add a small constant to <span class="math inline">\(\lambda\)</span>. This would solve the problem of <span class="math inline">\(\lambda\)</span> that were too small, but not the problem of <span class="math inline">\(\lambda\)</span> that were too large. Personally, I prefer the first solution, because the estimated <code>beta0</code> and <code>beta1</code> are for the expected value, not the expected value minus a small constant.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<pre><code>y[i] ~ dpois(lambda[i])
+lambda[i] &lt;- eta[i] + 0.00001
+eta[i] &lt;- exp(beta0 + beta1 * x[i])</code></pre>
+</section>
+</section>
+<section id="sec-glm1-nb" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="sec-glm1-nb"><span class="header-section-number">5.3</span> Negative binomial GLM for overdispersed counts</h2>
+<p>Poisson GLMs assume that the single parameter <span class="math inline">\(\lambda\)</span> of the Poisson distribution is both the mean and the variance of the response distribution (i.e., that <span class="math inline">\(\lambda=\mu=\sigma^2\)</span>). This is not always the case in real datasets. Many biological processes that produce counts have a variance much greater than their mean. This phenomenon is called <strong>overdispersion</strong>. The “over” in “overdispersion” means “more variance than expected for a Poisson distribution with the same mean”.</p>
+<p>One way to deal with overdispersion is to use a distribution other than the Poisson. Most textbooks recommend either the <strong>quasi-Poisson</strong> or the <strong>negative binomial</strong>. The negative binomial is easier to work with in most software packages because it has a full likelihood function.</p>
+<section id="sec-glm1-nb-def" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="sec-glm1-nb-def"><span class="header-section-number">5.3.1</span> Definition</h3>
+<p>There are several definitions of the <strong>negative binomial distribution</strong>. The definition biologists usually use has a mean <span class="math inline">\(\mu\)</span> or <span class="math inline">\(\lambda\)</span> and an overdispersion parameter called <span class="math inline">\(\theta\)</span> (“theta”) or <span class="math inline">\(k\)</span>. Smaller <span class="math inline">\(\theta\)</span> leads to more variance; at larger <span class="math inline">\(\theta\)</span> the distribution becomes indistinguishable from the Poisson.</p>
+<p><span class="math display">\[\sigma^2\left(\text{NegBin}\right)=\lambda+\frac{\lambda^2}{\theta}\]</span></p>
+<p>In the R functions that deal with the negative binomial, <span class="math inline">\(\theta\)</span> is referred to as the <code>size</code> parameter. As <span class="math inline">\(\theta\)</span> gets smaller, the fraction <span class="math inline">\(\frac{\lambda^2}{\theta}\)</span> gets larger, and the distribution picks up more and more variance compared to the Poisson distribution (because for a Poisson, <span class="math inline">\(\sigma^2=\lambda\)</span>). Thus, as <span class="math inline">\(\theta\)</span> increases to positive infinity, the fraction gets smaller and the variance approaches that of a Poisson.</p>
+<p>Other people define the negative binomial as a gamma-Poisson mixture . That is, a Poisson distribution with expected value <span class="math inline">\(\lambda\)</span>, where <span class="math inline">\(\lambda\)</span> itself varies as a gamma distribution. Both can be obtained in JAGS, which uses an altogether different definition of the negative binomial. In JAGS, the expected value (linear predictor) needs to be converted to a probability parameter <span class="math inline">\(\pi\)</span>. The <code>r</code> parameter here is the overdispersion parameter which is also fit as part of the model.</p>
+<p><span class="math display">\[y\sim \text{NegBin}\left(\pi,r\right)\]</span></p>
+<p><span class="math display">\[\pi=\frac{r}{r+\mu}\]</span></p>
+<p><span class="math display">\[\log{\mu}=\boldsymbol{\beta}\mathbf{x}\]</span></p>
+<p>This multi-step process if fraught with opportunities for numerical errors, including the dreaded “Node inconsistent with parents”. Here be dragons.</p>
+</section>
+<section id="sec-glm1-nb-ex" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="sec-glm1-nb-ex"><span class="header-section-number">5.3.2</span> Example</h3>
+<section id="sec-glm1-nb-ex-sim" class="level4" data-number="5.3.2.1">
+<h4 data-number="5.3.2.1" class="anchored" data-anchor-id="sec-glm1-nb-ex-sim"><span class="header-section-number">5.3.2.1</span> Data simulation</h4>
+<p>Let’s simulate a dataset and analyze it.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># random number seed for reproducibility</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sample size</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># coefficients</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>beta0 <span class="ot">&lt;-</span> <span class="dv">4</span>     <span class="co"># intercept</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>beta1 <span class="ot">&lt;-</span> <span class="fl">0.15</span>  <span class="co"># slope</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="dv">3</span>     <span class="co"># overdispersion</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co"># x values</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n, <span class="dv">0</span>, <span class="dv">10</span>)</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="co"># linear predictor</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>eta <span class="ot">&lt;-</span> beta0 <span class="sc">+</span> beta1 <span class="sc">*</span> x</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="co"># inverse link function</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="fu">exp</span>(eta)</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="co"># response variable</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnbinom</span>(n, <span class="at">mu=</span>lambda, <span class="at">size=</span>theta)</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="co"># assemble into data frame</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>dn <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span>x, <span class="at">y=</span>y)</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a><span class="co"># make the plot</span></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="fl">5.1</span>, <span class="fl">5.1</span>, <span class="fl">1.1</span>, <span class="fl">1.1</span>))</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x,y, <span class="at">pch=</span><span class="dv">19</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-glm-01-counts_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-glm1-nb-ex-freq" class="level4" data-number="5.3.2.2">
+<h4 data-number="5.3.2.2" class="anchored" data-anchor-id="sec-glm1-nb-ex-freq"><span class="header-section-number">5.3.2.2</span> Frequentist analysis</h4>
+<p>There is no base R function for a negative binomial GLM, so we need to find an add-on package for it. The most common package for this is probably <code>MASS</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now let’s fit the negative binomial GLM.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mod3 <span class="ot">&lt;-</span> <span class="fu">glm.nb</span>(y<span class="sc">~</span>x, <span class="at">data=</span>dx)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm.nb(formula = y ~ x, data = dx, init.theta = 201722.9736, 
+    link = log)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  1.46480    0.07145    20.5   &lt;2e-16 ***
+x            0.21025    0.01011    20.8   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for Negative Binomial(201723) family taken to be 1)
+
+    Null deviance: 552.169  on 99  degrees of freedom
+Residual deviance:  75.698  on 98  degrees of freedom
+AIC: 515.17
+
+Number of Fisher Scoring iterations: 1
+
+              Theta:  201723 
+          Std. Err.:  2992532 
+Warning while fitting theta: iteration limit reached 
+
+ 2 x log-likelihood:  -509.173 </code></pre>
+</div>
+</div>
+<p>The model estimates for the parameters are pretty close to reality.</p>
+</section>
+<section id="sec-glm1-nb-ex-jags" class="level4" data-number="5.3.2.3">
+<h4 data-number="5.3.2.3" class="anchored" data-anchor-id="sec-glm1-nb-ex-jags"><span class="header-section-number">5.3.2.3</span> Bayesian analysis with JAGS</h4>
+<p>The Bayesian version is a little more involved. First, write a model file for the model. Notice the difference from the Poisson model.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Negative binomial GLM with one predictor x</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>mod.name <span class="ot">&lt;-</span> <span class="st">"jags-glm-negbin-v1.txt"</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(mod.name)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="st">    model{</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="st">        # priors</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="st">        beta0 ~ dnorm(0, 1)</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="st">        beta1 ~ dnorm(0, 1)</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="st">        r ~ dgamma(0.1, 0.1)</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="st">        # likelihood</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="st">        for(i in 1:n){</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="st">            y[i] ~ dnegbin(pi[i],r)</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="st">            pi[i] &lt;- r/(r+mu[i])</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="st">            log(mu[i]) &lt;- beta0 + beta1 * x[i]</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="st">            </span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="st">        }#i</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="st">    }#model</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">fill=</span><span class="cn">TRUE</span>)</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then, set up the usual MCMC parameters for JAGS and tell JAGS what parameters to monitor.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># parameters to monitor</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"beta0"</span>, <span class="st">"beta1"</span>, <span class="st">"r"</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># MCMC parameters</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>n.iter <span class="ot">&lt;-</span> <span class="fl">5e4</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>n.burnin <span class="ot">&lt;-</span> <span class="fl">1e4</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>n.thin <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>nchains <span class="ot">&lt;-</span> <span class="dv">3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>As always, we need a function to define initial values for the MCMC chains. Remember that EVERY parameter in the model defined as a stochastic node needs an initial value. This means any variable that is ever on the left side of a ~ symbol.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function to define initial values for MCMC chains</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>init.fun <span class="ot">&lt;-</span> <span class="cf">function</span>(nc){</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># output will be a list with one element per chain</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length=</span>nc)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fill in a for loop over chains</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nc){</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># note that </span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    res[[i]] <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">beta0=</span><span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">beta1=</span><span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">r=</span><span class="fu">rgamma</span>(<span class="dv">1</span>,</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>                              <span class="at">shape=</span><span class="fl">0.1</span>,</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>                              <span class="at">rate=</span><span class="fl">0.1</span>))</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  }<span class="co">#i</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(res)</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="co"># generate the intial values</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>inits <span class="ot">&lt;-</span> <span class="fu">init.fun</span>(nchains)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Package up the data for JAGS</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># package data for JAGS</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>in.data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">x=</span>dx<span class="sc">$</span>x, <span class="at">y=</span>dx<span class="sc">$</span>y, <span class="at">n=</span>n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>And run the model.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(R2jags)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjags)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>mod03 <span class="ot">&lt;-</span> <span class="fu">jags</span>(<span class="at">data=</span>in.data, <span class="at">inits=</span>inits,</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">parameters.to.save=</span>params,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">model.file=</span>mod.name,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">n.chains=</span>nchains, <span class="at">n.iter=</span>n.iter,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">n.burnin=</span>n.burnin, <span class="at">n.thin=</span>n.thin)<span class="co">#jags</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 100
+   Unobserved stochastic nodes: 3
+   Total graph size: 707
+
+Initializing model</code></pre>
+</div>
+</div>
+<p>And inspect the results:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>mod03</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Inference for Bugs model at "jags-glm-negbin-v1.txt", fit using jags,
+ 3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
+ n.sims = 1200 iterations saved. Running time = 109.42 secs
+         mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+beta0      1.463   0.079   1.310   1.405   1.463   1.517   1.611 1.004   490
+beta1      0.210   0.012   0.188   0.202   0.210   0.218   0.234 1.003   680
+r         49.875  16.328  25.530  38.044  47.255  58.720  89.167 1.001  1200
+deviance 519.960   3.819 514.307 517.279 519.421 522.102 528.482 1.002   860
+
+For each parameter, n.eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor (at convergence, Rhat=1).
+
+DIC info (using the rule: pV = var(deviance)/2)
+pV = 7.3 and DIC = 527.2
+DIC is an estimate of expected predictive error (lower deviance is better).</code></pre>
+</div>
+</div>
+<p>The parameters are pretty close to the truth.</p>
+<p>We can also use the Poisson-Gamma mixture definition of the negative binomial, if you prefer that. The model file is very similar, and the initial values structure is the same.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Negative binomial GLM with one predictor x</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>mod.name <span class="ot">&lt;-</span> <span class="st">"jags-glm-negbin-v2.txt"</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(mod.name)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="st">    model{</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="st">        # priors</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="st">        beta0 ~ dnorm(0, 1)</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="st">        beta1 ~ dnorm(0, 1)</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="st">        r ~ dgamma(0.1, 0.1)</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="st">        # likelihood</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="st">        for(i in 1:n){</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="st">            y[i] ~ dpois(lambda[i])</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="st">            lambda[i] ~ dgamma(r, r/mu[i])</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="st">            log(mu[i]) &lt;- beta0 + beta1 * x[i]</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="st">            </span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a><span class="st">        }#i</span></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a><span class="st">    }#model</span></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">fill=</span><span class="cn">TRUE</span>)</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>mod04 <span class="ot">&lt;-</span> <span class="fu">jags</span>(<span class="at">data=</span>in.data, <span class="at">inits=</span>inits,</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">parameters.to.save=</span>params,</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">model.file=</span>mod.name,</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">n.chains=</span>nchains, <span class="at">n.iter=</span>n.iter,</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">n.burnin=</span>n.burnin, <span class="at">n.thin=</span>n.thin)<span class="co">#jags</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 100
+   Unobserved stochastic nodes: 103
+   Total graph size: 707
+
+Initializing model</code></pre>
+</div>
+</div>
+<p>And we see essentially the same estimates for <code>beta0</code>, <code>beta1</code>, and <code>r</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mod04</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Inference for Bugs model at "jags-glm-negbin-v2.txt", fit using jags,
+ 3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
+ n.sims = 1200 iterations saved. Running time = 71.86 secs
+         mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+beta0      1.456   0.078   1.307   1.404   1.455   1.510   1.607 1.001  1200
+beta1      0.211   0.011   0.189   0.204   0.211   0.219   0.234 1.001  1100
+r         48.984  15.641  25.861  38.008  46.465  57.515  86.794 1.001  1200
+deviance 502.220   7.444 487.522 497.356 502.270 507.038 517.458 1.011   180
+
+For each parameter, n.eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor (at convergence, Rhat=1).
+
+DIC info (using the rule: pV = var(deviance)/2)
+pV = 27.4 and DIC = 529.7
+DIC is an estimate of expected predictive error (lower deviance is better).</code></pre>
+</div>
+</div>
+<p>Producing the figure with model predictions and 95% CRI for the negative binomial model is similar to the procedure for the Poisson model.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set up x values at which to predict</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>pn <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>px <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">min</span>(dx<span class="sc">$</span>x), <span class="fu">max</span>(dx<span class="sc">$</span>x), <span class="at">length=</span>pn)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co"># get posterior draws</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>mx <span class="ot">&lt;-</span> mod04<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.matrix</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrices: rows = posterior draws, columns = x values</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>mu <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">outer</span>(mx[, <span class="st">"beta1"</span>], px, <span class="st">"*"</span>) <span class="sc">+</span> mx[, <span class="st">"beta0"</span>])</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate posterior predictive observations</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>yp <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnbinom</span>(</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">length</span>(mu),</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">mu =</span> <span class="fu">as.vector</span>(mu),</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">size =</span> <span class="fu">rep</span>(mx[, <span class="st">"r"</span>], <span class="at">times =</span> <span class="fu">length</span>(px))</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">nrow =</span> <span class="fu">nrow</span>(mx)</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Expected count and 95% credible interval</span></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> px,</span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">fit =</span> <span class="fu">colMeans</span>(mu),</span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">lwr =</span> <span class="fu">apply</span>(mu, <span class="dv">2</span>, quantile, <span class="fl">0.025</span>),</span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">upr =</span> <span class="fu">apply</span>(mu, <span class="dv">2</span>, quantile, <span class="fl">0.975</span>),</span>
+<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred.lwr =</span> <span class="fu">apply</span>(yp, <span class="dv">2</span>, quantile, <span class="fl">0.025</span>),</span>
+<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred.upr =</span> <span class="fu">apply</span>(yp, <span class="dv">2</span>, quantile, <span class="fl">0.975</span>)</span>
+<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now we can construct our plot:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dx<span class="sc">$</span>x, dx<span class="sc">$</span>y, <span class="at">type=</span><span class="st">"n"</span>, </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab=</span><span class="st">"x variable"</span>,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab=</span><span class="st">"y variable (count)"</span>)</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(pred<span class="sc">$</span>x, pred<span class="sc">$</span>fit, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(pred<span class="sc">$</span>x, pred<span class="sc">$</span>lwr, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(pred<span class="sc">$</span>x, pred<span class="sc">$</span>upr, <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">3</span>, <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lty=</span><span class="dv">2</span>)</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(dx<span class="sc">$</span>x, dx<span class="sc">$</span>y, <span class="at">pch=</span><span class="dv">16</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-glm-01-counts_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="sec-glm1-zi" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="sec-glm1-zi"><span class="header-section-number">5.4</span> Counts with zero-inflation</h2>
+<section id="sec-glm1-zi-def" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="sec-glm1-zi-def"><span class="header-section-number">5.4.1</span> Definition</h3>
+</section>
+<section id="sec-glm1-zi-ex" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="sec-glm1-zi-ex"><span class="header-section-number">5.4.2</span> Example</h3>
+<section id="sec-glm1-nb-zi-sim" class="level4" data-number="5.4.2.1">
+<h4 data-number="5.4.2.1" class="anchored" data-anchor-id="sec-glm1-nb-zi-sim"><span class="header-section-number">5.4.2.1</span> Data simulation</h4>
+</section>
+<section id="sec-glm1-zi-ex-jags" class="level4" data-number="5.4.2.2">
+<h4 data-number="5.4.2.2" class="anchored" data-anchor-id="sec-glm1-zi-ex-jags"><span class="header-section-number">5.4.2.2</span> Bayesian analysis with JAGS</h4>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="1" role="list" style="display: none">
+<div id="ref-plummer2003jags" class="csl-entry" role="listitem">
+<span class="smallcaps">Plummer, M.</span> 2003. <span>JAGS</span>: A program for analysis of <span>B</span>ayesian graphical models using <span>G</span>ibbs sampling. Pp. 1–10 in Proceedings of the 3rd international workshop on distributed statistical computing. Vienna, Austria.
+</div>
+<div id="ref-plummer2021" class="csl-entry" role="listitem">
+<span class="smallcaps">Plummer, M.</span> [online]. 2021. <a href="https://CRAN.R-project.org/package=rjags"><span class="nocase">r</span>jags: <span>B</span>ayesian graphical models using <span>MCMC</span></a>. in.
+</div>
+<div id="ref-rcore2025" class="csl-entry" role="listitem">
+<span class="smallcaps">R Core Team</span> [online]. 2025. <a href="https://www.R-project.org/">R: A language and environment for statistical computing</a>. in. R Foundation for Statistical Computing, Vienna, Austria.
+</div>
+<div id="ref-su2021" class="csl-entry" role="listitem">
+<span class="smallcaps">Su, Y.-S.</span> and <span class="smallcaps">Masanao Yajima</span> [online]. 2021. <a href="https://CRAN.R-project.org/package=R2jags"><span>R2</span>jags: Using <span>R</span> to run ’<span>JAGS</span>’</a>. in.
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>I once needed to model a population of deer, which could occur in groups on a landscape. We had a parameter for mean group size, but there was a problem. Using the Poisson distribution for group size would frequently predict groups of 0 deer…in other words, no group! Our solution was to reparametrize the model to work with “group size minus 1”. This meant that 0s returned from any Poisson draws would have 1 added to them, so the minimum group size in the model was a biologically reasonable 1. If it’s stupid but it works, then it isn’t stupid.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -676,5 +1510,5 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/edit/main/chapters/05-glm-01-counts.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/edit/main/chapters/05-glm-01-counts.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

@@ -138,6 +138,39 @@
 \makeatother
 
 
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 
 
@@ -230,7 +263,7 @@
 
 \title{Bayesian Inference for Biologists}
 \author{Nick Green}
-\date{August 31, 2026}
+\date{October 15, 2026}
 \begin{document}
 \maketitle
 
@@ -978,7 +1011,17 @@ data. But we can get a fuller picture if we test more values:
 \end{Highlighting}
 \end{Shaded}
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/01-introduction_files/figure-pdf/unnamed-chunk-12-1.pdf}}
+\begin{figure}[H]
+
+\caption{\label{fig-likelihood1}}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/01-introduction_files/figure-pdf/fig-likelihood1-1.pdf}}
+
+}
+
+\end{figure}%
 
 In this case, the sample mean \(\bar{x}=66.04\) (\texttt{mean(a)}) is
 the same as the \(\mu\) value that maximized the joint likelihood of the
@@ -1757,9 +1800,119 @@ Gould SJ. 1983. Hen's teeth and horse's toes. W.W. Norton, New York.
 
 \section{Bayesian thinking}\label{bayesian-thinking}
 
+Most of the time when we fit a model in R, we need to supply the
+software with enough information to specify which model to fit, what
+variables to include, and where to find those variables. All the
+rest--i.e., the machinery of sums of squares or maximum
+likelihood--takes place under the hood. Once you specify, say, a
+logistic regression model, there really isn't much else to do. For
+example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# fit a logistic regression model}
+\NormalTok{mod1 }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x1, }\AttributeTok{data=}\NormalTok{my.data, }\AttributeTok{family=}\FunctionTok{binomial}\NormalTok{(}\AttributeTok{link=}\StringTok{"logit"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+fits a logistic regression model, and the command is very concise:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{mod1} is (or will be?) the fitted model object.
+\item
+  \texttt{glm()} is the command that fits GLMs.
+\item
+  \texttt{y\textasciitilde{}x1} is the model formula, such that
+  \texttt{y} is the response variable and \texttt{x1} is the predictor
+  variable.
+\item
+  \texttt{my.data} is the data frame that contains all of the variables
+  in the model.
+\item
+  \texttt{binomal()} is the response distribution (i.e., the
+  \texttt{family} of the GLM).
+\item
+  \texttt{"logit"} is the link function.
+\end{itemize}
+
+You don't need to specify a distribution for the intercept or slope:
+those are baked into the GLM. Likewise, you don't need to make a
+decision about when the gradient descent methods have reached a valid
+solution. That too is baked into \texttt{glm()}.
+
+The same is not true when using Bayesian inference. Note that I said,
+``Bayesian inference'' and not ``Bayesian models''. There isn't really
+such a thing as a ``Bayesian model'', only a Bayesian approach to
+testing a model.
+
+When working in Bayesian, we need to specify more pieces of the model
+upfront, and we need to make more decisions on the back end.
+
 \subsection{Priors}\label{priors}
 
+\subsubsection{Role in Bayesian
+inference}\label{role-in-bayesian-inference}
+
+As we saw in Section~\ref{sec-intro-bayes}, the prior
+\(p\left(H\right)\) is an important part of Bayes' theorem:
+
+\[p\left(H|E\right)=\frac{p\left(E|H\right)p\left(H\right)}{p\left(E\right)}\]
+
+The prior is used to scale the ratio of the likelihood
+\(p\left(E|H\right)\) to the probability. This means that priors can
+exert varying degrees of influence: when the prior is strong, the prior
+dominates the calculation. When the prior is weak or uninformative, the
+data dominate.
+
+\subsubsection{Informative priors}\label{informative-priors}
+
+An \textbf{informative} prior is a prior that contains a lot of
+information, or a very strong guess, about a parameter or a model. For
+example, if you were building a model to predict the body mass of an
+animal a weak ahead, your prior distribution might be centered on the
+animal's current weight with a variance equal to the historical average
+of week-to-week body mass fluctuations. Or, you could use a distribution
+of body masses for animals of that precise age.
+
+Using informative priors is using \emph{pre-existing knowledge} to help
+fit your model. This does not necessarily mean that your prior
+distribution will determine the fitted model. It means that more
+evidence will be needed to find an outcome that is very unlikely under
+the prior distribution. Put another way, informative priors can help you
+reach a robust conclusion with fewer additional data. The latter reason
+is part of why Bayesian methods are becoming more and more common in
+clinical trials.
+
+For example, if a drug developer is testing a new, higher dose of a
+medicine (say, 10 mg instead of 5 mg), there is no reason to start from
+the assumption that the 10 mg version will have 0 effect if the 5 mg
+version is already known to be clinically efficacious. They could set
+their prior for the effect of the 10 mg version to slightly larger than
+the known effect of the 5 mg version, and obtain tiral results with
+fewer data.
+
+A less dramatic example is to use informative priors when the sign of a
+coefficient is known. In a
+\href{https://doi.org/10.1016/j.foreco.2024.122372}{recent study
+published here at KSU}, a student used Bayesian path analysis models to
+explore how environmental conditions affected fire behavior. After
+consultation with his PI (and me), he defined the prior distributions of
+some parameters to be either positive or negative based on strong
+evidence from the literature. This gave his analysis a boost in power
+that allowed him to discover some neat effects--without having to waste
+sample units eliminating possibilities that were already known to be
+false.
+
+\subsubsection{Uninformative (vague)
+priors}\label{uninformative-vague-priors}
+
+\subsubsection{Conjugate priors}\label{conjugate-priors}
+
 \subsection{Evidence (Data)}\label{evidence-data}
+
+\subsection{Convergence}\label{convergence}
 
 \subsection{Posteriors}\label{posteriors}
 
@@ -2828,9 +2981,9 @@ For this module you will need:
 \end{Highlighting}
 \end{Shaded}
 
-\section{Linear models refresher}\label{linear-models-refresher}
+\section{Linear models refresher}\label{sec-linear}
 
-\subsection{Enter the matrix}\label{enter-the-matrix}
+\subsection{Enter the matrix}\label{sec-linear-matrix}
 
 \textbf{Linear models} are called linear models because they assume
 \textbf{linearity}. This means that a change in some response variable
@@ -4355,7 +4508,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_anova2way_means.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 9.87 secs
+ n.sims = 1200 iterations saved. Running time = 9.81 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 mu[1,1]   16.416   1.005  14.441  15.734  16.450  17.110  18.233 1.004   550
 mu[2,1]   30.378   0.994  28.510  29.673  30.373  31.028  32.372 1.004   680
@@ -6330,7 +6483,1068 @@ straightforward in JAGS\ldots much more so than in R!
 
 \chapter{GLM for count data}\label{sec-glm1}
 
+Over the next two modules we will extend our JAGS language knowledge and
+our statistical skills to another important class of statistical
+methods: \textbf{generalized linear models (GLM)}. GLMs are an
+indispensable tool in the modern biologist's toolbox. The GLM framework
+includes all linear models, as well as a wide variety of other
+techniques:
+
+\begin{itemize}
+\tightlist
+\item
+  Gamma GLM for overdispersed continuous data
+\item
+  Poisson and negative binomial models for counts
+\item
+  Logistic regression for binary outcomes
+\item
+  Binomial regression for proportional data
+\item
+  And many more.
+\end{itemize}
+
+These models may appear different on the surface, and take different
+kinds of data as inputs, but are actually the same kind of model. This
+is much more apparent when fitting models in JAGS than in R.
+
+This module explores GLMs for \textbf{count} data. Count data are
+exactly what they sound like: values resulting from counting things.
+Count data take the form of non-negative integers. Non-negative
+integers, however, are not necessarily count data. For example, summer
+temperatures in Georgia can be rounded to the nearest integer, but they
+will not be counts.
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-note-color!10!white, colframe=quarto-callout-note-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{About this module}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+For this module you will need a recent versions of R, JAGS, and the R
+packages rjags and R2jags (Plummer (2003), Plummer (2021), R Core Team
+(2025), Su and Masanao Yajima (2021)). This module and all code examples
+were developed and tested using R version 4.5.1, JAGS 4.3.1, rjags
+version 4-17, and R2jags version 0.8-9.
+
+\end{tcolorbox}
+
+\section{GLM refresher}\label{glm-refresher}
+
+Generalized linear models (GLM) extend the
+\href{\%7B@sec-linear\%7D}{linear model} by relaxing two assumptions:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  GLM allows response distributions other than the normal distribution
+\item
+  GLM allows the linear predictor to be on a scale other than the scale
+  that the data are on; the data and linear predictor scales are related
+  by a link function.
+\end{enumerate}
+
+So, while a linear model is written as:
+
+\[\text{Stochastic part}:y\sim \text{Normal}\left(E\left(y\right),\sigma_{res}\right)\]
+
+\[\text{Linear predictor}:E\left(y\right)=\boldsymbol{\beta}\mathbf{x}\]
+
+Here we use matrix shorthand for the linear predictor to indicate that
+\(\boldsymbol{\beta}\) is a vector of coefficients (\(\beta_0\),
+\(\beta_1\), \(\beta_2\), and so on), and \(\mathbf{x}\) is the design
+matrix that contains the predictor variables (\(x_1\), \(x_2\), and so
+on; see Section~\ref{sec-linear-matrix}).
+
+A GLM is written as:
+
+\[\text{Stochastic part}:y\sim \text{SomeDistribution}\left(E\left(y\right),\theta\right)\]
+
+\[\text{Linear predictor}:\eta=\boldsymbol{\beta}\mathbf{x}\]
+
+where \(\theta\) stands in for other parameters of the response
+distribution (if there are any), and \(\eta\) (``eta'') is the expected
+value on the scale of the linear predictor--which may or may not be the
+same scale as \(y\) and \(E\left(y\right)\). We relate
+\(E\left(y\right)\) and \(\eta\) via a \textbf{link function}:
+
+\[\text{Link function}:f\left(E\left(y\right)\right)=\eta\]
+
+\begin{tcolorbox}[enhanced jigsaw, arc=.35mm, bottomrule=.15mm, bottomtitle=1mm, breakable, colback=white, colbacktitle=quarto-callout-note-color!10!white, colframe=quarto-callout-note-color-frame, coltitle=black, left=2mm, leftrule=.75mm, opacityback=0, opacitybacktitle=0.6, rightrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{GLM response distributions}, titlerule=0mm, toprule=.15mm, toptitle=1mm]
+
+Technically, the response distribution in a GLM must be one of the
+\href{https://en.wikipedia.org/wiki/Exponential_family}{exponential
+family}. This family includes a huge variety: the normal, exponential,
+gamma, beta, Poisson, and geometric. Under certain conditions, the
+binomial, negative binomial, and multinomial can be included as well.
+
+\end{tcolorbox}
+
+This means that linear regression itself is a special case of GLM, with
+a normal response distribution and the identity link function (the
+identity function of any value is that value itself).
+
+\[\text{Stochastic part}:y\sim \text{Normal}\left(E\left(y\right),\sigma_{res}\right)\]
+
+\[\text{Link function}:E\left(y\right)=\eta\]
+\[\text{Linear predictor}:\eta=\boldsymbol{\beta}\mathbf{x}\]
+
+If you are unfamiliar with GLM, check out the
+\href{https://greenquanteco.github.io/appl-biol-data-analysis/chapters/ch18.html}{notes
+to my data anlysis course} for a more in-depth explanation.
+
+\section{Poisson GLM for counts}\label{sec-glm1-pois}
+
+\subsection{Definition}\label{sec-glm1-pois-def}
+
+The Poisson GLM models the logarithm of expected count \(\lambda\) as a
+linear function of predictors \(\boldsymbol{\beta}\mathbf{x}\). Here we
+use matrix shorthand for the linear predictor to indicate that
+\(\boldsymbol{\beta}\) is a vector of coefficients (\(\beta_0\),
+\(\beta_1\), \(\beta_2\), and so on), and \(\mathbf{x}\) is the design
+matrix that contains the predictor variables (\(x_1\), \(x_2\), and so
+on). Instead of saying that the Poisson GLM ``models the logarithm of
+the expected count'', we could also say that it uses a log link
+function.
+
+\[\text{Stochastic part}:y\sim Poisson\left(\lambda\right)\]
+
+\[\text{Link function}:\log\left(\lambda\right)=\eta\]
+
+\[\text{Linear predictor}:\eta=\boldsymbol{\beta}\mathbf{x}\]
+
+Notice that the Poisson distribution has only one parameter, \(\lambda\)
+(``lambda''), which is both the mean and variance of the distribution.
+This means that we should not be surprised or concerned if a scatterplot
+suggests heteroscedasticity with variance increasing with the expected
+value. This property of the Poisson distribution and the log link
+function means that a ``cone'' of points on a scatterplot does not
+necessarily imply heteroscedasticity or overdispersion.
+\textbf{Overdispersion} means that the data contain more variance than
+would be expected under a Poisson distribution. If overdispersion is
+suspected, you can try a negative binomial GLM instead of a Poisson GLM
+(Section~\ref{sec-glm1-nb}).
+
+\subsection{Example}\label{sec-glm1-pois-ex}
+
+\subsubsection{Data simulation}\label{sec-glm1-pois-ex-sim}
+
+Let's simulate a dataset and analyze it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# random number seed for reproducibility}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+
+\CommentTok{\# sample size}
+\NormalTok{n }\OtherTok{\textless{}{-}} \DecValTok{100}
+
+\CommentTok{\# coefficients}
+\NormalTok{beta0 }\OtherTok{\textless{}{-}} \FloatTok{1.5}
+\NormalTok{beta1 }\OtherTok{\textless{}{-}} \FloatTok{0.2}
+
+\CommentTok{\# x values}
+\NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{runif}\NormalTok{(n, }\DecValTok{0}\NormalTok{, }\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# linear predictor}
+\NormalTok{eta }\OtherTok{\textless{}{-}}\NormalTok{ beta0 }\SpecialCharTok{+}\NormalTok{ beta1 }\SpecialCharTok{*}\NormalTok{ x}
+
+\CommentTok{\# inverse link function}
+\NormalTok{lambda }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(eta)}
+
+\CommentTok{\# response variable}
+\NormalTok{y }\OtherTok{\textless{}{-}} \FunctionTok{rpois}\NormalTok{(n, lambda)}
+
+\CommentTok{\# put everything in a data frame}
+\NormalTok{dx }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x=}\NormalTok{x,}\AttributeTok{y=}\NormalTok{y)}
+
+\CommentTok{\# make the plot}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{5.1}\NormalTok{, }\FloatTok{5.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(x,y)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-1-1.pdf}}
+
+The relationship between \(y\) and \(x\) looks almost linear, but
+because we are clever biologists, we know that linear models are not
+appropriate for two reasons. First, linear models predict continuous
+responses, and counts are not continuous (they are discrete). Second,
+linear models can predict negative responses, and counts cannot be
+negative. So, we will try Poisson regression.
+
+\subsubsection{Frequentist analysis}\label{sec-glm1-pois-ex-freq}
+
+We could fit a Poisson GLM of y vs.~x in R with this command:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod01 }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x, }\AttributeTok{data=}\NormalTok{dx, }\AttributeTok{family=}\NormalTok{poisson)}
+\CommentTok{\# model summary:}
+\FunctionTok{summary}\NormalTok{(mod01)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+glm(formula = y ~ x, family = poisson, data = dx)
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  1.46480    0.07144    20.5   <2e-16 ***
+x            0.21025    0.01011    20.8   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 552.212  on 99  degrees of freedom
+Residual deviance:  75.704  on 98  degrees of freedom
+AIC: 513.17
+
+Number of Fisher Scoring iterations: 4
+\end{verbatim}
+
+The frequentist analysis gets pretty close to the real coefficients, and
+the model
+\href{https://greenquanteco.github.io/appl-biol-data-analysis/chapters/ch18.html\#sec-glm1-lik-pseudo}{reduced
+the deviance} by an impressive 86\%.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DecValTok{1}\SpecialCharTok{{-}}\NormalTok{mod01}\SpecialCharTok{$}\NormalTok{deviance}\SpecialCharTok{/}\NormalTok{mod01}\SpecialCharTok{$}\NormalTok{null.deviance}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.8629071
+\end{verbatim}
+
+\subsubsection{Bayesian analysis with JAGS}\label{sec-glm1-pois-ex-jags}
+
+Now let's repeat the analysis in JAGS. The analysis takes a little more
+work in JAGS, but it might be worth it.
+
+First, define a model file for the Poisson GLM.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Poisson GLM with one predictor x}
+\NormalTok{mod.name }\OtherTok{\textless{}{-}} \StringTok{"jags{-}glm{-}poisson.txt"}
+\FunctionTok{sink}\NormalTok{(mod.name)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}
+\StringTok{    model\{}
+\StringTok{        \# priors}
+\StringTok{        \# reasonable ranges...extreme values may cause}
+\StringTok{        \# numerical overflow. Use some number sense!}
+\StringTok{        beta0 \textasciitilde{} dnorm(0, 1)}
+\StringTok{        beta1 \textasciitilde{} dnorm(0, 1)}
+
+\StringTok{        \# likelihood}
+\StringTok{        for(i in 1:n)\{}
+\StringTok{            y[i] \textasciitilde{} dpois(lambda[i])}
+\StringTok{            log(lambda[i]) \textless{}{-} beta0 + beta1 * x[i]}
+\StringTok{        \}\#i}
+\StringTok{    \}\#model}
+\StringTok{"}\NormalTok{, }\AttributeTok{fill=}\ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{sink}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+Then, set up the usual MCMC parameters for JAGS and tell JAGS what
+parameters to monitor.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# parameters to monitor}
+\NormalTok{params }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"beta0"}\NormalTok{, }\StringTok{"beta1"}\NormalTok{)}
+
+\CommentTok{\# MCMC parameters}
+\NormalTok{n.iter }\OtherTok{\textless{}{-}} \FloatTok{5e4}
+\NormalTok{n.burnin }\OtherTok{\textless{}{-}} \FloatTok{1e4}
+\NormalTok{n.thin }\OtherTok{\textless{}{-}} \DecValTok{100}
+\NormalTok{nchains }\OtherTok{\textless{}{-}} \DecValTok{3}
+\end{Highlighting}
+\end{Shaded}
+
+As always, we need a function to define initial values for the MCMC
+chains. Remember that EVERY parameter in the model defined as a
+stochastic node needs an initial value. This means any variable that is
+ever on the left side of a \textasciitilde{} symbol.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# function to define initial values for MCMC chains}
+\NormalTok{init.fun }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(nc)\{}
+  \CommentTok{\# output will be a list with one element per chain}
+\NormalTok{  res }\OtherTok{\textless{}{-}} \FunctionTok{vector}\NormalTok{(}\StringTok{"list"}\NormalTok{, }\AttributeTok{length=}\NormalTok{nc)}
+  
+  \CommentTok{\# fill in a for loop over chains}
+  \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{nc)\{}
+    \CommentTok{\# note that }
+\NormalTok{    res[[i]] }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{beta0=}\FunctionTok{rnorm}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{),}
+                     \AttributeTok{beta1=}\FunctionTok{rnorm}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\NormalTok{  \}}\CommentTok{\#i}
+  \FunctionTok{return}\NormalTok{(res)}
+\NormalTok{\}}
+
+\CommentTok{\# generate the intial values}
+\NormalTok{inits }\OtherTok{\textless{}{-}} \FunctionTok{init.fun}\NormalTok{(nchains)}
+\end{Highlighting}
+\end{Shaded}
+
+Package up the data for JAGS
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# package data for JAGS}
+\NormalTok{in.data }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{x=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{x, }\AttributeTok{y=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{y, }\AttributeTok{n=}\NormalTok{n)}
+\end{Highlighting}
+\end{Shaded}
+
+And run the model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(R2jags)}
+\FunctionTok{library}\NormalTok{(rjags)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod02 }\OtherTok{\textless{}{-}} \FunctionTok{jags}\NormalTok{(}\AttributeTok{data=}\NormalTok{in.data, }\AttributeTok{inits=}\NormalTok{inits,}
+              \AttributeTok{parameters.to.save=}\NormalTok{params,}
+              \AttributeTok{model.file=}\NormalTok{mod.name,}
+              \AttributeTok{n.chains=}\NormalTok{nchains, }\AttributeTok{n.iter=}\NormalTok{n.iter,}
+              \AttributeTok{n.burnin=}\NormalTok{n.burnin, }\AttributeTok{n.thin=}\NormalTok{n.thin)}\CommentTok{\#jags}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 100
+   Unobserved stochastic nodes: 2
+   Total graph size: 505
+
+Initializing model
+\end{verbatim}
+
+And inspect the results:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod02}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Inference for Bugs model at "jags-glm-poisson.txt", fit using jags,
+ 3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
+ n.sims = 1200 iterations saved. Running time = 58.16 secs
+         mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+beta0      1.456    0.07   1.327   1.410   1.455   1.500   1.596 1.001  1200
+beta1      0.211    0.01   0.192   0.205   0.212   0.217   0.230 1.000  1200
+deviance 511.122    2.01 509.212 509.699 510.528 511.821 516.818 1.000  1200
+
+For each parameter, n.eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor (at convergence, Rhat=1).
+
+DIC info (using the rule: pV = var(deviance)/2)
+pV = 2.0 and DIC = 513.1
+DIC is an estimate of expected predictive error (lower deviance is better).
+\end{verbatim}
+
+The model converged, and the estimated values for \texttt{beta0} and
+\texttt{beta1} are pretty close to the truth\ldots and, to the estimates
+from the frequentist version of the model.
+
+Just as with linear models, the best way to present the results of your
+Poisson GLM is to plot the model predictions against the data. Plotting
+the expected value \(\lambda\) against the data is easy. What's tricky
+is plotting the uncertainty. We will plot uncertainty as the 95\%
+credible interval (CRI) of the predicted value \(\lambda\). Unless you
+think carefully about what you're doing, it's easy to confuse plotting
+uncertainty about the expected values with plotting uncertainty about
+the observable values. In frequentist terms, the former is a confidence
+interval (CI) and the latter is a prediction interval (PI).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# set up x values at which to predict}
+\NormalTok{pn }\OtherTok{\textless{}{-}} \DecValTok{100}
+\NormalTok{px }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x), }\FunctionTok{max}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x), }\AttributeTok{length=}\NormalTok{pn)}
+\NormalTok{prx }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x=}\NormalTok{px)}
+
+\CommentTok{\# extract permuted posteriors for}
+\CommentTok{\# model parameters}
+\NormalTok{mx }\OtherTok{\textless{}{-}}\NormalTok{ mod02}\SpecialCharTok{$}\NormalTok{BUGSoutput}\SpecialCharTok{$}\NormalTok{sims.matrix}
+\NormalTok{npost }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(mx)}
+
+\CommentTok{\# make matrix to hold model predictions}
+\NormalTok{pred }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\ConstantTok{NA}\NormalTok{, }\AttributeTok{nrow=}\FunctionTok{nrow}\NormalTok{(prx), }\AttributeTok{ncol=}\FunctionTok{nrow}\NormalTok{(mx))}
+
+\CommentTok{\# fill matrix in a loop}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{npost)\{}
+\NormalTok{    pred[,i] }\OtherTok{\textless{}{-}}\NormalTok{ mx[i,}\StringTok{"beta0"}\NormalTok{] }\SpecialCharTok{+}\NormalTok{ mx[i,}\StringTok{"beta1"}\NormalTok{] }\SpecialCharTok{*}\NormalTok{ prx}\SpecialCharTok{$}\NormalTok{x}
+\NormalTok{\}}\CommentTok{\#i}
+
+\CommentTok{\# summarize across columns of pred to}
+\CommentTok{\# get predicted values and 95\% credible interval}
+\NormalTok{prx}\SpecialCharTok{$}\NormalTok{lo }\OtherTok{\textless{}{-}} \FunctionTok{apply}\NormalTok{(pred, }\DecValTok{1}\NormalTok{, quantile, }\FloatTok{0.025}\NormalTok{)}
+\NormalTok{prx}\SpecialCharTok{$}\NormalTok{mn }\OtherTok{\textless{}{-}} \FunctionTok{apply}\NormalTok{(pred, }\DecValTok{1}\NormalTok{, quantile, }\FloatTok{0.5}\NormalTok{)}
+\NormalTok{prx}\SpecialCharTok{$}\NormalTok{up }\OtherTok{\textless{}{-}} \FunctionTok{apply}\NormalTok{(pred, }\DecValTok{1}\NormalTok{, quantile, }\FloatTok{0.975}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The values in \texttt{prx} are still on the link scale, where the linear
+predictor lives. So, we need to apply the inverse link function to get
+values on the data scale.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{prx}\SpecialCharTok{$}\NormalTok{lo }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{lo)}
+\NormalTok{prx}\SpecialCharTok{$}\NormalTok{mn }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{mn)}
+\NormalTok{prx}\SpecialCharTok{$}\NormalTok{up }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{up)}
+\end{Highlighting}
+\end{Shaded}
+
+Now we can construct our plot:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x, dx}\SpecialCharTok{$}\NormalTok{y, }\AttributeTok{type=}\StringTok{"n"}\NormalTok{, }
+    \AttributeTok{xlab=}\StringTok{"x variable"}\NormalTok{,}
+    \AttributeTok{ylab=}\StringTok{"y variable (count)"}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{x, prx}\SpecialCharTok{$}\NormalTok{mn, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{x, prx}\SpecialCharTok{$}\NormalTok{lo, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{, }\AttributeTok{lty=}\DecValTok{2}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{x, prx}\SpecialCharTok{$}\NormalTok{up, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{, }\AttributeTok{lty=}\DecValTok{2}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x, dx}\SpecialCharTok{$}\NormalTok{y, }\AttributeTok{pch=}\DecValTok{16}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-13-1.pdf}}
+
+The interval plotted is the 95\% \textbf{credible interval (CRI)}, not a
+confidence interval. Remember that a credible interval is calculated
+from samples of the posterior distribution, not estimated from a fitted
+function like a frequentist confidence interval (CI) (see
+Section~\ref{sec-intro-bayes-cri}). That means we can say, ``we are 95\%
+certain that the true expected value lies within the interval shown by
+the dashed lines.
+
+A CRI is often similar in width to a CI, but they are not the same.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# compare to CI}
+\NormalTok{predf }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(mod01, }\AttributeTok{newdata=}\NormalTok{prx,}
+                 \AttributeTok{type=}\StringTok{"link"}\NormalTok{, }\AttributeTok{se.fit=}\ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{prx}\SpecialCharTok{$}\NormalTok{lof }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(}\FunctionTok{qnorm}\NormalTok{(}\FloatTok{0.025}\NormalTok{, predf}\SpecialCharTok{$}\NormalTok{fit, predf}\SpecialCharTok{$}\NormalTok{se.fit))}
+\NormalTok{prx}\SpecialCharTok{$}\NormalTok{mnf }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(}\FunctionTok{qnorm}\NormalTok{(}\FloatTok{0.5}\NormalTok{, predf}\SpecialCharTok{$}\NormalTok{fit, predf}\SpecialCharTok{$}\NormalTok{se.fit))}
+\NormalTok{prx}\SpecialCharTok{$}\NormalTok{upf }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(}\FunctionTok{qnorm}\NormalTok{(}\FloatTok{0.975}\NormalTok{, predf}\SpecialCharTok{$}\NormalTok{fit, predf}\SpecialCharTok{$}\NormalTok{se.fit))}
+
+
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x, dx}\SpecialCharTok{$}\NormalTok{y, }\AttributeTok{type=}\StringTok{"n"}\NormalTok{, }
+    \AttributeTok{xlab=}\StringTok{"x variable"}\NormalTok{,}
+    \AttributeTok{ylab=}\StringTok{"y variable (count)"}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{x, prx}\SpecialCharTok{$}\NormalTok{mn, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{x, prx}\SpecialCharTok{$}\NormalTok{lo, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{, }\AttributeTok{lty=}\DecValTok{2}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{x, prx}\SpecialCharTok{$}\NormalTok{up, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{, }\AttributeTok{lty=}\DecValTok{2}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{x, prx}\SpecialCharTok{$}\NormalTok{lof, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{, }\AttributeTok{col=}\StringTok{"blue"}\NormalTok{, }\AttributeTok{lty=}\DecValTok{3}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{x, prx}\SpecialCharTok{$}\NormalTok{upf, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{, }\AttributeTok{col=}\StringTok{"blue"}\NormalTok{, }\AttributeTok{lty=}\DecValTok{3}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x, dx}\SpecialCharTok{$}\NormalTok{y, }\AttributeTok{pch=}\DecValTok{16}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"topleft"}\NormalTok{,}
+       \AttributeTok{legend=}\FunctionTok{c}\NormalTok{(}\StringTok{"Bayesian CRI"}\NormalTok{, }\StringTok{"Frequentist CI"}\NormalTok{),}
+       \AttributeTok{lty=}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{), }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{,}
+       \AttributeTok{col=}\FunctionTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"blue"}\NormalTok{),}
+       \AttributeTok{bty=}\StringTok{"n"}\NormalTok{, }\AttributeTok{cex=}\FloatTok{1.3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-14-1.pdf}}
+
+\subsection{A note on numeracy (number sense)}\label{sec-glm1-pois-num}
+
+It may have been tempting to put a very wide prior on the intercept and
+slope, like we did for coefficients in a linear model. But, this can be
+a bad idea when working on the log scale. In the linear models in the
+last module, we usually used priors like \(Normal\left(0,\ 100\right)\)
+for \texttt{beta0} and \texttt{beta1} terms. This was fine for linear
+models, where the response variable and linear predictor were on the
+same scale. For our Poisson GLM, however, the parameters are on the
+logarithmic scale because of the log link function. Because the linear
+predictor (\(\beta_0+\beta_1x\)) is exponentiated in the model
+likelihood, calculations like the following might occur:
+
+\[\log{\left(\lambda\right)}=200+1500x\]
+
+which really means
+
+\[\lambda=e^{200+1500x}\]
+
+which even for a small value like \(x=1\) would evaluate to an absurdly
+large number, too large to be represented in R or JAGS. R can represent
+values with an absolute value up to about \(1.79\times10^{308}\).
+Anything larger returns \texttt{Inf} (or \texttt{-Inf}, for negative
+numbers).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{.Machine}\SpecialCharTok{$}\NormalTok{double.xmax}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 1.797693e+308
+\end{verbatim}
+
+which is approximately \(10^{228}\) times greater than the number of
+atoms in the universe. Similarly, R can only represent numbers as small
+as about \(2.2\times10^{-308}\). So, even if R and JAGS could represent
+those numbers, would they really be relevant to your analysis? Probably
+not.
+
+Any of these could cause inappropriately large or small values of
+\lambda\_i within JAGS. Values that are too large cannot be represented
+in JAGS and may be treated as infinity\ldots which will cause an error.
+Values that are too small will be arbitrarily close to 0, and may be
+treated as 0\ldots which will also cause an error. When you try to feed
+a JAGS distribution function with an illegitimate input, such as a
+negative or 0 value for \texttt{dpois()}, you will get the dreaded
+``Node inconsistent with parents'' error. This error can be very hard to
+track down, because it is not possible to see current parameter values
+within JAGS. This means you have to examine each node and work out if
+extreme values of any of its inputs could lead to illegitimate values.
+
+In JAGS, the expected value of a Poisson distribution must be finite and
+strictly positive. So, we need to be careful to set up the model in such
+a way as to avoid these kinds of numerical issues.
+
+There are two takeaways from this digression. First, you need to be
+smart about what numbers you are implying in your JAGS models. Your
+model might have the correct relationships, but if the numbers lead to
+illegitimate values, it is all for naught. Try rewriting the model above
+with the extremely broad priors and see what happens.
+
+Second, sometimes you need to think like a programmer instead of a
+biologist or statistician. There's an old saying: ``If it's stupid and
+its works, then it's not stupid.'' Many people might opt to relate
+\texttt{x} and \texttt{y} with a construction like this in their JAGS
+code:
+
+\begin{verbatim}
+# stochastic part as usual
+y[i] ~ dpois(lambda[i])
+
+# limit lambda to [0.0001, 9999]
+lambda[i] <- max(0.0001, min(9999, exp(eta[i])))
+
+# calculate log scale expected value eta
+eta[i] <- exp(beta0 + beta1 * x[i])
+\end{verbatim}
+
+What does this do? By separating the value of the linear predictor
+\texttt{eta{[}i{]}} from the expected value of the Poisson distribution
+\texttt{lambda{[}i{]}}, this code allows us to limit the values that go
+into \texttt{dpois()}. This practice is less elegant than choosing
+appropriate prior values, but it's not wrong. In fact, this practice is
+explicitly recommended for some GLMs by Kéry (2010). We'll use it below
+when we get to logistic regression (see
+Section~\ref{sec-glm2-logistic}).
+
+Some might argue that putting this kind of limit in your JAGS model
+might bias the parameter estimates. In my experience, however, this is
+not the case. As long as you don't make the acceptable interval too
+narrow, the MCMC algorithm will probably still find the right solution.
+The only issue I've ever had is when the ``true'' coefficient value
+might be very close to one of the limits. In that case, the parameter
+estimates can be biased high if the correct value is just above a limit,
+or biased low if the correct value is just below a limit.
+
+Another option might be to simply add a small constant to \(\lambda\).
+This would solve the problem of \(\lambda\) that were too small, but not
+the problem of \(\lambda\) that were too large. Personally, I prefer the
+first solution, because the estimated \texttt{beta0} and \texttt{beta1}
+are for the expected value, not the expected value minus a small
+constant.\footnote{I once needed to model a population of deer, which
+  could occur in groups on a landscape. We had a parameter for mean
+  group size, but there was a problem. Using the Poisson distribution
+  for group size would frequently predict groups of 0 deer\ldots in
+  other words, no group! Our solution was to reparametrize the model to
+  work with ``group size minus 1''. This meant that 0s returned from any
+  Poisson draws would have 1 added to them, so the minimum group size in
+  the model was a biologically reasonable 1. If it's stupid but it
+  works, then it isn't stupid.}
+
+\begin{verbatim}
+y[i] ~ dpois(lambda[i])
+lambda[i] <- eta[i] + 0.00001
+eta[i] <- exp(beta0 + beta1 * x[i])
+\end{verbatim}
+
+\section{Negative binomial GLM for overdispersed
+counts}\label{sec-glm1-nb}
+
+Poisson GLMs assume that the single parameter \(\lambda\) of the Poisson
+distribution is both the mean and the variance of the response
+distribution (i.e., that \(\lambda=\mu=\sigma^2\)). This is not always
+the case in real datasets. Many biological processes that produce counts
+have a variance much greater than their mean. This phenomenon is called
+\textbf{overdispersion}. The ``over'' in ``overdispersion'' means ``more
+variance than expected for a Poisson distribution with the same mean''.
+
+One way to deal with overdispersion is to use a distribution other than
+the Poisson. Most textbooks recommend either the \textbf{quasi-Poisson}
+or the \textbf{negative binomial}. The negative binomial is easier to
+work with in most software packages because it has a full likelihood
+function.
+
+\subsection{Definition}\label{sec-glm1-nb-def}
+
+There are several definitions of the \textbf{negative binomial
+distribution}. The definition biologists usually use has a mean \(\mu\)
+or \(\lambda\) and an overdispersion parameter called \(\theta\)
+(``theta'') or \(k\). Smaller \(\theta\) leads to more variance; at
+larger \(\theta\) the distribution becomes indistinguishable from the
+Poisson.
+
+\[\sigma^2\left(\text{NegBin}\right)=\lambda+\frac{\lambda^2}{\theta}\]
+
+In the R functions that deal with the negative binomial, \(\theta\) is
+referred to as the \texttt{size} parameter. As \(\theta\) gets smaller,
+the fraction \(\frac{\lambda^2}{\theta}\) gets larger, and the
+distribution picks up more and more variance compared to the Poisson
+distribution (because for a Poisson, \(\sigma^2=\lambda\)). Thus, as
+\(\theta\) increases to positive infinity, the fraction gets smaller and
+the variance approaches that of a Poisson.
+
+Other people define the negative binomial as a gamma-Poisson mixture .
+That is, a Poisson distribution with expected value \(\lambda\), where
+\(\lambda\) itself varies as a gamma distribution. Both can be obtained
+in JAGS, which uses an altogether different definition of the negative
+binomial. In JAGS, the expected value (linear predictor) needs to be
+converted to a probability parameter \(\pi\). The \texttt{r} parameter
+here is the overdispersion parameter which is also fit as part of the
+model.
+
+\[y\sim \text{NegBin}\left(\pi,r\right)\]
+
+\[\pi=\frac{r}{r+\mu}\]
+
+\[\log{\mu}=\boldsymbol{\beta}\mathbf{x}\]
+
+This multi-step process if fraught with opportunities for numerical
+errors, including the dreaded ``Node inconsistent with parents''. Here
+be dragons.
+
+\subsection{Example}\label{sec-glm1-nb-ex}
+
+\subsubsection{Data simulation}\label{sec-glm1-nb-ex-sim}
+
+Let's simulate a dataset and analyze it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# random number seed for reproducibility}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{42}\NormalTok{)}
+
+\CommentTok{\# sample size}
+\NormalTok{n }\OtherTok{\textless{}{-}} \DecValTok{100}
+
+\CommentTok{\# coefficients}
+\NormalTok{beta0 }\OtherTok{\textless{}{-}} \DecValTok{4}     \CommentTok{\# intercept}
+\NormalTok{beta1 }\OtherTok{\textless{}{-}} \FloatTok{0.15}  \CommentTok{\# slope}
+\NormalTok{theta }\OtherTok{\textless{}{-}} \DecValTok{3}     \CommentTok{\# overdispersion}
+
+\CommentTok{\# x values}
+\NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{runif}\NormalTok{(n, }\DecValTok{0}\NormalTok{, }\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# linear predictor}
+\NormalTok{eta }\OtherTok{\textless{}{-}}\NormalTok{ beta0 }\SpecialCharTok{+}\NormalTok{ beta1 }\SpecialCharTok{*}\NormalTok{ x}
+
+\CommentTok{\# inverse link function}
+\NormalTok{lambda }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(eta)}
+
+\CommentTok{\# response variable}
+\NormalTok{y }\OtherTok{\textless{}{-}} \FunctionTok{rnbinom}\NormalTok{(n, }\AttributeTok{mu=}\NormalTok{lambda, }\AttributeTok{size=}\NormalTok{theta)}
+
+\CommentTok{\# assemble into data frame}
+\NormalTok{dn }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x=}\NormalTok{x, }\AttributeTok{y=}\NormalTok{y)}
+
+\CommentTok{\# make the plot}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{5.1}\NormalTok{, }\FloatTok{5.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(x,y, }\AttributeTok{pch=}\DecValTok{19}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-16-1.pdf}}
+
+\subsubsection{Frequentist analysis}\label{sec-glm1-nb-ex-freq}
+
+There is no base R function for a negative binomial GLM, so we need to
+find an add-on package for it. The most common package for this is
+probably \texttt{MASS}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(MASS)}
+\end{Highlighting}
+\end{Shaded}
+
+Now let's fit the negative binomial GLM.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod3 }\OtherTok{\textless{}{-}} \FunctionTok{glm.nb}\NormalTok{(y}\SpecialCharTok{\textasciitilde{}}\NormalTok{x, }\AttributeTok{data=}\NormalTok{dx)}
+\FunctionTok{summary}\NormalTok{(mod3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+
+Call:
+glm.nb(formula = y ~ x, data = dx, init.theta = 201722.9736, 
+    link = log)
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  1.46480    0.07145    20.5   <2e-16 ***
+x            0.21025    0.01011    20.8   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for Negative Binomial(201723) family taken to be 1)
+
+    Null deviance: 552.169  on 99  degrees of freedom
+Residual deviance:  75.698  on 98  degrees of freedom
+AIC: 515.17
+
+Number of Fisher Scoring iterations: 1
+
+              Theta:  201723 
+          Std. Err.:  2992532 
+Warning while fitting theta: iteration limit reached 
+
+ 2 x log-likelihood:  -509.173 
+\end{verbatim}
+
+The model estimates for the parameters are pretty close to reality.
+
+\subsubsection{Bayesian analysis with JAGS}\label{sec-glm1-nb-ex-jags}
+
+The Bayesian version is a little more involved. First, write a model
+file for the model. Notice the difference from the Poisson model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Negative binomial GLM with one predictor x}
+\NormalTok{mod.name }\OtherTok{\textless{}{-}} \StringTok{"jags{-}glm{-}negbin{-}v1.txt"}
+\FunctionTok{sink}\NormalTok{(mod.name)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}
+\StringTok{    model\{}
+\StringTok{        \# priors}
+\StringTok{        beta0 \textasciitilde{} dnorm(0, 1)}
+\StringTok{        beta1 \textasciitilde{} dnorm(0, 1)}
+\StringTok{        r \textasciitilde{} dgamma(0.1, 0.1)}
+
+\StringTok{        \# likelihood}
+\StringTok{        for(i in 1:n)\{}
+\StringTok{            y[i] \textasciitilde{} dnegbin(pi[i],r)}
+\StringTok{            pi[i] \textless{}{-} r/(r+mu[i])}
+\StringTok{            log(mu[i]) \textless{}{-} beta0 + beta1 * x[i]}
+\StringTok{            }
+\StringTok{        \}\#i}
+\StringTok{    \}\#model}
+\StringTok{"}\NormalTok{, }\AttributeTok{fill=}\ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{sink}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+Then, set up the usual MCMC parameters for JAGS and tell JAGS what
+parameters to monitor.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# parameters to monitor}
+\NormalTok{params }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"beta0"}\NormalTok{, }\StringTok{"beta1"}\NormalTok{, }\StringTok{"r"}\NormalTok{)}
+
+\CommentTok{\# MCMC parameters}
+\NormalTok{n.iter }\OtherTok{\textless{}{-}} \FloatTok{5e4}
+\NormalTok{n.burnin }\OtherTok{\textless{}{-}} \FloatTok{1e4}
+\NormalTok{n.thin }\OtherTok{\textless{}{-}} \DecValTok{100}
+\NormalTok{nchains }\OtherTok{\textless{}{-}} \DecValTok{3}
+\end{Highlighting}
+\end{Shaded}
+
+As always, we need a function to define initial values for the MCMC
+chains. Remember that EVERY parameter in the model defined as a
+stochastic node needs an initial value. This means any variable that is
+ever on the left side of a \textasciitilde{} symbol.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# function to define initial values for MCMC chains}
+\NormalTok{init.fun }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(nc)\{}
+  \CommentTok{\# output will be a list with one element per chain}
+\NormalTok{  res }\OtherTok{\textless{}{-}} \FunctionTok{vector}\NormalTok{(}\StringTok{"list"}\NormalTok{, }\AttributeTok{length=}\NormalTok{nc)}
+  
+  \CommentTok{\# fill in a for loop over chains}
+  \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{nc)\{}
+    \CommentTok{\# note that }
+\NormalTok{    res[[i]] }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{beta0=}\FunctionTok{rnorm}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{),}
+                     \AttributeTok{beta1=}\FunctionTok{rnorm}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{),}
+                     \AttributeTok{r=}\FunctionTok{rgamma}\NormalTok{(}\DecValTok{1}\NormalTok{,}
+                              \AttributeTok{shape=}\FloatTok{0.1}\NormalTok{,}
+                              \AttributeTok{rate=}\FloatTok{0.1}\NormalTok{))}
+\NormalTok{  \}}\CommentTok{\#i}
+  \FunctionTok{return}\NormalTok{(res)}
+\NormalTok{\}}
+
+\CommentTok{\# generate the intial values}
+\NormalTok{inits }\OtherTok{\textless{}{-}} \FunctionTok{init.fun}\NormalTok{(nchains)}
+\end{Highlighting}
+\end{Shaded}
+
+Package up the data for JAGS
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# package data for JAGS}
+\NormalTok{in.data }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{x=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{x, }\AttributeTok{y=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{y, }\AttributeTok{n=}\NormalTok{n)}
+\end{Highlighting}
+\end{Shaded}
+
+And run the model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(R2jags)}
+\FunctionTok{library}\NormalTok{(rjags)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod03 }\OtherTok{\textless{}{-}} \FunctionTok{jags}\NormalTok{(}\AttributeTok{data=}\NormalTok{in.data, }\AttributeTok{inits=}\NormalTok{inits,}
+              \AttributeTok{parameters.to.save=}\NormalTok{params,}
+              \AttributeTok{model.file=}\NormalTok{mod.name,}
+              \AttributeTok{n.chains=}\NormalTok{nchains, }\AttributeTok{n.iter=}\NormalTok{n.iter,}
+              \AttributeTok{n.burnin=}\NormalTok{n.burnin, }\AttributeTok{n.thin=}\NormalTok{n.thin)}\CommentTok{\#jags}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 100
+   Unobserved stochastic nodes: 3
+   Total graph size: 707
+
+Initializing model
+\end{verbatim}
+
+And inspect the results:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod03}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Inference for Bugs model at "jags-glm-negbin-v1.txt", fit using jags,
+ 3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
+ n.sims = 1200 iterations saved. Running time = 109.52 secs
+         mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+beta0      1.463   0.079   1.310   1.405   1.463   1.517   1.611 1.004   490
+beta1      0.210   0.012   0.188   0.202   0.210   0.218   0.234 1.003   680
+r         49.875  16.328  25.530  38.044  47.255  58.720  89.167 1.001  1200
+deviance 519.960   3.819 514.307 517.279 519.421 522.102 528.482 1.002   860
+
+For each parameter, n.eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor (at convergence, Rhat=1).
+
+DIC info (using the rule: pV = var(deviance)/2)
+pV = 7.3 and DIC = 527.2
+DIC is an estimate of expected predictive error (lower deviance is better).
+\end{verbatim}
+
+The parameters are pretty close to the truth.
+
+We can also use the Poisson-Gamma mixture definition of the negative
+binomial, if you prefer that. The model file is very similar, and the
+initial values structure is the same.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Negative binomial GLM with one predictor x}
+\NormalTok{mod.name }\OtherTok{\textless{}{-}} \StringTok{"jags{-}glm{-}negbin{-}v2.txt"}
+\FunctionTok{sink}\NormalTok{(mod.name)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}
+\StringTok{    model\{}
+\StringTok{        \# priors}
+\StringTok{        beta0 \textasciitilde{} dnorm(0, 1)}
+\StringTok{        beta1 \textasciitilde{} dnorm(0, 1)}
+\StringTok{        r \textasciitilde{} dgamma(0.1, 0.1)}
+
+\StringTok{        \# likelihood}
+\StringTok{        for(i in 1:n)\{}
+\StringTok{            y[i] \textasciitilde{} dpois(lambda[i])}
+\StringTok{            lambda[i] \textasciitilde{} dgamma(r, r/mu[i])}
+\StringTok{            log(mu[i]) \textless{}{-} beta0 + beta1 * x[i]}
+\StringTok{            }
+\StringTok{        \}\#i}
+\StringTok{    \}\#model}
+\StringTok{"}\NormalTok{, }\AttributeTok{fill=}\ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{sink}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod04 }\OtherTok{\textless{}{-}} \FunctionTok{jags}\NormalTok{(}\AttributeTok{data=}\NormalTok{in.data, }\AttributeTok{inits=}\NormalTok{inits,}
+              \AttributeTok{parameters.to.save=}\NormalTok{params,}
+              \AttributeTok{model.file=}\NormalTok{mod.name,}
+              \AttributeTok{n.chains=}\NormalTok{nchains, }\AttributeTok{n.iter=}\NormalTok{n.iter,}
+              \AttributeTok{n.burnin=}\NormalTok{n.burnin, }\AttributeTok{n.thin=}\NormalTok{n.thin)}\CommentTok{\#jags}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 100
+   Unobserved stochastic nodes: 103
+   Total graph size: 707
+
+Initializing model
+\end{verbatim}
+
+And we see essentially the same estimates for \texttt{beta0},
+\texttt{beta1}, and \texttt{r}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod04}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Inference for Bugs model at "jags-glm-negbin-v2.txt", fit using jags,
+ 3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
+ n.sims = 1200 iterations saved. Running time = 71.94 secs
+         mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+beta0      1.456   0.078   1.307   1.404   1.455   1.510   1.607 1.001  1200
+beta1      0.211   0.011   0.189   0.204   0.211   0.219   0.234 1.001  1100
+r         48.984  15.641  25.861  38.008  46.465  57.515  86.794 1.001  1200
+deviance 502.220   7.444 487.522 497.356 502.270 507.038 517.458 1.011   180
+
+For each parameter, n.eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor (at convergence, Rhat=1).
+
+DIC info (using the rule: pV = var(deviance)/2)
+pV = 27.4 and DIC = 529.7
+DIC is an estimate of expected predictive error (lower deviance is better).
+\end{verbatim}
+
+Producing the figure with model predictions and 95\% CRI for the
+negative binomial model is similar to the procedure for the Poisson
+model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# set up x values at which to predict}
+\NormalTok{pn }\OtherTok{\textless{}{-}} \DecValTok{100}
+\NormalTok{px }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x), }\FunctionTok{max}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x), }\AttributeTok{length=}\NormalTok{pn)}
+
+\CommentTok{\# get posterior draws}
+\NormalTok{mx }\OtherTok{\textless{}{-}}\NormalTok{ mod04}\SpecialCharTok{$}\NormalTok{BUGSoutput}\SpecialCharTok{$}\NormalTok{sims.matrix}
+
+\CommentTok{\# Matrices: rows = posterior draws, columns = x values}
+\NormalTok{mu }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(}\FunctionTok{outer}\NormalTok{(mx[, }\StringTok{"beta1"}\NormalTok{], px, }\StringTok{"*"}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ mx[, }\StringTok{"beta0"}\NormalTok{])}
+
+\CommentTok{\# Simulate posterior predictive observations}
+\NormalTok{yp }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}
+    \FunctionTok{rnbinom}\NormalTok{(}
+        \FunctionTok{length}\NormalTok{(mu),}
+        \AttributeTok{mu =} \FunctionTok{as.vector}\NormalTok{(mu),}
+        \AttributeTok{size =} \FunctionTok{rep}\NormalTok{(mx[, }\StringTok{"r"}\NormalTok{], }\AttributeTok{times =} \FunctionTok{length}\NormalTok{(px))}
+\NormalTok{    ),}
+    \AttributeTok{nrow =} \FunctionTok{nrow}\NormalTok{(mx)}
+\NormalTok{)}
+
+\CommentTok{\# Expected count and 95\% credible interval}
+\NormalTok{pred }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+    \AttributeTok{x =}\NormalTok{ px,}
+    \AttributeTok{fit =} \FunctionTok{colMeans}\NormalTok{(mu),}
+    \AttributeTok{lwr =} \FunctionTok{apply}\NormalTok{(mu, }\DecValTok{2}\NormalTok{, quantile, }\FloatTok{0.025}\NormalTok{),}
+    \AttributeTok{upr =} \FunctionTok{apply}\NormalTok{(mu, }\DecValTok{2}\NormalTok{, quantile, }\FloatTok{0.975}\NormalTok{),}
+    \AttributeTok{pred.lwr =} \FunctionTok{apply}\NormalTok{(yp, }\DecValTok{2}\NormalTok{, quantile, }\FloatTok{0.025}\NormalTok{),}
+    \AttributeTok{pred.upr =} \FunctionTok{apply}\NormalTok{(yp, }\DecValTok{2}\NormalTok{, quantile, }\FloatTok{0.975}\NormalTok{)}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Now we can construct our plot:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x, dx}\SpecialCharTok{$}\NormalTok{y, }\AttributeTok{type=}\StringTok{"n"}\NormalTok{, }
+    \AttributeTok{xlab=}\StringTok{"x variable"}\NormalTok{,}
+    \AttributeTok{ylab=}\StringTok{"y variable (count)"}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(pred}\SpecialCharTok{$}\NormalTok{x, pred}\SpecialCharTok{$}\NormalTok{fit, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(pred}\SpecialCharTok{$}\NormalTok{x, pred}\SpecialCharTok{$}\NormalTok{lwr, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{, }\AttributeTok{lty=}\DecValTok{2}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(pred}\SpecialCharTok{$}\NormalTok{x, pred}\SpecialCharTok{$}\NormalTok{upr, }\AttributeTok{type=}\StringTok{"l"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{, }\AttributeTok{lty=}\DecValTok{2}\NormalTok{)}
+\FunctionTok{points}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x, dx}\SpecialCharTok{$}\NormalTok{y, }\AttributeTok{pch=}\DecValTok{16}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-30-1.pdf}}
+
+\section{Counts with zero-inflation}\label{sec-glm1-zi}
+
+\subsection{Definition}\label{sec-glm1-zi-def}
+
+\subsection{Example}\label{sec-glm1-zi-ex}
+
+\subsubsection{Data simulation}\label{sec-glm1-nb-zi-sim}
+
+\subsubsection{Bayesian analysis with JAGS}\label{sec-glm1-zi-ex-jags}
+
 \chapter{GLM for binomial data}\label{sec-glm2}
+
+\section{Logistic GLM for binary outcomes}\label{sec-glm2-logistic}
+
+\subsection{Definition}\label{sec-glm2-logistic-def}
+
+\subsection{Example}\label{sec-glm2-logistic-ex}
+
+\subsubsection{Data generation}\label{sec-glm2-logistic-ex-sim}
+
+\subsubsection{Frequentist analysis}\label{sec-glm2-logistic-ex-freq}
+
+\subsubsection{Bayesian analysis}\label{sec-glm2-logistic-ex-bayes}
+
+\section{Binomial GLM for proportions}\label{sec-glm2-binom}
+
+\subsection{Definition}\label{sec-glm2-binom-def}
+
+\subsection{Example}\label{sec-glm2-binom-ex}
+
+\subsubsection{Data generation}\label{sec-glm2-binom-ex-sim}
+
+\subsubsection{Frequentist analysis}\label{sec-glm2-binom-ex-freq}
+
+\subsubsection{Bayesian analysis}\label{sec-glm2-binom-ex-bayes}
 
 \chapter{GLM for continuous data}\label{sec-glm3}
 
@@ -6342,7 +7556,7 @@ straightforward in JAGS\ldots much more so than in R!
 
 State space state space state space\ldots{}
 
-\chapter{}\label{section}
+\chapter{Mark-recapture analysis}\label{sec-mark}
 
 \chapter{State space models}\label{sec-state}
 
@@ -6354,6 +7568,30 @@ State space state space state space\ldots{}
 \markboth{References}{References}
 
 \protect\phantomsection\label{refs}
+\begin{CSLReferences}{1}{1}
+\bibitem[\citeproctext]{ref-plummer2003jags}
+\textsc{Plummer, M.} 2003. {JAGS}: A program for analysis of {B}ayesian
+graphical models using {G}ibbs sampling. Pp. 1--10 in Proceedings of the
+3rd international workshop on distributed statistical computing. Vienna,
+Austria.
+
+\bibitem[\citeproctext]{ref-plummer2021}
+\textsc{Plummer, M.} {[}online{]}. 2021.
+\href{https://CRAN.R-project.org/package=rjags}{{r}jags: {B}ayesian
+graphical models using {MCMC}}. in.
+
+\bibitem[\citeproctext]{ref-rcore2025}
+\textsc{R Core Team} {[}online{]}. 2025.
+\href{https://www.R-project.org/}{R: A language and environment for
+statistical computing}. in. R Foundation for Statistical Computing,
+Vienna, Austria.
+
+\bibitem[\citeproctext]{ref-su2021}
+\textsc{Su, Y.-S.} and \textsc{Masanao Yajima} {[}online{]}. 2021.
+\href{https://CRAN.R-project.org/package=R2jags}{{R2}jags: Using {R} to
+run '{JAGS}'}. in.
+
+\end{CSLReferences}
 
 
 

@@ -93,7 +93,7 @@ Since we already have the measurements, one good first step would be a make a pl
 
 ```{r}
 #| fig-cap: "Variation in petal length among 3 species of *Iris*"
-#| label: fig-iris2
+#| label: fig-iris1
 boxplot(Petal.Length~Species, data=iris)
 ```
 

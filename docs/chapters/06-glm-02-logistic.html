@@ -208,7 +208,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/10-mark-recapture.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">10-mark-recapture.html</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Mark-recapture analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -230,8 +230,23 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-glm2-logistic" id="toc-sec-glm2-logistic" class="nav-link active" data-scroll-target="#sec-glm2-logistic"><span class="header-section-number">6.1</span> Logistic GLM for binary outcomes</a>
+  <ul class="collapse">
+  <li><a href="#sec-glm2-logistic-def" id="toc-sec-glm2-logistic-def" class="nav-link" data-scroll-target="#sec-glm2-logistic-def"><span class="header-section-number">6.1.1</span> Definition</a></li>
+  <li><a href="#sec-glm2-logistic-ex" id="toc-sec-glm2-logistic-ex" class="nav-link" data-scroll-target="#sec-glm2-logistic-ex"><span class="header-section-number">6.1.2</span> Example</a></li>
+  </ul></li>
+  <li><a href="#sec-glm2-binom" id="toc-sec-glm2-binom" class="nav-link" data-scroll-target="#sec-glm2-binom"><span class="header-section-number">6.2</span> Binomial GLM for proportions</a>
+  <ul class="collapse">
+  <li><a href="#sec-glm2-binom-def" id="toc-sec-glm2-binom-def" class="nav-link" data-scroll-target="#sec-glm2-binom-def"><span class="header-section-number">6.2.1</span> Definition</a></li>
+  <li><a href="#sec-glm2-binom-ex" id="toc-sec-glm2-binom-ex" class="nav-link" data-scroll-target="#sec-glm2-binom-ex"><span class="header-section-number">6.2.2</span> Example</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/edit/main/chapters/06-glm-02-logistic.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -255,8 +270,44 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="sec-glm2-logistic" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="sec-glm2-logistic"><span class="header-section-number">6.1</span> Logistic GLM for binary outcomes</h2>
+<section id="sec-glm2-logistic-def" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="sec-glm2-logistic-def"><span class="header-section-number">6.1.1</span> Definition</h3>
+</section>
+<section id="sec-glm2-logistic-ex" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="sec-glm2-logistic-ex"><span class="header-section-number">6.1.2</span> Example</h3>
+<section id="sec-glm2-logistic-ex-sim" class="level4" data-number="6.1.2.1">
+<h4 data-number="6.1.2.1" class="anchored" data-anchor-id="sec-glm2-logistic-ex-sim"><span class="header-section-number">6.1.2.1</span> Data generation</h4>
+</section>
+<section id="sec-glm2-logistic-ex-freq" class="level4" data-number="6.1.2.2">
+<h4 data-number="6.1.2.2" class="anchored" data-anchor-id="sec-glm2-logistic-ex-freq"><span class="header-section-number">6.1.2.2</span> Frequentist analysis</h4>
+</section>
+<section id="sec-glm2-logistic-ex-bayes" class="level4" data-number="6.1.2.3">
+<h4 data-number="6.1.2.3" class="anchored" data-anchor-id="sec-glm2-logistic-ex-bayes"><span class="header-section-number">6.1.2.3</span> Bayesian analysis</h4>
+</section>
+</section>
+</section>
+<section id="sec-glm2-binom" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="sec-glm2-binom"><span class="header-section-number">6.2</span> Binomial GLM for proportions</h2>
+<section id="sec-glm2-binom-def" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="sec-glm2-binom-def"><span class="header-section-number">6.2.1</span> Definition</h3>
+</section>
+<section id="sec-glm2-binom-ex" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="sec-glm2-binom-ex"><span class="header-section-number">6.2.2</span> Example</h3>
+<section id="sec-glm2-binom-ex-sim" class="level4" data-number="6.2.2.1">
+<h4 data-number="6.2.2.1" class="anchored" data-anchor-id="sec-glm2-binom-ex-sim"><span class="header-section-number">6.2.2.1</span> Data generation</h4>
+</section>
+<section id="sec-glm2-binom-ex-freq" class="level4" data-number="6.2.2.2">
+<h4 data-number="6.2.2.2" class="anchored" data-anchor-id="sec-glm2-binom-ex-freq"><span class="header-section-number">6.2.2.2</span> Frequentist analysis</h4>
+</section>
+<section id="sec-glm2-binom-ex-bayes" class="level4" data-number="6.2.2.3">
+<h4 data-number="6.2.2.3" class="anchored" data-anchor-id="sec-glm2-binom-ex-bayes"><span class="header-section-number">6.2.2.3</span> Bayesian analysis</h4>
 
 
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -676,5 +727,5 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/edit/main/chapters/06-glm-02-logistic.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/edit/main/chapters/06-glm-02-logistic.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

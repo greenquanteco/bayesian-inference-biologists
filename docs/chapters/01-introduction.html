@@ -272,7 +272,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/10-mark-recapture.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">10-mark-recapture.html</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Mark-recapture analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -387,7 +387,7 @@ window.Quarto = {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption>Affect or affect not. There is no try.</figcaption>
-<p><img src="../images/affect-or-affect.jpg" class="img-fluid figure-img" alt="Master Yoda reminds us that the null hypothesis and the alternative hypothesis must cover all logical possibilities."></p>
+<p><img src="../images/affect-or-affect.jpg" class="img-fluid figure-img" data-label="fig-yoda" alt="Master Yoda reminds us that the null hypothesis and the alternative hypothesis must cover all logical possibilities."></p>
 </figure>
 </div>
 <p>The alternative hypothesis is also <strong><em>not</em></strong> a statement about another variable (e.g., “Factor <span class="math inline">\(Z\)</span> affects <span class="math inline">\(Y\)</span>”). This is an easy mistake to make and one of the weaknesses of NHST: the word “hypothesis” in the phrase “null hypothesis” is not being used in the sense that scientists usually use it. This unfortunate choice of vocabulary is responsible for generations of confusion among researchers<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
@@ -412,14 +412,14 @@ window.Quarto = {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption>Relationship between the null hypothesis and our decision about experimental results. Type I and II errors result when we reject a true null hypothesis and when we fail to reject a false null. The false discovery rate, or Type I error rate, defined by <span class="math inline">\(\alpha\)</span> is a very important value in our approach to science.</figcaption>
-<p><img src="../images/01_02.jpg" class="img-fluid figure-img"></p>
+<p><img src="../images/01_02.jpg" class="img-fluid figure-img" data-label="fig-errors1"></p>
 </figure>
 </div>
 <p>Why have we evolved this way? Finding patterns in noisy data has helped us discover virtually everything we know. So, pattern recognition must be a powerful cognitive tool. But there is another interpretation, that in our ancestral lifestyle life false positives were far less costly than false negatives. Imagine you are an Australopithecine or an early <em>Homo erectus</em> (or <em>H. sapiens</em>, for that matter), wandering through the savanna of what will someday be modern Ethiopia, looking for food. You hear a rustle in the tall grass a few meters ahead. Is that rustle just the wind? Or is it a dangerous animal that will kill and possibly eat you? Here are your choices and their consequences:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption>Illustration of the consequences of Type I and Type II errors, and why human minds may be so prone to Type I errors.</figcaption>
-<p><img src="../images/01_03.jpg" class="img-fluid figure-img"></p>
+<p><img src="../images/01_03.jpg" class="img-fluid figure-img" data-label="fig-labels2"></p>
 </figure>
 </div>
 <p>Notice that of your choices, only the type II error has immediate evolutionary consequences. In terms of fitness, the difference between a type II error and a true positive (death vs.&nbsp;survival) is much greater than the difference between a true negative and a false positive (a bit more food vs.&nbsp;a mild inconvenience).</p>
@@ -431,7 +431,7 @@ window.Quarto = {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption>Three species of purple iris. From left to right, <em>Iris setosa</em>, <em>I. versicolor</em>, and <em>I. virginica</em>. The petal is one of the flowery parts.</figcaption>
-<p><img src="../images/01-iris.jpg" class="img-fluid figure-img"></p>
+<p><img src="../images/01-iris.jpg" class="img-fluid figure-img" data-label="fig-iris1"></p>
 </figure>
 </div>
 <p>Our research question is:</p>
@@ -617,9 +617,14 @@ Note
 <span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span>lik[<span class="fu">which.max</span>(lik)], <span class="at">lty=</span><span class="dv">2</span>, <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">col=</span><span class="st">"blue"</span>)</span>
 <span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">67.5</span>, <span class="fl">3.4e-5</span>, <span class="fu">expression</span>(<span class="fu">hat</span>(mu)<span class="sc">==</span><span class="fl">66.04</span>), <span class="at">adj=</span><span class="dv">0</span>, <span class="at">col=</span><span class="st">"blue"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="01-introduction_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="768"></p>
+<div id="fig-likelihood1" class="quarto-float quarto-figure quarto-figure-center anchored" width="768">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-likelihood1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.2
+</figcaption>
+<div aria-describedby="fig-likelihood1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="01-introduction_files/figure-html/fig-likelihood1-1.png" id="fig-likelihood1" class="img-fluid figure-img" width="768">
+</div>
 </figure>
 </div>
 </div>
@@ -682,7 +687,7 @@ Note
 <div id="fig-heat1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-heat1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.2: The likelihood surface of a model with 2 parameters, <span class="math inline">\(mu\)</span> and <span class="math inline">\(sigma\)</span> resulting from a wide parameter search space, shown as a heatmap with <code>image()</code>.
+Figure&nbsp;1.3: The likelihood surface of a model with 2 parameters, <span class="math inline">\(mu\)</span> and <span class="math inline">\(sigma\)</span> resulting from a wide parameter search space, shown as a heatmap with <code>image()</code>.
 </figcaption>
 <div aria-describedby="fig-heat1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="01-introduction_files/figure-html/fig-heat1-1.png" class="img-fluid figure-img" width="672">
@@ -748,7 +753,7 @@ Figure&nbsp;1.2: The likelihood surface of a model with 2 parameters, <span clas
 <div id="fig-heat2" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-heat2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.3: The likelihood surface of a model with 2 parameters, <span class="math inline">\(mu\)</span> and <span class="math inline">\(sigma\)</span>, with a narrowed parameter search space, shhown as a heatmap with <code>image()</code>.
+Figure&nbsp;1.4: The likelihood surface of a model with 2 parameters, <span class="math inline">\(mu\)</span> and <span class="math inline">\(sigma\)</span>, with a narrowed parameter search space, shhown as a heatmap with <code>image()</code>.
 </figcaption>
 <div aria-describedby="fig-heat2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="01-introduction_files/figure-html/fig-heat2-1.png" class="img-fluid figure-img" width="672">
@@ -776,7 +781,7 @@ Figure&nbsp;1.3: The likelihood surface of a model with 2 parameters, <span clas
 <div id="fig-surface1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-surface1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.4: The likelihood surface for a model with 2 parameters, <span class="math inline">\(mu\)</span> and <span class="math inline">\(sigma\)</span>.
+Figure&nbsp;1.5: The likelihood surface for a model with 2 parameters, <span class="math inline">\(mu\)</span> and <span class="math inline">\(sigma\)</span>.
 </figcaption>
 <div aria-describedby="fig-surface1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="01-introduction_files/figure-html/fig-surface1-1.png" class="img-fluid figure-img" width="672">
@@ -808,7 +813,7 @@ Figure&nbsp;1.4: The likelihood surface for a model with 2 parameters, <span cla
 <div id="fig-surface2" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-surface2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1.5: The log-likelihood surface for a model with 2 parameters, <span class="math inline">\(mu\)</span> and <span class="math inline">\(sigma\)</span>.
+Figure&nbsp;1.6: The log-likelihood surface for a model with 2 parameters, <span class="math inline">\(mu\)</span> and <span class="math inline">\(sigma\)</span>.
 </figcaption>
 <div aria-describedby="fig-surface2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="01-introduction_files/figure-html/fig-surface2-1.png" class="img-fluid figure-img" width="672">
@@ -908,14 +913,14 @@ Figure&nbsp;1.5: The log-likelihood surface for a model with 2 parameters, <span
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption>Bayes theorem helps us reason about the relative probabilities of observing a piece of evidence E or not when a hypothesis H is true or not true. The area of all four sections must add up to 1. According to Bayes’ theorem, the probability of a hypothesis H being true, given evidence E, is the ratio of <span class="math inline">\(P\left(E|H\right)\)</span> to <span class="math inline">\(P\left(E|H\right)+P\left(E|lnot H\right)\)</span>.</figcaption>
-<p><img src="../images/01-bayes1.jpg" class="img-fluid figure-img"></p>
+<p><img src="../images/01-bayes1.jpg" class="img-fluid figure-img" data-label="fig-bayes1"></p>
 </figure>
 </div>
 <p>Notice that the prior probability <span class="math inline">\(p\left(\ldots|H\right)\)</span> (the two left, blue sections) is much smaller than the probability of <span class="math inline">\(\lnot H\)</span> (the two right, red and pink sections with <span class="math inline">\(p\left(\ldots|\lnot H\right)\)</span>). Bayes’ rule restricts our focus to the cases where we observe the evidence–the bottom two sections with <span class="math inline">\(p\left(E|\ldots\right)\)</span>. Given that the evidence was observed, the sections with <span class="math inline">\(\lnot E\)</span> are irrelevant. The calculation then becomes:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption>In Bayesian inference, the probability of the hypothesis being true given the observed evidence is the ratio of cases where the evidence is observed <em>and</em> the hypothesis is true, to all cases where the evidence is observed.</figcaption>
-<p><img src="../images/01-bayes2.jpg" class="img-fluid figure-img"></p>
+<p><img src="../images/01-bayes2.jpg" class="img-fluid figure-img" data-label="fig-bayes2"></p>
 </figure>
 </div>
 </section>
@@ -944,7 +949,7 @@ Figure&nbsp;1.5: The log-likelihood surface for a model with 2 parameters, <span
 </section>
 <section id="sec-intro-bayes-mcmc" class="level3" data-number="1.4.5">
 <h3 data-number="1.4.5" class="anchored" data-anchor-id="sec-intro-bayes-mcmc"><span class="header-section-number">1.4.5</span> MCMC and Metropolis-Hastings</h3>
-<p>In practice, calculating posterior distributions of many parameters simultaneously is computationally difficult. The surface of possible values and their joint likelihoods (<a href="#fig-surface1" class="quarto-xref">Figure&nbsp;<span>1.4</span></a>), defined by Bayes’ theorem, often can’t be defined explicitly. Instead, we can use different techniques to explore the surface. That is, to <strong>sample from the posterior distributions</strong>.</p>
+<p>In practice, calculating posterior distributions of many parameters simultaneously is computationally difficult. The surface of possible values and their joint likelihoods (<a href="#fig-surface1" class="quarto-xref">Figure&nbsp;<span>1.5</span></a>), defined by Bayes’ theorem, often can’t be defined explicitly. Instead, we can use different techniques to explore the surface. That is, to <strong>sample from the posterior distributions</strong>.</p>
 <p>One strategy for sampling from the posterior distribution is really a family of techniques known as <strong>Markov chain Monte Carlo (MCMC)</strong>. A <strong>Markov chain</strong> is a sequence of values, where each value depends only on the value before it. The <strong>Monte Carlo</strong> part refers to a European city famous for its casinos. So, MCMC involves a series or <em>chain</em> of values that involves at least some random number generation. One of the most common MCMC algorithms is the <strong>Metropolis-Hastings</strong> algorithm.</p>
 <p>Suppose we are using a Markov chain to explore the posterior distributions of the parameters in a model. At the current step, the chain is at state <span class="math inline">\(\theta\)</span>. Using some process (it doesn’t matter what), a proposed new set of parameter values <span class="math inline">\(\theta^\prime\)</span>. Whether <span class="math inline">\(\theta^\prime\)</span> is an improvement depends on the ratio</p>
 <p><span class="math display">\[\frac{p\left(\theta^\prime|y\right)}{p\left(\theta|y\right)}\]</span></p>

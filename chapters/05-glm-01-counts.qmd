@@ -1,1 +1,623 @@
 # GLM for count data {#sec-glm1}
+
+Over the next two modules  we will extend our JAGS language knowledge and our statistical skills to another important class of statistical methods: **generalized linear models (GLM)**. GLMs are an indispensable tool in the modern biologist’s toolbox. The GLM framework includes all linear models, as well as a wide variety of other techniques:
+
+- Gamma GLM for overdispersed continuous data
+- Poisson and negative binomial models for counts
+- Logistic regression for binary outcomes
+- Binomial regression for proportional data
+- And many more.
+
+These models may appear different on the surface, and take different kinds of data as inputs, but are actually the same kind of model. This is much more apparent when fitting models in JAGS than in R. 
+
+This module explores GLMs for **count** data. Count data are exactly what they sound like: values resulting from counting things. Count data take the form of non-negative integers. Non-negative integers, however, are not necessarily count data. For example, summer temperatures in Georgia can be rounded to the nearest integer, but they will not be counts.
+
+:::{.callout-note title="About this module"}
+For this module you will need a recent versions of R, JAGS, and the R packages rjags and R2jags (@plummer2003jags, @plummer2021, @rcore2025, @su2021). This module and all code examples were developed and tested using R version 4.5.1, JAGS 4.3.1, rjags version 4-17, and R2jags version 0.8-9. 
+:::
+
+## GLM refresher
+
+Generalized linear models (GLM) extend the [linear model]( {@sec-linear}) by relaxing two assumptions:
+
+1. GLM allows response distributions other than the normal distribution
+1. GLM allows the linear predictor to be on a scale other than the scale that the data are on; the data and linear predictor scales are related by a link function.
+
+So, while a linear model is written as:
+
+$$\text{Stochastic part}:y\sim \text{Normal}\left(E\left(y\right),\sigma_{res}\right)$$
+
+$$\text{Linear predictor}:E\left(y\right)=\boldsymbol{\beta}\mathbf{x}$$
+
+Here we use matrix shorthand for the linear predictor to indicate that $\boldsymbol{\beta}$ is a vector of coefficients ($\beta_0$, $\beta_1$, $\beta_2$, and so on), and $\mathbf{x}$ is the design matrix that contains the predictor variables ($x_1$, $x_2$, and so on; see @sec-linear-matrix). 
+
+A GLM is written as:
+
+$$\text{Stochastic part}:y\sim \text{SomeDistribution}\left(E\left(y\right),\theta\right)$$
+
+$$\text{Linear predictor}:\eta=\boldsymbol{\beta}\mathbf{x}$$
+
+where $\theta$ stands in for other parameters of the response distribution (if there are any), and $\eta$ ("eta") is the expected value on the scale of the linear predictor--which may or may not be the same scale as $y$ and $E\left(y\right)$. We relate $E\left(y\right)$ and $\eta$ via a **link function**:
+
+$$\text{Link function}:f\left(E\left(y\right)\right)=\eta$$
+
+:::{.callout-note title="GLM response distributions"}
+Technically, the response distribution in a GLM must be one of the [exponential family](https://en.wikipedia.org/wiki/Exponential_family). This family includes a huge variety: the normal, exponential, gamma, beta, Poisson, and geometric. Under certain conditions, the binomial, negative binomial, and multinomial can be included as well. 
+:::
+
+This means that linear regression itself is a special case of GLM, with a normal response distribution and the identity link function (the identity function of any value is that value itself).
+
+$$\text{Stochastic part}:y\sim \text{Normal}\left(E\left(y\right),\sigma_{res}\right)$$
+
+$$\text{Link function}:E\left(y\right)=\eta$$
+$$\text{Linear predictor}:\eta=\boldsymbol{\beta}\mathbf{x}$$
+
+If you are unfamiliar with GLM, check out the [notes to my data anlysis course](https://greenquanteco.github.io/appl-biol-data-analysis/chapters/ch18.html) for a more in-depth explanation.
+
+## Poisson GLM for counts {#sec-glm1-pois}
+
+### Definition {#sec-glm1-pois-def}
+
+The Poisson GLM models the logarithm of expected count $\lambda$ as a linear function of predictors $\boldsymbol{\beta}\mathbf{x}$. Here we use matrix shorthand for the linear predictor to indicate that $\boldsymbol{\beta}$ is a vector of coefficients ($\beta_0$, $\beta_1$, $\beta_2$, and so on), and $\mathbf{x}$ is the design matrix that contains the predictor variables ($x_1$, $x_2$, and so on). Instead of saying that the Poisson GLM "models the logarithm of the expected count", we could also say that it uses a log link function.
+
+$$\text{Stochastic part}:y\sim Poisson\left(\lambda\right)$$
+
+$$\text{Link function}:\log\left(\lambda\right)=\eta$$
+
+$$\text{Linear predictor}:\eta=\boldsymbol{\beta}\mathbf{x}$$
+
+Notice that the Poisson distribution has only one parameter, $\lambda$ ("lambda"), which is both the mean and variance of the distribution. This means that we should not be surprised or concerned if a scatterplot suggests heteroscedasticity with variance increasing with the expected value. This property of the Poisson distribution and the log link function means that a "cone" of points on a scatterplot does not necessarily imply heteroscedasticity or overdispersion. **Overdispersion** means that the data contain more variance than would be expected under a Poisson distribution. If overdispersion is suspected, you can try a negative binomial GLM instead of a Poisson GLM (@sec-glm1-nb).
+
+### Example {#sec-glm1-pois-ex}
+
+#### Data simulation {#sec-glm1-pois-ex-sim}
+
+Let's simulate a dataset and analyze it.
+
+
+```{r}
+#| fig.width: 8
+#| fig.height: 6
+
+# random number seed for reproducibility
+set.seed(123)
+
+# sample size
+n <- 100
+
+# coefficients
+beta0 <- 1.5
+beta1 <- 0.2
+
+# x values
+x <- runif(n, 0, 10)
+
+# linear predictor
+eta <- beta0 + beta1 * x
+
+# inverse link function
+lambda <- exp(eta)
+
+# response variable
+y <- rpois(n, lambda)
+
+# put everything in a data frame
+dx <- data.frame(x=x,y=y)
+
+# make the plot
+par(mar=c(5.1, 5.1, 1.1, 1.1))
+plot(x,y)
+```
+
+The relationship between $y$ and $x$ looks almost linear, but because we are clever biologists, we know that linear models are not appropriate for two reasons. First, linear models predict continuous responses, and counts are not continuous (they are discrete). Second, linear models can predict negative responses, and counts cannot be negative. So, we will try Poisson regression.
+
+#### Frequentist analysis {#sec-glm1-pois-ex-freq}
+
+We could fit a Poisson GLM of y vs. x in R with this command:
+
+```{r}
+mod01 <- glm(y~x, data=dx, family=poisson)
+# model summary:
+summary(mod01)
+```
+
+The frequentist analysis gets pretty close to the real coefficients, and the model [reduced the deviance](https://greenquanteco.github.io/appl-biol-data-analysis/chapters/ch18.html#sec-glm1-lik-pseudo) by an impressive 86%.
+
+```{r}
+1-mod01$deviance/mod01$null.deviance
+```
+
+#### Bayesian analysis with JAGS {#sec-glm1-pois-ex-jags}
+
+Now let’s repeat the analysis in JAGS. The analysis takes a little more work in JAGS, but it might be worth it.
+
+First, define a model file for the Poisson GLM.
+
+```{r}
+# Poisson GLM with one predictor x
+mod.name <- "jags-glm-poisson.txt"
+sink(mod.name)
+cat("
+    model{
+        # priors
+        # reasonable ranges...extreme values may cause
+        # numerical overflow. Use some number sense!
+        beta0 ~ dnorm(0, 1)
+        beta1 ~ dnorm(0, 1)
+
+        # likelihood
+        for(i in 1:n){
+            y[i] ~ dpois(lambda[i])
+            log(lambda[i]) <- beta0 + beta1 * x[i]
+        }#i
+    }#model
+", fill=TRUE)
+sink()
+```
+
+Then, set up the usual MCMC parameters for JAGS and tell JAGS what parameters to monitor.
+
+```{r}
+# parameters to monitor
+params <- c("beta0", "beta1")
+
+# MCMC parameters
+n.iter <- 5e4
+n.burnin <- 1e4
+n.thin <- 100
+nchains <- 3
+```
+
+As always, we need a function to define initial values for the MCMC chains. Remember that EVERY parameter in the model defined as a stochastic node needs an initial value. This means any variable that is ever on the left side of a ~ symbol.
+
+```{r}
+# function to define initial values for MCMC chains
+init.fun <- function(nc){
+  # output will be a list with one element per chain
+  res <- vector("list", length=nc)
+  
+  # fill in a for loop over chains
+  for(i in 1:nc){
+    # note that 
+    res[[i]] <- list(beta0=rnorm(1, 0, 1),
+                     beta1=rnorm(1, 0, 1))
+  }#i
+  return(res)
+}
+
+# generate the intial values
+inits <- init.fun(nchains)
+```
+
+Package up the data for JAGS
+
+```{r}
+# package data for JAGS
+in.data <- list(x=dx$x, y=dx$y, n=n)
+```
+
+And run the model.
+
+```{r}
+library(R2jags)
+library(rjags)
+```
+
+```{r}
+
+mod02 <- jags(data=in.data, inits=inits,
+              parameters.to.save=params,
+              model.file=mod.name,
+              n.chains=nchains, n.iter=n.iter,
+              n.burnin=n.burnin, n.thin=n.thin)#jags
+```
+
+And inspect the results:
+
+```{r}
+mod02
+```
+
+The model converged, and the estimated values for `beta0` and `beta1` are pretty close to the truth…and, to the estimates from the frequentist version of the model. 
+
+Just as with linear models, the best way to present the results of your Poisson GLM is to plot the model predictions against the data. Plotting the expected value $\lambda$ against the data is easy. What’s tricky is plotting the uncertainty. We will plot uncertainty as the 95% credible interval (CRI) of the predicted value $\lambda$. Unless you think carefully about what you’re doing, it’s easy to confuse plotting uncertainty about the expected values with plotting uncertainty about the observable values. In frequentist terms, the former is a confidence interval (CI) and the latter is a prediction interval (PI). 
+
+```{r}
+# set up x values at which to predict
+pn <- 100
+px <- seq(min(dx$x), max(dx$x), length=pn)
+prx <- data.frame(x=px)
+
+# extract permuted posteriors for
+# model parameters
+mx <- mod02$BUGSoutput$sims.matrix
+npost <- nrow(mx)
+
+# make matrix to hold model predictions
+pred <- matrix(NA, nrow=nrow(prx), ncol=nrow(mx))
+
+# fill matrix in a loop
+for(i in 1:npost){
+    pred[,i] <- mx[i,"beta0"] + mx[i,"beta1"] * prx$x
+}#i
+
+# summarize across columns of pred to
+# get predicted values and 95% credible interval
+prx$lo <- apply(pred, 1, quantile, 0.025)
+prx$mn <- apply(pred, 1, quantile, 0.5)
+prx$up <- apply(pred, 1, quantile, 0.975)
+```
+
+The values in `prx` are still on the link scale, where the linear predictor lives. So, we need to apply the inverse link function to get values on the data scale.
+
+```{r}
+prx$lo <- exp(prx$lo)
+prx$mn <- exp(prx$mn)
+prx$up <- exp(prx$up)
+```
+
+Now we can construct our plot:
+
+```{r}
+par(mar=c(5,5,1,1))
+plot(dx$x, dx$y, type="n", 
+    xlab="x variable",
+    ylab="y variable (count)")
+points(prx$x, prx$mn, type="l", lwd=3, col="red")
+points(prx$x, prx$lo, type="l", lwd=3, col="red", lty=2)
+points(prx$x, prx$up, type="l", lwd=3, col="red", lty=2)
+points(dx$x, dx$y, pch=16)
+```
+
+The interval plotted is the 95% **credible interval (CRI)**, not a confidence interval. Remember that a credible interval is calculated from samples of the posterior distribution, not estimated from a fitted function like a frequentist confidence interval (CI) (see @sec-intro-bayes-cri). That means we can say, "we are 95% certain that the true expected value lies within the interval shown by the dashed lines.
+
+A CRI is often similar in width to a CI, but they are not the same.
+
+```{r}
+# compare to CI
+predf <- predict(mod01, newdata=prx,
+                 type="link", se.fit=TRUE)
+prx$lof <- exp(qnorm(0.025, predf$fit, predf$se.fit))
+prx$mnf <- exp(qnorm(0.5, predf$fit, predf$se.fit))
+prx$upf <- exp(qnorm(0.975, predf$fit, predf$se.fit))
+
+
+par(mar=c(5,5,1,1))
+plot(dx$x, dx$y, type="n", 
+    xlab="x variable",
+    ylab="y variable (count)")
+points(prx$x, prx$mn, type="l", lwd=3, col="red")
+points(prx$x, prx$lo, type="l", lwd=3, col="red", lty=2)
+points(prx$x, prx$up, type="l", lwd=3, col="red", lty=2)
+points(prx$x, prx$lof, type="l", lwd=3, col="blue", lty=3)
+points(prx$x, prx$upf, type="l", lwd=3, col="blue", lty=3)
+points(dx$x, dx$y, pch=16)
+legend("topleft",
+       legend=c("Bayesian CRI", "Frequentist CI"),
+       lty=c(2,3), lwd=3,
+       col=c("red", "blue"),
+       bty="n", cex=1.3)
+
+```
+
+### A note on numeracy (number sense) {#sec-glm1-pois-num}
+
+It may have been tempting to put a very wide prior on the intercept and slope, like we did for coefficients in a linear model. But, this can be a bad idea when working on the log scale. In the linear models in the last module, we usually used priors like $Normal\left(0,\ 100\right)$ for `beta0` and `beta1` terms. This was fine for linear models, where the response variable and linear predictor were on the same scale. For our Poisson GLM, however, the parameters are on the logarithmic scale because of the log link function. Because the linear predictor ($\beta_0+\beta_1x$) is exponentiated in the model likelihood, calculations like the following might occur:
+
+$$\log{\left(\lambda\right)}=200+1500x$$
+
+which really means
+
+$$\lambda=e^{200+1500x}$$
+
+which even for a small value like $x=1$ would evaluate to an absurdly large number, too large to be represented in R or JAGS. R can represent values with an absolute value up to about $1.79\times10^{308}$. Anything larger returns `Inf` (or `-Inf`, for negative numbers). 
+
+```{r}
+.Machine$double.xmax
+```
+
+which is approximately $10^{228}$ times greater than the number of atoms in the universe. Similarly, R can only represent numbers as small as about $2.2\times10^{-308}$. So, even if R and JAGS could represent those numbers, would they really be relevant to your analysis? Probably not.
+
+Any of these could cause inappropriately large or small values of \lambda_i within JAGS. Values that are too large cannot be represented in JAGS and may be treated as infinity…which will cause an error. Values that are too small will be arbitrarily close to 0, and may be treated as 0…which will also cause an error. When you try to feed a JAGS distribution function with an illegitimate input, such as a negative or 0 value for `dpois()`, you will get the dreaded "Node inconsistent with parents" error. This error can be very hard to track down, because it is not possible to see current parameter values within JAGS. This means you have to examine each node and work out if extreme values of any of its inputs could lead to illegitimate values.
+
+In JAGS, the expected value of a Poisson distribution must be finite and strictly positive. So, we need to be careful to set up the model in such a way as to avoid these kinds of numerical issues. 
+
+There are two takeaways from this digression. First, you need to be smart about what numbers you are implying in your JAGS models. Your model might have the correct relationships, but if the numbers lead to illegitimate values, it is all for naught. Try rewriting the model above with the extremely broad priors and see what happens.
+
+Second, sometimes you need to think like a programmer instead of a biologist or statistician. There’s an old saying: "If it’s stupid and its works, then it’s not stupid." Many people might opt to relate `x` and `y` with a construction like this in their JAGS code:
+
+```
+# stochastic part as usual
+y[i] ~ dpois(lambda[i])
+
+# limit lambda to [0.0001, 9999]
+lambda[i] <- max(0.0001, min(9999, exp(eta[i])))
+
+# calculate log scale expected value eta
+eta[i] <- exp(beta0 + beta1 * x[i])
+```
+
+What does this do? By separating the value of the linear predictor `eta[i]` from the expected value of the Poisson distribution `lambda[i]`, this code allows us to limit the values that go into `dpois()`. This practice is less elegant than choosing appropriate prior values, but it’s not wrong. In fact, this practice is explicitly recommended for some GLMs by Kéry (2010). We’ll use it below when we get to logistic regression (see @sec-glm2-logistic).
+
+Some might argue that putting this kind of limit in your JAGS model might bias the parameter estimates. In my experience, however, this is not the case. As long as you don’t make the acceptable interval too narrow, the MCMC algorithm will probably still find the right solution. The only issue I’ve ever had is when the “true” coefficient value might be very close to one of the limits. In that case, the parameter estimates can be biased high if the correct value is just above a limit, or biased low if the correct value is just below a limit.
+
+Another option might be to simply add a small constant to $\lambda$. This would solve the problem of $\lambda$ that were too small, but not the problem of $\lambda$ that were too large. Personally, I prefer the first solution, because the estimated `beta0` and `beta1` are for the expected value, not the expected value minus a small constant.^[I once needed to model a population of deer, which could occur in groups on a landscape. We had a parameter for mean group size, but there was a problem. Using the Poisson distribution for group size would frequently predict groups of 0 deer…in other words, no group! Our solution was to reparametrize the model to work with “group size minus 1”. This meant that 0s returned from any Poisson draws would have 1 added to them, so the minimum group size in the model was a biologically reasonable 1. If it’s stupid but it works, then it isn’t stupid.]
+
+```
+y[i] ~ dpois(lambda[i])
+lambda[i] <- eta[i] + 0.00001
+eta[i] <- exp(beta0 + beta1 * x[i])
+```
+
+## Negative binomial GLM for overdispersed counts {#sec-glm1-nb}
+
+Poisson GLMs assume that the single parameter $\lambda$ of the Poisson distribution is both the mean and the variance of the response distribution (i.e., that $\lambda=\mu=\sigma^2$). This is not always the case in real datasets. Many biological processes that produce counts have a variance much greater than their mean. This phenomenon is called **overdispersion**. The “over” in “overdispersion” means “more variance than expected for a Poisson distribution with the same mean”. 
+
+One way to deal with overdispersion is to use a distribution other than the Poisson. Most textbooks recommend either the **quasi-Poisson** or the **negative binomial**. The negative binomial is easier to work with in most software packages because it has a full likelihood function.
+
+### Definition {#sec-glm1-nb-def}
+
+There are several definitions of the **negative binomial distribution**. The definition biologists usually use has a mean $\mu$ or $\lambda$ and an overdispersion parameter called $\theta$ (“theta”) or $k$. Smaller $\theta$ leads to more variance; at larger $\theta$ the distribution becomes indistinguishable from the Poisson.
+
+$$\sigma^2\left(\text{NegBin}\right)=\lambda+\frac{\lambda^2}{\theta}$$
+
+In the R functions that deal with the negative binomial, $\theta$ is referred to as the `size` parameter. As $\theta$ gets smaller, the fraction $\frac{\lambda^2}{\theta}$ gets larger, and the distribution picks up more and more variance compared to the Poisson distribution (because for a Poisson, $\sigma^2=\lambda$). Thus, as $\theta$ increases to positive infinity, the fraction gets smaller and the variance approaches that of a Poisson.
+
+Other people define the negative binomial as a gamma-Poisson mixture . That is, a Poisson distribution with expected value $\lambda$, where $\lambda$ itself varies as a gamma distribution. Both can be obtained in JAGS, which uses an altogether different definition of the negative binomial. In JAGS, the expected value (linear predictor) needs to be converted to a probability parameter $\pi$. The `r` parameter here is the overdispersion parameter which is also fit as part of the model.
+
+$$y\sim \text{NegBin}\left(\pi,r\right)$$
+
+$$\pi=\frac{r}{r+\mu}$$
+
+$$\log{\mu}=\boldsymbol{\beta}\mathbf{x}$$
+
+This multi-step process if fraught with opportunities for numerical errors, including the dreaded “Node inconsistent with parents”. Here be dragons.
+
+### Example {#sec-glm1-nb-ex}
+
+#### Data simulation {#sec-glm1-nb-ex-sim}
+
+Let's simulate a dataset and analyze it.
+
+```{r}
+# random number seed for reproducibility
+set.seed(42)
+
+# sample size
+n <- 100
+
+# coefficients
+beta0 <- 4     # intercept
+beta1 <- 0.15  # slope
+theta <- 3     # overdispersion
+
+# x values
+x <- runif(n, 0, 10)
+
+# linear predictor
+eta <- beta0 + beta1 * x
+
+# inverse link function
+lambda <- exp(eta)
+
+# response variable
+y <- rnbinom(n, mu=lambda, size=theta)
+
+# assemble into data frame
+dn <- data.frame(x=x, y=y)
+
+# make the plot
+par(mar=c(5.1, 5.1, 1.1, 1.1))
+plot(x,y, pch=19)
+```
+
+#### Frequentist analysis {#sec-glm1-nb-ex-freq}
+
+There is no base R function for a negative binomial GLM, so we need to find an add-on package for it. The most common package for this is probably `MASS`.
+
+```{r}
+library(MASS)
+```
+
+Now let's fit the negative binomial GLM.
+
+```{r}
+mod3 <- glm.nb(y~x, data=dx)
+summary(mod3)
+```
+
+The model estimates for the parameters are pretty close to reality.
+
+#### Bayesian analysis with JAGS {#sec-glm1-nb-ex-jags}
+
+The Bayesian version is a little more involved. First, write a model file for the model. Notice the difference from the Poisson model.
+
+```{r}
+# Negative binomial GLM with one predictor x
+mod.name <- "jags-glm-negbin-v1.txt"
+sink(mod.name)
+cat("
+    model{
+        # priors
+        beta0 ~ dnorm(0, 1)
+        beta1 ~ dnorm(0, 1)
+        r ~ dgamma(0.1, 0.1)
+
+        # likelihood
+        for(i in 1:n){
+            y[i] ~ dnegbin(pi[i],r)
+            pi[i] <- r/(r+mu[i])
+            log(mu[i]) <- beta0 + beta1 * x[i]
+            
+        }#i
+    }#model
+", fill=TRUE)
+sink()
+```
+
+Then, set up the usual MCMC parameters for JAGS and tell JAGS what parameters to monitor.
+
+```{r}
+# parameters to monitor
+params <- c("beta0", "beta1", "r")
+
+# MCMC parameters
+n.iter <- 5e4
+n.burnin <- 1e4
+n.thin <- 100
+nchains <- 3
+```
+
+As always, we need a function to define initial values for the MCMC chains. Remember that EVERY parameter in the model defined as a stochastic node needs an initial value. This means any variable that is ever on the left side of a ~ symbol.
+
+```{r}
+# function to define initial values for MCMC chains
+init.fun <- function(nc){
+  # output will be a list with one element per chain
+  res <- vector("list", length=nc)
+  
+  # fill in a for loop over chains
+  for(i in 1:nc){
+    # note that 
+    res[[i]] <- list(beta0=rnorm(1, 0, 1),
+                     beta1=rnorm(1, 0, 1),
+                     r=rgamma(1,
+                              shape=0.1,
+                              rate=0.1))
+  }#i
+  return(res)
+}
+
+# generate the intial values
+inits <- init.fun(nchains)
+```
+
+Package up the data for JAGS
+
+```{r}
+# package data for JAGS
+in.data <- list(x=dx$x, y=dx$y, n=n)
+```
+
+And run the model.
+
+```{r}
+library(R2jags)
+library(rjags)
+```
+
+```{r}
+
+mod03 <- jags(data=in.data, inits=inits,
+              parameters.to.save=params,
+              model.file=mod.name,
+              n.chains=nchains, n.iter=n.iter,
+              n.burnin=n.burnin, n.thin=n.thin)#jags
+```
+
+And inspect the results:
+
+```{r}
+mod03
+```
+
+The parameters are pretty close to the truth.
+
+We can also use the Poisson-Gamma mixture definition of the negative binomial, if you prefer that. The model file is very similar, and the initial values structure is the same.
+
+```{r}
+# Negative binomial GLM with one predictor x
+mod.name <- "jags-glm-negbin-v2.txt"
+sink(mod.name)
+cat("
+    model{
+        # priors
+        beta0 ~ dnorm(0, 1)
+        beta1 ~ dnorm(0, 1)
+        r ~ dgamma(0.1, 0.1)
+
+        # likelihood
+        for(i in 1:n){
+            y[i] ~ dpois(lambda[i])
+            lambda[i] ~ dgamma(r, r/mu[i])
+            log(mu[i]) <- beta0 + beta1 * x[i]
+            
+        }#i
+    }#model
+", fill=TRUE)
+sink()
+```
+
+```{r}
+
+mod04 <- jags(data=in.data, inits=inits,
+              parameters.to.save=params,
+              model.file=mod.name,
+              n.chains=nchains, n.iter=n.iter,
+              n.burnin=n.burnin, n.thin=n.thin)#jags
+```
+
+And we see essentially the same estimates for `beta0`, `beta1`, and `r`:
+
+```{r}
+mod04
+```
+
+Producing the figure with model predictions and 95% CRI for the negative binomial model is similar to the procedure for the Poisson model.
+
+```{r}
+# set up x values at which to predict
+pn <- 100
+px <- seq(min(dx$x), max(dx$x), length=pn)
+
+# get posterior draws
+mx <- mod04$BUGSoutput$sims.matrix
+
+# Matrices: rows = posterior draws, columns = x values
+mu <- exp(outer(mx[, "beta1"], px, "*") + mx[, "beta0"])
+
+# Simulate posterior predictive observations
+yp <- matrix(
+    rnbinom(
+        length(mu),
+        mu = as.vector(mu),
+        size = rep(mx[, "r"], times = length(px))
+    ),
+    nrow = nrow(mx)
+)
+
+# Expected count and 95% credible interval
+pred <- data.frame(
+    x = px,
+    fit = colMeans(mu),
+    lwr = apply(mu, 2, quantile, 0.025),
+    upr = apply(mu, 2, quantile, 0.975),
+    pred.lwr = apply(yp, 2, quantile, 0.025),
+    pred.upr = apply(yp, 2, quantile, 0.975)
+)
+```
+
+Now we can construct our plot:
+
+```{r}
+par(mar=c(5,5,1,1))
+plot(dx$x, dx$y, type="n", 
+    xlab="x variable",
+    ylab="y variable (count)")
+points(pred$x, pred$fit, type="l", lwd=3, col="red")
+points(pred$x, pred$lwr, type="l", lwd=3, col="red", lty=2)
+points(pred$x, pred$upr, type="l", lwd=3, col="red", lty=2)
+points(dx$x, dx$y, pch=16)
+```
+
+## Counts with zero-inflation {#sec-glm1-zi}
+
+### Definition {#sec-glm1-zi-def}
+
+### Example {#sec-glm1-zi-ex}
+
+#### Data simulation {#sec-glm1-nb-zi-sim}
+
+#### Bayesian analysis with JAGS {#sec-glm1-zi-ex-jags}
+
+

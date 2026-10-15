@@ -1,1 +1,25 @@
 # GLM for binomial data {#sec-glm2}
+
+## Logistic GLM for binary outcomes {#sec-glm2-logistic}
+
+### Definition {#sec-glm2-logistic-def}
+
+### Example {#sec-glm2-logistic-ex}
+
+#### Data generation {#sec-glm2-logistic-ex-sim}
+
+#### Frequentist analysis {#sec-glm2-logistic-ex-freq}
+
+#### Bayesian analysis {#sec-glm2-logistic-ex-bayes}
+
+## Binomial GLM for proportions {#sec-glm2-binom}
+
+### Definition {#sec-glm2-binom-def}
+
+### Example {#sec-glm2-binom-ex}
+
+#### Data generation {#sec-glm2-binom-ex-sim}
+
+#### Frequentist analysis {#sec-glm2-binom-ex-freq}
+
+#### Bayesian analysis {#sec-glm2-binom-ex-bayes}
