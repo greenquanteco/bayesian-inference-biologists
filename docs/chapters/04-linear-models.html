@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -76,10 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-9e3e5b9121e68b3f077afb32f2c64d95.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-631496449bf32ff9b0bb69a6bfd9195d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -110,7 +113,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <style>html{ scroll-behavior: smooth; }</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -299,23 +302,23 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-linear" id="toc-sec-linear" class="nav-link active" data-scroll-target="#sec-linear"><span class="header-section-number">4.1</span> Linear models refresher</a>
+  <li><a href="#sec-linear-review" id="toc-sec-linear-review" class="nav-link active" data-scroll-target="#sec-linear-review"><span class="header-section-number">4.1</span> Linear models refresher</a>
   <ul class="collapse">
-  <li><a href="#sec-linear-matrix" id="toc-sec-linear-matrix" class="nav-link" data-scroll-target="#sec-linear-matrix"><span class="header-section-number">4.1.1</span> Enter the matrix</a></li>
+  <li><a href="#sec-linear-review-matrix" id="toc-sec-linear-review-matrix" class="nav-link" data-scroll-target="#sec-linear-review-matrix"><span class="header-section-number">4.1.1</span> Enter the matrix</a></li>
   <li><a href="#straight-lines-somehow" id="toc-straight-lines-somehow" class="nav-link" data-scroll-target="#straight-lines-somehow"><span class="header-section-number">4.1.2</span> Straight lines (somehow)</a></li>
   <li><a href="#other-details-and-assumptions" id="toc-other-details-and-assumptions" class="nav-link" data-scroll-target="#other-details-and-assumptions"><span class="header-section-number">4.1.3</span> Other details and assumptions</a></li>
   </ul></li>
-  <li><a href="#comparing-groups" id="toc-comparing-groups" class="nav-link" data-scroll-target="#comparing-groups"><span class="header-section-number">4.2</span> Comparing groups</a>
+  <li><a href="#sec-linear-groups" id="toc-sec-linear-groups" class="nav-link" data-scroll-target="#sec-linear-groups"><span class="header-section-number">4.2</span> Comparing groups</a>
   <ul class="collapse">
-  <li><a href="#students-t-test" id="toc-students-t-test" class="nav-link" data-scroll-target="#students-t-test"><span class="header-section-number">4.2.1</span> Student’s <em>t</em>-test</a></li>
-  <li><a href="#analysis-of-variance-anova" id="toc-analysis-of-variance-anova" class="nav-link" data-scroll-target="#analysis-of-variance-anova"><span class="header-section-number">4.2.2</span> Analysis of variance (ANOVA)</a></li>
+  <li><a href="#sec-linear-groups-studentt" id="toc-sec-linear-groups-studentt" class="nav-link" data-scroll-target="#sec-linear-groups-studentt"><span class="header-section-number">4.2.1</span> Student’s <em>t</em>-test</a></li>
+  <li><a href="#sec-linear-groups-anova" id="toc-sec-linear-groups-anova" class="nav-link" data-scroll-target="#sec-linear-groups-anova"><span class="header-section-number">4.2.2</span> Analysis of variance (ANOVA)</a></li>
   </ul></li>
-  <li><a href="#continuous-patterns" id="toc-continuous-patterns" class="nav-link" data-scroll-target="#continuous-patterns"><span class="header-section-number">4.3</span> Continuous patterns</a>
+  <li><a href="#sec-linear-cont" id="toc-sec-linear-cont" class="nav-link" data-scroll-target="#sec-linear-cont"><span class="header-section-number">4.3</span> Continuous patterns</a>
   <ul class="collapse">
   <li><a href="#linear-regression" id="toc-linear-regression" class="nav-link" data-scroll-target="#linear-regression"><span class="header-section-number">4.3.1</span> Linear regression</a></li>
   <li><a href="#multiple-linear-regression" id="toc-multiple-linear-regression" class="nav-link" data-scroll-target="#multiple-linear-regression"><span class="header-section-number">4.3.2</span> Multiple linear regression</a></li>
   </ul></li>
-  <li><a href="#analysis-of-covariance-ancova" id="toc-analysis-of-covariance-ancova" class="nav-link" data-scroll-target="#analysis-of-covariance-ancova"><span class="header-section-number">4.4</span> Analysis of covariance (ANCOVA)</a>
+  <li><a href="#sec-linear-ancova" id="toc-sec-linear-ancova" class="nav-link" data-scroll-target="#sec-linear-ancova"><span class="header-section-number">4.4</span> Analysis of covariance (ANCOVA)</a>
   <ul class="collapse">
   <li><a href="#ancova-with-main-effects-only" id="toc-ancova-with-main-effects-only" class="nav-link" data-scroll-target="#ancova-with-main-effects-only"><span class="header-section-number">4.4.1</span> ANCOVA with main effects only</a></li>
   <li><a href="#ancova-with-interaction" id="toc-ancova-with-interaction" class="nav-link" data-scroll-target="#ancova-with-interaction"><span class="header-section-number">4.4.2</span> ANCOVA with interaction</a></li>
@@ -371,10 +374,10 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjags)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(R2jags)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<section id="sec-linear" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="sec-linear"><span class="header-section-number">4.1</span> Linear models refresher</h2>
-<section id="sec-linear-matrix" class="level3" data-number="4.1.1">
-<h3 data-number="4.1.1" class="anchored" data-anchor-id="sec-linear-matrix"><span class="header-section-number">4.1.1</span> Enter the matrix</h3>
+<section id="sec-linear-review" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="sec-linear-review"><span class="header-section-number">4.1</span> Linear models refresher</h2>
+<section id="sec-linear-review-matrix" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="sec-linear-review-matrix"><span class="header-section-number">4.1.1</span> Enter the matrix</h3>
 <p><strong>Linear models</strong> are called linear models because they assume <strong>linearity</strong>. This means that a change in some response variable <span class="math inline">\(Y\)</span> is described by an additive change in some predictor <span class="math inline">\(X\)</span> multiplied by a constant called the <strong>slope</strong>. The slope encodes the change in in <span class="math inline">\(Y\)</span> resulting from adding 1 to <span class="math inline">\(X\)</span>.</p>
 <p><span class="math display">\[Y=f\left(X\right)\]</span></p>
 <p><span class="math display">\[f\left(X+1\right)=f\left(X\right)+\beta_1\]</span></p>
@@ -479,8 +482,8 @@ y_n
 </section>
 </section>
 </section>
-<section id="comparing-groups" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="comparing-groups"><span class="header-section-number">4.2</span> Comparing groups</h2>
+<section id="sec-linear-groups" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="sec-linear-groups"><span class="header-section-number">4.2</span> Comparing groups</h2>
 <p>One common class of analysis is to compare the means, or central tendencies, of groups to each other. In frequentist statistics, this is the realm of the <em>t</em>-test and ANOVA. In Bayesian statistics, they are the same thing.</p>
 <p>Here we have options:</p>
 <ul>
@@ -489,8 +492,8 @@ y_n
 <li>Test whether the differences in paired data are different from 0 (or a target value): <strong>paired <em>t</em>-test</strong>.</li>
 <li>Compare the means of two or more sets of numbers: <strong>analysis of variance (ANOVA)</strong>.</li>
 </ul>
-<section id="students-t-test" class="level3" data-number="4.2.1">
-<h3 data-number="4.2.1" class="anchored" data-anchor-id="students-t-test"><span class="header-section-number">4.2.1</span> Student’s <em>t</em>-test</h3>
+<section id="sec-linear-groups-studentt" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="sec-linear-groups-studentt"><span class="header-section-number">4.2.1</span> Student’s <em>t</em>-test</h3>
 <p>We’ll start with one of the most famous linear models, the Student’s <em>t</em>-test. Most people have some vague idea that the <em>t</em>-test compares the means of two groups. However, the “<em>t</em>-test” is actually a family of tests that evaluate null hypotheses regarding sample means. Some of the most common <em>t</em>-tests are shown below:</p>
 <ul>
 <li>One-sample <em>t</em>-test, one-tailed: Tests whether population mean of a single set of values is less than, or greater than, a specified values <span class="math inline">\(\mu_0\)</span>. Only appropriate in when differences in one direction only are of interest.</li>
@@ -658,7 +661,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_ttest_onesample.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 1.64 secs
+ n.sims = 1200 iterations saved. Running time = 1.18 secs
          mu.vect sd.vect   2.5%    25%     50%     75%   97.5%  Rhat n.eff
 mu        10.449   0.712  9.006 10.002  10.457  10.904  11.828 1.002  1200
 sigma      3.118   0.564  2.232  2.741   3.037   3.429   4.470 1.001  1200
@@ -757,7 +760,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_ttest_twosample.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 3.61 secs
+ n.sims = 1200 iterations saved. Running time = 2.42 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 mu[1]     10.287   0.462   9.360   9.987  10.307  10.594  11.209 1.001  1200
 mu[2]     14.936   0.189  14.580  14.814  14.930  15.054  15.313 1.001  1200
@@ -872,7 +875,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_ttest_paired_v1.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 1.69 secs
+ n.sims = 1200 iterations saved. Running time = 1.26 secs
           mu.vect sd.vect   2.5%    25%   50%    75%  97.5%  Rhat n.eff
 dif         3.972   0.096  3.776  3.908  3.97  4.032  4.160 1.000  1200
 sigma.res   0.441   0.077  0.319  0.385  0.43  0.485  0.610 1.000  1200
@@ -906,8 +909,8 @@ mean difference
 </section>
 </section>
 </section>
-<section id="analysis-of-variance-anova" class="level3" data-number="4.2.2">
-<h3 data-number="4.2.2" class="anchored" data-anchor-id="analysis-of-variance-anova"><span class="header-section-number">4.2.2</span> Analysis of variance (ANOVA)</h3>
+<section id="sec-linear-groups-anova" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="sec-linear-groups-anova"><span class="header-section-number">4.2.2</span> Analysis of variance (ANOVA)</h3>
 <p>The analysis of variance (ANOVA) is another case of the linear model. It is usually used to compare the means of 3 or more groups. In this way it can be thought of as an extension of the <em>t</em>-test from 2 groups to &gt;2, but this is incorrect from a frequentist perspective because of how differently the <em>t</em>-test and ANOVA arrive at a <em>p</em>-value. It’s better to think of the frequentist <em>t</em>-test and ANOVA as cousins. Frequentist ANOVA assesses statistical significance using the statistic <em>F</em>, which is related to the amount of variance associated with different sources of variance, relative to the number of degrees of freedom. This is different from t, which is a difference in means scaled by variances and sample sizes, <em>F</em>. Either way, <em>t</em> and <em>F</em> (and all test statistics) are just contrivances to obtain a <em>p</em>-value. In Bayesian statistics, we don’t need that.</p>
 <p>Consider this model:</p>
 <p><span class="math display">\[y_i\sim Normal\left(\mu_{x_i},\ \sigma_{res.}\right)\]</span></p>
@@ -1030,7 +1033,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_anova_oneway.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 12.13 secs
+ n.sims = 1200 iterations saved. Running time = 8 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 mu[1]      1.462   0.025   1.412   1.445   1.462   1.479   1.509 1.002  1100
 mu[2]      4.257   0.065   4.133   4.211   4.256   4.301   4.382 1.002  1200
@@ -1189,7 +1192,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_anova2way_main.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 14.64 secs
+ n.sims = 1200 iterations saved. Running time = 10.08 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      1.481   0.072   1.339   1.433   1.479   1.527   1.632 1.002   750
 beta1[1]   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
@@ -1389,7 +1392,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_anova2way_means.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 10.28 secs
+ n.sims = 1200 iterations saved. Running time = 6.36 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 mu[1,1]   16.416   1.005  14.441  15.734  16.450  17.110  18.233 1.004   550
 mu[2,1]   30.378   0.994  28.510  29.673  30.373  31.028  32.372 1.004   680
@@ -1438,8 +1441,8 @@ DIC is an estimate of expected predictive error (lower deviance is better).</cod
 </section>
 </section>
 </section>
-<section id="continuous-patterns" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="continuous-patterns"><span class="header-section-number">4.3</span> Continuous patterns</h2>
+<section id="sec-linear-cont" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="sec-linear-cont"><span class="header-section-number">4.3</span> Continuous patterns</h2>
 <section id="linear-regression" class="level3" data-number="4.3.1">
 <h3 data-number="4.3.1" class="anchored" data-anchor-id="linear-regression"><span class="header-section-number">4.3.1</span> Linear regression</h3>
 <p>One of the most well-known of all statistical analyses, the linear regression model describes a pattern where some response variable <span class="math inline">\(y\)</span> varies as a linear function of a predictor variable <span class="math inline">\(x\)</span>. The equation is:</p>
@@ -1540,7 +1543,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_linreg_1x.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 5.56 secs
+ n.sims = 1200 iterations saved. Running time = 3.94 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      3.854   1.313   1.312   3.002   3.863   4.724   6.458 1.001  1200
 beta1      1.791   0.096   1.602   1.725   1.790   1.855   1.984 1.001  1200
@@ -1803,7 +1806,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_linreg_2x.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 10.23 secs
+ n.sims = 1200 iterations saved. Running time = 7.43 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      3.622   1.006   1.547   2.969   3.620   4.324   5.548 1.003   660
 beta1      1.786   0.060   1.675   1.745   1.785   1.828   1.907 1.002   950
@@ -1895,8 +1898,8 @@ DIC is an estimate of expected predictive error (lower deviance is better).</cod
 </div>
 </section>
 </section>
-<section id="analysis-of-covariance-ancova" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="analysis-of-covariance-ancova"><span class="header-section-number">4.4</span> Analysis of covariance (ANCOVA)</h2>
+<section id="sec-linear-ancova" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="sec-linear-ancova"><span class="header-section-number">4.4</span> Analysis of covariance (ANCOVA)</h2>
 <p>In <strong>analysis of covariance (ANCOVA)</strong>, a continuous response variable is modeled using a continuous explanatory variable and a factor (grouping variable). You’ve probably heard of ANCOVA before without realizing it. When scientific studies are described on the news, the reporter might say that the researchers “controlled for” the effects of additional variables. That often means that the researchers used a type of ANCOVA in their analysis.</p>
 <p>The figure below shows two examples of what ANCOVA looks like in practice. Both types of ANCOVA are extremely common in biology, so we’ll fit both (although, as we’ll see, they can be the same model in JAGS).</p>
 <div id="fig-ancova" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-cap="Left: ANCOVA with main effects only, where group membership (a factor variable) affects the intercept of the relationship between Y and X. Right: ANCOVA with interaction effects, where group membership can affect the intercept and the slope (effect of X on Y).">
@@ -1913,9 +1916,7 @@ Figure&nbsp;4.3: Illustration of ANCOVA without an interaction (different interc
 <li>Left: y increases as a linear function of x, and values in group 2 tend to be larger than values in group 1. Groups 1 and 2 share the same slope, so x has the same effect on y in both groups.</li>
 <li>Right: y varies as a function of x, and the effect of x on y is different in each group (i.e., the slopes are different). This is “interaction effects” ANCOVA, or “ANCOVA with interaction”. An “interaction” means that the effect of one variable affects the effect of another variable.</li>
 </ul>
-<section id="figure" class="level6">
-<h6 class="anchored" data-anchor-id="figure">figure</h6>
-</section>
+<p><strong><em>Put figure here</em></strong></p>
 <section id="ancova-with-main-effects-only" class="level3" data-number="4.4.1">
 <h3 data-number="4.4.1" class="anchored" data-anchor-id="ancova-with-main-effects-only"><span class="header-section-number">4.4.1</span> ANCOVA with main effects only</h3>
 <p>As always, we’ll simulate a dataset and then analyze it. Before that we need to think about how we want to write the ANCOVA model. The traditional way is the effects parameterization:</p>
@@ -2050,7 +2051,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_ancova_main_1x1f.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 15.2 secs
+ n.sims = 1200 iterations saved. Running time = 10.42 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0[1] -10.126   0.604 -11.292 -10.553 -10.107  -9.728  -8.898 1.002   780
 beta0[2]  -0.147   0.585  -1.268  -0.556  -0.164   0.258   1.029 1.003   680
@@ -2261,7 +2262,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_ancova_inter_1x1f.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 29.85 secs
+ n.sims = 1200 iterations saved. Running time = 21.7 secs
           mu.vect sd.vect     2.5%      25%      50%      75%    97.5%  Rhat
 beta0[1]    5.203   0.639    3.968    4.747    5.203    5.634    6.451 1.001
 beta0[2]   10.045   0.670    8.731    9.600   10.033   10.485   11.448 1.002
@@ -2456,7 +2457,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_loglinear.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 16.11 secs
+ n.sims = 1200 iterations saved. Running time = 10.79 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      0.397   0.112   0.178   0.325   0.398   0.469   0.624 1.005   390
 beta1      1.060   0.042   0.980   1.034   1.060   1.089   1.141 1.003   610
@@ -2720,7 +2721,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_power_law.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 11.25 secs
+ n.sims = 1200 iterations saved. Running time = 7.31 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 A          2.248   0.558   1.325   1.852   2.169   2.580   3.473 1.000  1200
 B          1.439   0.100   1.243   1.374   1.439   1.509   1.641 1.000  1200
@@ -2830,7 +2831,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_power_law_v2.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 3.77 secs
+ n.sims = 1200 iterations saved. Running time = 2.64 secs
          mu.vect sd.vect   2.5%    25%    50%    75%  97.5%  Rhat n.eff
 A          2.263   0.544  1.380  1.885  2.213  2.551  3.543 1.001  1200
 B          1.437   0.096  1.244  1.374  1.436  1.500  1.618 1.000  1200

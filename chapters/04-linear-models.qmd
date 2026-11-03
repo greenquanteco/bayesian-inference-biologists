@@ -24,9 +24,9 @@ library(rjags)
 library(R2jags)
 ```
 
-## Linear models refresher  {#sec-linear}
+## Linear models refresher  {#sec-linear-review}
 
-### Enter the matrix  {#sec-linear-matrix}
+### Enter the matrix  {#sec-linear-review-matrix}
 
 **Linear models** are called linear models because they assume **linearity**. This means that a change in some response variable $Y$ is described by an additive change in some predictor $X$ multiplied by a constant called the **slope**. The slope encodes the change in in $Y$ resulting from adding 1 to $X$.
 
@@ -203,7 +203,7 @@ Linear models assume that predictor values are precisely known (“fixed”) and
 
 I’ve mentioned this assumption before, but it bears repeating because it is so often violated in biology. The assumption of independently and identically distributed (i.i.d.) errors is ***very*** important. It means that the residual, or predictive error, for each observation depends only on the parameters of the residual distribution and not on predictor variables or other observations. When the assumption of independence is violated, the degrees of freedom in the analysis is artificially inflated because the number of unique pieces of information is smaller than the nominal number of samples. In frequentist analyses, this deflates the P-value and increases the chance of a type I error (false positive). In Bayesian analyses, this tends to reduce the width of the credible intervals and bias parameter estimates. There are methods to deal with errors that are not independent, but linear models are not among them.
 
-## Comparing groups
+## Comparing groups {#sec-linear-groups}
 
 One common class of analysis is to compare the means, or central tendencies, of groups to each other. In frequentist statistics, this is the realm of the *t*-test and ANOVA. In Bayesian statistics, they are the same thing.
 
@@ -214,7 +214,7 @@ Here we have options:
 - Test whether the differences in paired data are different from 0 (or a target value): **paired *t*-test**.
 - Compare the means of two or more sets of numbers: **analysis of variance (ANOVA)**.
 
-### Student's *t*-test
+### Student's *t*-test {#sec-linear-groups-studentt}
 
 We’ll start with one of the most famous linear models, the Student’s *t*-test. Most people have some vague idea that the *t*-test compares the means of two groups. However, the “*t*-test” is actually a family of tests that evaluate null hypotheses regarding sample means. Some of the most common *t*-tests are shown below:
 
@@ -517,7 +517,7 @@ The result is spot-on what is estimated by the base R `t.test()` function:
 t.test(y1, y2, paired=TRUE)
 ```
 
-### Analysis of variance (ANOVA)
+### Analysis of variance (ANOVA) {#sec-linear-groups-anova}
 
 The analysis of variance (ANOVA) is another case of the linear model. It is usually used to compare the means of 3 or more groups. In this way it can be thought of as an extension of the *t*-test from 2 groups to >2, but this is incorrect from a frequentist perspective because of how differently the *t*-test and ANOVA arrive at a *p*-value. It’s better to think of the frequentist *t*-test and ANOVA as cousins. Frequentist ANOVA assesses statistical significance using the statistic *F*, which is related to the amount of variance associated with different sources of variance, relative to the number of degrees of freedom. This is different from t, which is a difference in means scaled by variances and sample sizes, *F*. Either way, *t* and *F* (and all test statistics) are just contrivances to obtain a *p*-value. In Bayesian statistics, we don't need that.
 
@@ -926,7 +926,7 @@ segments(10, 1:3+0.1, 50, 1:3+0.1, lty=2)
 ```
 
 
-## Continuous patterns
+## Continuous patterns {#sec-linear-cont}
 
 ### Linear regression
 
@@ -1337,7 +1337,7 @@ points(pr2$x2, pr2$mn, type="l", lwd=2)
 points(dx$x2, dx$y, pch=16)
 ```
 
-## Analysis of covariance (ANCOVA)
+## Analysis of covariance (ANCOVA) {#sec-linear-ancova}
 
 In **analysis of covariance (ANCOVA)**, a continuous response variable is modeled using a continuous explanatory variable and a factor (grouping variable). You’ve probably heard of ANCOVA before without realizing it. When scientific studies are described on the news, the reporter might say that the researchers “controlled for” the effects of additional variables. That often means that the researchers used a type of ANCOVA in their analysis.
 
@@ -1348,9 +1348,10 @@ The figure below shows two examples of what ANCOVA looks like in practice. Both 
 - Left: y increases as a linear function of x, and values in group 2 tend to be larger than values in group 1. Groups 1 and 2 share the same slope, so x has the same effect on y in both groups.
 - Right: y varies as a function of x, and the effect of x on y is different in each group (i.e., the slopes are different). This is “interaction effects” ANCOVA, or “ANCOVA with interaction”. An “interaction” means that the effect of one variable affects the effect of another variable.
 
-###### figure
+***Put figure here***
 
 ### ANCOVA with main effects only
+
 As always, we’ll simulate a dataset and then analyze it. Before that we need to think about how we want to write the ANCOVA model. The traditional way is the effects parameterization:
 
 $$y_i=Normal\left(\eta_i,\sigma_{res}\right)$$

@@ -300,9 +300,9 @@ legend("topleft",
 
 ```
 
-### Example with brms {#sec-glm1-pois-brms}
+#### Bayesian analysis with brms {#sec-glm1-pois-brms}
 
-JAGS is a powerful engine for fitting models, and I love JAGS, but it is not the only option. Let's use a newer package, `brms`. It has the advantage of being able to fit models using a formula interface similar to the standard R `lm()` or `glm()` functions. This has the side effect of being able to fit models without a lot of the programming overhead needed for JAGS.
+JAGS is a powerful engine for fitting models, and I love JAGS (and its spiritual predecessor, WinBUGS), but it is not the only option. Let's use a newer package, `brms`. It has the advantage of being able to fit models using a formula interface similar to the standard R `lm()` or `glm()` functions. This has the side effect of being able to fit models without a lot of the programming overhead needed for JAGS.
 
 You will need the package `brms`. Load it and set the backend to use stan as its engine. Using the data frame `dx` from earlier:
 
@@ -312,8 +312,42 @@ options(brms.backend = "cmdstanr")
 ```
 
 ```{r}
+
+# random number seed for reproducibility
+set.seed(123)
+
+# sample size
+n <- 100
+
+# coefficients
+beta0 <- 1.5
+beta1 <- 0.2
+
+# x values
+x <- runif(n, 0, 10)
+
+# linear predictor
+eta <- beta0 + beta1 * x
+
+# inverse link function
+lambda <- exp(eta)
+
+# response variable
+y <- rpois(n, lambda)
+
+# put everything in a data frame
+dx <- data.frame(x=x,y=y)
+
+# make the plot
+par(mar=c(5.1, 5.1, 1.1, 1.1))
+plot(x,y)
+```
+
+Now let's fit the model. This step might take a minute or two as the stan model compiles in the background...but to be fair, it would have taken longer than that to write all the JAGS code!
+
+```{r}
 # Fit Bayesian Poisson GLM
-mod <- brm(
+mod03 <- brm(
   y ~ x,
   data = dx,
   family = poisson(link = "log"),
@@ -332,34 +366,40 @@ The first time you run the model, R will have to compile the model into stan. Th
 
 ```{r}
 # see the posterior summary
-summary(mod)
+summary(mod03)
 ```
 
-And plot the results.
+And plot the results. The default `plot` method for a `brm` output will include a histogram of the posteriors and a trace plot for each parameter.
 
 ```{r}
 #| fig-keep: last
-plot(mod)
+plot(mod03)
 ```
 
 Getting predicted values in `brms` is easier than in JAGS and more like a `lm` or `glm` fit.
 
 ```{r}
+# make a data frame with a range of 
+# x values covering the observed x
 px <- seq(min(dx$x), max(dx$x), length=100)
 prx <- data.frame(x=px)
-pred <- fitted(mod, newdata=prx)
-str(pred)
+
+# obtain fitted values with fitted
+pred <- fitted(mod03, newdata=prx)
 ```
 
-This returns a matrix with four columns: the posterior mean, posterior SD, and the 95% credible interval limits. Combine these with the new data frame.
+This returns object `pred`, a matrix with four columns: the posterior mean, posterior SD, and the 95% credible interval limits. Combine these with the new data frame.
 
 ```{r}
 prx <- cbind(prx, pred)
 ```
 
-Now we can use base R graphics as usual:
+Now we can use base R graphics to construct our figure: 
 
 ```{r}
+#| fig-width: 8
+#| fig-height: 6
+par(mar=c(4,4,1,1))
 plot(dx$x, dx$y, pch=19)
 lines(prx$x, prx$Estimate, lwd=4, col="red")
 lines(prx$x, prx$Q2.5, lwd=2, lty=2, col="red")
@@ -369,7 +409,6 @@ lines(prx$x, prx$Q97.5, lwd=2, lty=2, col="red")
 The difference here can be a bit confusing. In `brms`, `fitted()` returns the posterior expected response and its 95% credible interval. This reflects uncertainty in the estimated mean response due to uncertainty in the model parameters. This is what we usually get from `predict.lm()` or `predict.glm()` with `se.fit=TRUE, interval="confidence"`. 
 
 In `brms`, `predict()` returns the posterior predictive distribution of a new observation and its 95% posterior predictive interval. This includes both parameter uncertainty and residual/sampling variation. This is equivalent to `predict.lm()` or `predict.glm()` with `se.fit=TRUE, interval="prediction"`.
-
 
 ### A note on numeracy (number sense) {#sec-glm1-pois-num}
 

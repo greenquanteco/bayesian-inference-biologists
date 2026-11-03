@@ -250,6 +250,10 @@
 \usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
+% fallback for those not using the hyperref driver hyperxmp:
+\makeatletter
+\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
+\makeatother
 \hypersetup{
   pdftitle={Bayesian Inference for Biologists},
   pdfauthor={Nick Green},
@@ -263,7 +267,7 @@
 
 \title{Bayesian Inference for Biologists}
 \author{Nick Green}
-\date{October 15, 2026}
+\date{November 2, 2026}
 \begin{document}
 \maketitle
 
@@ -2981,9 +2985,9 @@ For this module you will need:
 \end{Highlighting}
 \end{Shaded}
 
-\section{Linear models refresher}\label{sec-linear}
+\section{Linear models refresher}\label{sec-linear-review}
 
-\subsection{Enter the matrix}\label{sec-linear-matrix}
+\subsection{Enter the matrix}\label{sec-linear-review-matrix}
 
 \textbf{Linear models} are called linear models because they assume
 \textbf{linearity}. This means that a change in some response variable
@@ -3217,7 +3221,7 @@ reduce the width of the credible intervals and bias parameter estimates.
 There are methods to deal with errors that are not independent, but
 linear models are not among them.
 
-\section{Comparing groups}\label{comparing-groups}
+\section{Comparing groups}\label{sec-linear-groups}
 
 One common class of analysis is to compare the means, or central
 tendencies, of groups to each other. In frequentist statistics, this is
@@ -3243,7 +3247,7 @@ Here we have options:
 \end{itemize}
 
 \subsection{\texorpdfstring{Student's
-\emph{t}-test}{Student's t-test}}\label{students-t-test}
+\emph{t}-test}{Student's t-test}}\label{sec-linear-groups-studentt}
 
 We'll start with one of the most famous linear models, the Student's
 \emph{t}-test. Most people have some vague idea that the \emph{t}-test
@@ -3497,7 +3501,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_ttest_onesample.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 1.66 secs
+ n.sims = 1200 iterations saved. Running time = 1.22 secs
          mu.vect sd.vect   2.5%    25%     50%     75%   97.5%  Rhat n.eff
 mu        10.449   0.712  9.006 10.002  10.457  10.904  11.828 1.002  1200
 sigma      3.118   0.564  2.232  2.741   3.037   3.429   4.470 1.001  1200
@@ -3622,7 +3626,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_ttest_twosample.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 3.59 secs
+ n.sims = 1200 iterations saved. Running time = 2.5 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 mu[1]     10.287   0.462   9.360   9.987  10.307  10.594  11.209 1.001  1200
 mu[2]     14.936   0.189  14.580  14.814  14.930  15.054  15.313 1.001  1200
@@ -3780,7 +3784,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_ttest_paired_v1.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 1.69 secs
+ n.sims = 1200 iterations saved. Running time = 1.24 secs
           mu.vect sd.vect   2.5%    25%   50%    75%  97.5%  Rhat n.eff
 dif         3.972   0.096  3.776  3.908  3.97  4.032  4.160 1.000  1200
 sigma.res   0.441   0.077  0.319  0.385  0.43  0.485  0.610 1.000  1200
@@ -3817,8 +3821,7 @@ mean difference
       -3.974371 
 \end{verbatim}
 
-\subsection{Analysis of variance
-(ANOVA)}\label{analysis-of-variance-anova}
+\subsection{Analysis of variance (ANOVA)}\label{sec-linear-groups-anova}
 
 The analysis of variance (ANOVA) is another case of the linear model. It
 is usually used to compare the means of 3 or more groups. In this way it
@@ -4035,7 +4038,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_anova_oneway.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 12.11 secs
+ n.sims = 1200 iterations saved. Running time = 8.14 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 mu[1]      1.462   0.025   1.412   1.445   1.462   1.479   1.509 1.002  1100
 mu[2]      4.257   0.065   4.133   4.211   4.256   4.301   4.382 1.002  1200
@@ -4240,7 +4243,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_anova2way_main.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 14.72 secs
+ n.sims = 1200 iterations saved. Running time = 10.05 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      1.481   0.072   1.339   1.433   1.479   1.527   1.632 1.002   750
 beta1[1]   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
@@ -4508,7 +4511,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_anova2way_means.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 9.81 secs
+ n.sims = 1200 iterations saved. Running time = 6.77 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 mu[1,1]   16.416   1.005  14.441  15.734  16.450  17.110  18.233 1.004   550
 mu[2,1]   30.378   0.994  28.510  29.673  30.373  31.028  32.372 1.004   680
@@ -4558,7 +4561,7 @@ posteriors. Below is one way to do it:
 
 \pandocbounded{\includegraphics[keepaspectratio]{chapters/04-linear-models_files/figure-pdf/unnamed-chunk-15-1.pdf}}
 
-\section{Continuous patterns}\label{continuous-patterns}
+\section{Continuous patterns}\label{sec-linear-cont}
 
 \subsection{Linear regression}\label{linear-regression}
 
@@ -4703,7 +4706,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_linreg_1x.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 5.5 secs
+ n.sims = 1200 iterations saved. Running time = 4 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      3.854   1.313   1.312   3.002   3.863   4.724   6.458 1.001  1200
 beta1      1.791   0.096   1.602   1.725   1.790   1.855   1.984 1.001  1200
@@ -5047,7 +5050,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_linreg_2x.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 10.24 secs
+ n.sims = 1200 iterations saved. Running time = 7.22 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      3.622   1.006   1.547   2.969   3.620   4.324   5.548 1.003   660
 beta1      1.786   0.060   1.675   1.745   1.785   1.828   1.907 1.002   950
@@ -5150,8 +5153,7 @@ should state explicitly that this is how you generated predictions.
 
 \pandocbounded{\includegraphics[keepaspectratio]{chapters/04-linear-models_files/figure-pdf/unnamed-chunk-24-1.pdf}}
 
-\section{Analysis of covariance
-(ANCOVA)}\label{analysis-of-covariance-ancova}
+\section{Analysis of covariance (ANCOVA)}\label{sec-linear-ancova}
 
 In \textbf{analysis of covariance (ANCOVA)}, a continuous response
 variable is modeled using a continuous explanatory variable and a factor
@@ -5193,7 +5195,7 @@ intercepts and slopes.)}
   effect of another variable.
 \end{itemize}
 
-\subparagraph{figure}\label{figure}
+\textbf{\emph{Put figure here}}
 
 \subsection{ANCOVA with main effects
 only}\label{ancova-with-main-effects-only}
@@ -5368,7 +5370,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_ancova_main_1x1f.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 15.13 secs
+ n.sims = 1200 iterations saved. Running time = 10.67 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0[1] -10.126   0.604 -11.292 -10.553 -10.107  -9.728  -8.898 1.002   780
 beta0[2]  -0.147   0.585  -1.268  -0.556  -0.164   0.258   1.029 1.003   680
@@ -5603,7 +5605,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_ancova_inter_1x1f.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 29.86 secs
+ n.sims = 1200 iterations saved. Running time = 22.18 secs
           mu.vect sd.vect     2.5%      25%      50%      75%    97.5%  Rhat
 beta0[1]    5.203   0.639    3.968    4.747    5.203    5.634    6.451 1.001
 beta0[2]   10.045   0.670    8.731    9.600   10.033   10.485   11.448 1.002
@@ -5832,7 +5834,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_loglinear.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 16.16 secs
+ n.sims = 1200 iterations saved. Running time = 10.72 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      0.397   0.112   0.178   0.325   0.398   0.469   0.624 1.005   390
 beta1      1.060   0.042   0.980   1.034   1.060   1.089   1.141 1.003   610
@@ -6181,7 +6183,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_power_law.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 11.11 secs
+ n.sims = 1200 iterations saved. Running time = 7.7 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 A          2.248   0.558   1.325   1.852   2.169   2.580   3.473 1.000  1200
 B          1.439   0.100   1.243   1.374   1.439   1.509   1.641 1.000  1200
@@ -6311,7 +6313,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_power_law_v2.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 3.69 secs
+ n.sims = 1200 iterations saved. Running time = 2.7 secs
          mu.vect sd.vect   2.5%    25%    50%    75%  97.5%  Rhat n.eff
 A          2.263   0.544  1.380  1.885  2.213  2.551  3.543 1.001  1200
 B          1.437   0.096  1.244  1.374  1.436  1.500  1.618 1.000  1200
@@ -6551,7 +6553,7 @@ Here we use matrix shorthand for the linear predictor to indicate that
 \(\boldsymbol{\beta}\) is a vector of coefficients (\(\beta_0\),
 \(\beta_1\), \(\beta_2\), and so on), and \(\mathbf{x}\) is the design
 matrix that contains the predictor variables (\(x_1\), \(x_2\), and so
-on; see Section~\ref{sec-linear-matrix}).
+on; see \textbf{?@sec-linear-matrix}).
 
 A GLM is written as:
 
@@ -6842,7 +6844,7 @@ And inspect the results:
 \begin{verbatim}
 Inference for Bugs model at "jags-glm-poisson.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 58.16 secs
+ n.sims = 1200 iterations saved. Running time = 41.21 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      1.456    0.07   1.327   1.410   1.455   1.500   1.596 1.001  1200
 beta1      0.211    0.01   0.192   0.205   0.212   0.217   0.230 1.000  1200
@@ -6966,6 +6968,257 @@ A CRI is often similar in width to a CI, but they are not the same.
 \end{Shaded}
 
 \pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-14-1.pdf}}
+
+\subsubsection{Bayesian analysis with brms}\label{sec-glm1-pois-brms}
+
+JAGS is a powerful engine for fitting models, and I love JAGS (and its
+spiritual predecessor, WinBUGS), but it is not the only option. Let's
+use a newer package, \texttt{brms}. It has the advantage of being able
+to fit models using a formula interface similar to the standard R
+\texttt{lm()} or \texttt{glm()} functions. This has the side effect of
+being able to fit models without a lot of the programming overhead
+needed for JAGS.
+
+You will need the package \texttt{brms}. Load it and set the backend to
+use stan as its engine. Using the data frame \texttt{dx} from earlier:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(brms)}
+\FunctionTok{options}\NormalTok{(}\AttributeTok{brms.backend =} \StringTok{"cmdstanr"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# random number seed for reproducibility}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+
+\CommentTok{\# sample size}
+\NormalTok{n }\OtherTok{\textless{}{-}} \DecValTok{100}
+
+\CommentTok{\# coefficients}
+\NormalTok{beta0 }\OtherTok{\textless{}{-}} \FloatTok{1.5}
+\NormalTok{beta1 }\OtherTok{\textless{}{-}} \FloatTok{0.2}
+
+\CommentTok{\# x values}
+\NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{runif}\NormalTok{(n, }\DecValTok{0}\NormalTok{, }\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# linear predictor}
+\NormalTok{eta }\OtherTok{\textless{}{-}}\NormalTok{ beta0 }\SpecialCharTok{+}\NormalTok{ beta1 }\SpecialCharTok{*}\NormalTok{ x}
+
+\CommentTok{\# inverse link function}
+\NormalTok{lambda }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(eta)}
+
+\CommentTok{\# response variable}
+\NormalTok{y }\OtherTok{\textless{}{-}} \FunctionTok{rpois}\NormalTok{(n, lambda)}
+
+\CommentTok{\# put everything in a data frame}
+\NormalTok{dx }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x=}\NormalTok{x,}\AttributeTok{y=}\NormalTok{y)}
+
+\CommentTok{\# make the plot}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\FloatTok{5.1}\NormalTok{, }\FloatTok{5.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{, }\FloatTok{1.1}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(x,y)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-16-1.pdf}}
+
+Now let's fit the model. This step might take a minute or two as the
+stan model compiles in the background\ldots but to be fair, it would
+have taken longer than that to write all the JAGS code!
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Fit Bayesian Poisson GLM}
+\NormalTok{mod03 }\OtherTok{\textless{}{-}} \FunctionTok{brm}\NormalTok{(}
+\NormalTok{  y }\SpecialCharTok{\textasciitilde{}}\NormalTok{ x,}
+  \AttributeTok{data =}\NormalTok{ dx,}
+  \AttributeTok{family =} \FunctionTok{poisson}\NormalTok{(}\AttributeTok{link =} \StringTok{"log"}\NormalTok{),}
+  \AttributeTok{prior =} \FunctionTok{c}\NormalTok{(}
+    \FunctionTok{prior}\NormalTok{(}\FunctionTok{normal}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{2}\NormalTok{), }\AttributeTok{class =} \StringTok{"Intercept"}\NormalTok{),}
+    \FunctionTok{prior}\NormalTok{(}\FunctionTok{normal}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{), }\AttributeTok{class =} \StringTok{"b"}\NormalTok{)}
+\NormalTok{  ),}
+  \AttributeTok{chains =} \DecValTok{3}\NormalTok{,}
+  \AttributeTok{iter =} \DecValTok{2000}\NormalTok{,}
+  \AttributeTok{warmup =} \DecValTok{1000}\NormalTok{,}
+  \AttributeTok{seed =} \DecValTok{123}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Running MCMC with 3 sequential chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 1 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 1 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 1 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 1 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 1 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 1 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 1 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 0.2 seconds.
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 2 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 2 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 2 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 2 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 2 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 2 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 2 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 2 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 finished in 0.2 seconds.
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 3 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 3 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 3 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 3 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 3 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 3 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 3 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 3 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 3 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 3 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 3 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 3 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 3 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 0.2 seconds.
+
+All 3 chains finished successfully.
+Mean chain execution time: 0.2 seconds.
+Total execution time: 1.0 seconds.
+\end{verbatim}
+
+The first time you run the model, R will have to compile the model into
+stan. This might take a few minutes. After compilation, the MCMC
+sampling begins. If everything works, the model object will be returned
+and you can inspect the output.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# see the posterior summary}
+\FunctionTok{summary}\NormalTok{(mod03)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ Family: poisson 
+  Links: mu = log 
+Formula: y ~ x 
+   Data: dx (Number of observations: 100) 
+  Draws: 3 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 3000
+
+Regression Coefficients:
+          Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept     1.46      0.07     1.32     1.60 1.00     1071     1612
+x             0.21      0.01     0.19     0.23 1.00     1305     1787
+
+Draws were sampled using sample(hmc). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).
+\end{verbatim}
+
+And plot the results. The default \texttt{plot} method for a
+\texttt{brm} output will include a histogram of the posteriors and a
+trace plot for each parameter.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(mod03)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-19-1.pdf}}
+
+Getting predicted values in \texttt{brms} is easier than in JAGS and
+more like a \texttt{lm} or \texttt{glm} fit.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# make a data frame with a range of }
+\CommentTok{\# x values covering the observed x}
+\NormalTok{px }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x), }\FunctionTok{max}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x), }\AttributeTok{length=}\DecValTok{100}\NormalTok{)}
+\NormalTok{prx }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{x=}\NormalTok{px)}
+
+\CommentTok{\# obtain fitted values with fitted}
+\NormalTok{pred }\OtherTok{\textless{}{-}} \FunctionTok{fitted}\NormalTok{(mod03, }\AttributeTok{newdata=}\NormalTok{prx)}
+\end{Highlighting}
+\end{Shaded}
+
+This returns object \texttt{pred}, a matrix with four columns: the
+posterior mean, posterior SD, and the 95\% credible interval limits.
+Combine these with the new data frame.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{prx }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(prx, pred)}
+\end{Highlighting}
+\end{Shaded}
+
+Now we can use base R graphics to construct our figure:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{x, dx}\SpecialCharTok{$}\NormalTok{y, }\AttributeTok{pch=}\DecValTok{19}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{x, prx}\SpecialCharTok{$}\NormalTok{Estimate, }\AttributeTok{lwd=}\DecValTok{4}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{x, prx}\SpecialCharTok{$}\NormalTok{Q2}\FloatTok{.5}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{, }\AttributeTok{lty=}\DecValTok{2}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(prx}\SpecialCharTok{$}\NormalTok{x, prx}\SpecialCharTok{$}\NormalTok{Q97}\FloatTok{.5}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{2}\NormalTok{, }\AttributeTok{lty=}\DecValTok{2}\NormalTok{, }\AttributeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-22-1.pdf}}
+
+The difference here can be a bit confusing. In \texttt{brms},
+\texttt{fitted()} returns the posterior expected response and its 95\%
+credible interval. This reflects uncertainty in the estimated mean
+response due to uncertainty in the model parameters. This is what we
+usually get from \texttt{predict.lm()} or \texttt{predict.glm()} with
+\texttt{se.fit=TRUE,\ interval="confidence"}.
+
+In \texttt{brms}, \texttt{predict()} returns the posterior predictive
+distribution of a new observation and its 95\% posterior predictive
+interval. This includes both parameter uncertainty and residual/sampling
+variation. This is equivalent to \texttt{predict.lm()} or
+\texttt{predict.glm()} with
+\texttt{se.fit=TRUE,\ interval="prediction"}.
 
 \subsection{A note on numeracy (number sense)}\label{sec-glm1-pois-num}
 
@@ -7181,7 +7434,7 @@ Let's simulate a dataset and analyze it.
 \end{Highlighting}
 \end{Shaded}
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-16-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-24-1.pdf}}
 
 \subsubsection{Frequentist analysis}\label{sec-glm1-nb-ex-freq}
 
@@ -7360,7 +7613,7 @@ And inspect the results:
 \begin{verbatim}
 Inference for Bugs model at "jags-glm-negbin-v1.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 109.52 secs
+ n.sims = 1200 iterations saved. Running time = 91.39 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      1.463   0.079   1.310   1.405   1.463   1.517   1.611 1.004   490
 beta1      0.210   0.012   0.188   0.202   0.210   0.218   0.234 1.003   680
@@ -7440,7 +7693,7 @@ And we see essentially the same estimates for \texttt{beta0},
 \begin{verbatim}
 Inference for Bugs model at "jags-glm-negbin-v2.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 71.94 secs
+ n.sims = 1200 iterations saved. Running time = 55.48 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      1.456   0.078   1.307   1.404   1.455   1.510   1.607 1.001  1200
 beta1      0.211   0.011   0.189   0.204   0.211   0.219   0.234 1.001  1100
@@ -7508,7 +7761,7 @@ Now we can construct our plot:
 \end{Highlighting}
 \end{Shaded}
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-30-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/05-glm-01-counts_files/figure-pdf/unnamed-chunk-38-1.pdf}}
 
 \section{Counts with zero-inflation}\label{sec-glm1-zi}
 
