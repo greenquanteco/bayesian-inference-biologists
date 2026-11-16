@@ -320,8 +320,8 @@ window.Quarto = {
   </ul></li>
   <li><a href="#sec-linear-ancova" id="toc-sec-linear-ancova" class="nav-link" data-scroll-target="#sec-linear-ancova"><span class="header-section-number">4.4</span> Analysis of covariance (ANCOVA)</a>
   <ul class="collapse">
-  <li><a href="#ancova-with-main-effects-only" id="toc-ancova-with-main-effects-only" class="nav-link" data-scroll-target="#ancova-with-main-effects-only"><span class="header-section-number">4.4.1</span> ANCOVA with main effects only</a></li>
-  <li><a href="#ancova-with-interaction" id="toc-ancova-with-interaction" class="nav-link" data-scroll-target="#ancova-with-interaction"><span class="header-section-number">4.4.2</span> ANCOVA with interaction</a></li>
+  <li><a href="#sec-linear-ancova-main" id="toc-sec-linear-ancova-main" class="nav-link" data-scroll-target="#sec-linear-ancova-main"><span class="header-section-number">4.4.1</span> ANCOVA with main effects only</a></li>
+  <li><a href="#sec-linear-ancova-inter" id="toc-sec-linear-ancova-inter" class="nav-link" data-scroll-target="#sec-linear-ancova-inter"><span class="header-section-number">4.4.2</span> ANCOVA with interaction</a></li>
   </ul></li>
   <li><a href="#linear-with-extra-steps" id="toc-linear-with-extra-steps" class="nav-link" data-scroll-target="#linear-with-extra-steps"><span class="header-section-number">4.5</span> Linear with extra steps</a>
   <ul class="collapse">
@@ -1392,7 +1392,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags_anova2way_means.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 6.36 secs
+ n.sims = 1200 iterations saved. Running time = 9.46 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 mu[1,1]   16.416   1.005  14.441  15.734  16.450  17.110  18.233 1.004   550
 mu[2,1]   30.378   0.994  28.510  29.673  30.373  31.028  32.372 1.004   680
@@ -1917,8 +1917,8 @@ Figure&nbsp;4.3: Illustration of ANCOVA without an interaction (different interc
 <li>Right: y varies as a function of x, and the effect of x on y is different in each group (i.e., the slopes are different). This is “interaction effects” ANCOVA, or “ANCOVA with interaction”. An “interaction” means that the effect of one variable affects the effect of another variable.</li>
 </ul>
 <p><strong><em>Put figure here</em></strong></p>
-<section id="ancova-with-main-effects-only" class="level3" data-number="4.4.1">
-<h3 data-number="4.4.1" class="anchored" data-anchor-id="ancova-with-main-effects-only"><span class="header-section-number">4.4.1</span> ANCOVA with main effects only</h3>
+<section id="sec-linear-ancova-main" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="sec-linear-ancova-main"><span class="header-section-number">4.4.1</span> ANCOVA with main effects only</h3>
 <p>As always, we’ll simulate a dataset and then analyze it. Before that we need to think about how we want to write the ANCOVA model. The traditional way is the effects parameterization:</p>
 <p><span class="math display">\[y_i=Normal\left(\eta_i,\sigma_{res}\right)\]</span></p>
 <p><span class="math display">\[\eta_i=\beta_0+\beta_1{x1}_i+\beta_2{x2}_i\]</span></p>
@@ -2136,8 +2136,8 @@ DIC is an estimate of expected predictive error (lower deviance is better).</cod
 </div>
 </section>
 </section>
-<section id="ancova-with-interaction" class="level3" data-number="4.4.2">
-<h3 data-number="4.4.2" class="anchored" data-anchor-id="ancova-with-interaction"><span class="header-section-number">4.4.2</span> ANCOVA with interaction</h3>
+<section id="sec-linear-ancova-inter" class="level3" data-number="4.4.2">
+<h3 data-number="4.4.2" class="anchored" data-anchor-id="sec-linear-ancova-inter"><span class="header-section-number">4.4.2</span> ANCOVA with interaction</h3>
 <p>The ANCOVA with interaction effect model will be constructed by combining bits of the main effects ANCOVA model with the “parameters as arrays” trick we learned in the ANOVA with interaction model. The key is that each group has its own slope and intercept.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate some data</span></span>

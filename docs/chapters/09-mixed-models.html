@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -77,6 +112,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -233,8 +297,27 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-mixed-intro" id="toc-sec-mixed-intro" class="nav-link active" data-scroll-target="#sec-mixed-intro"><span class="header-section-number">9.1</span> Introduction</a>
+  <ul class="collapse">
+  <li><a href="#sec-mixed-intro-rand" id="toc-sec-mixed-intro-rand" class="nav-link" data-scroll-target="#sec-mixed-intro-rand"><span class="header-section-number">9.1.1</span> Putting the random in random effect</a></li>
+  <li><a href="#sec-mixed-intro-para" id="toc-sec-mixed-intro-para" class="nav-link" data-scroll-target="#sec-mixed-intro-para"><span class="header-section-number">9.1.2</span> Parameterizing mixed models</a></li>
+  </ul></li>
+  <li><a href="#sec-mixed-lmm" id="toc-sec-mixed-lmm" class="nav-link" data-scroll-target="#sec-mixed-lmm"><span class="header-section-number">9.2</span> Linear mixed models (LMM)</a>
+  <ul class="collapse">
+  <li><a href="#sec-mixed-lmm-def" id="toc-sec-mixed-lmm-def" class="nav-link" data-scroll-target="#sec-mixed-lmm-def"><span class="header-section-number">9.2.1</span> Definition</a></li>
+  <li><a href="#sec-mixed-lmm-data" id="toc-sec-mixed-lmm-data" class="nav-link" data-scroll-target="#sec-mixed-lmm-data"><span class="header-section-number">9.2.2</span> Data preparation for examples</a></li>
+  <li><a href="#sec-mixed-lmm-lme4" id="toc-sec-mixed-lmm-lme4" class="nav-link" data-scroll-target="#sec-mixed-lmm-lme4"><span class="header-section-number">9.2.3</span> Example analysis in <code>lme4</code></a></li>
+  <li><a href="#sec-mixed-lmm-jags" id="toc-sec-mixed-lmm-jags" class="nav-link" data-scroll-target="#sec-mixed-lmm-jags"><span class="header-section-number">9.2.4</span> Example analysis in JAGS</a></li>
+  <li><a href="#sec-mixed-lmm-brms" id="toc-sec-mixed-lmm-brms" class="nav-link" data-scroll-target="#sec-mixed-lmm-brms"><span class="header-section-number">9.2.5</span> Example analysis in <code>brms</code></a></li>
+  </ul></li>
+  <li><a href="#sec-mixed-glmm" id="toc-sec-mixed-glmm" class="nav-link" data-scroll-target="#sec-mixed-glmm"><span class="header-section-number">9.3</span> Generalized linear mixed model (GLMM)</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/edit/main/chapters/09-mixed-models.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -258,8 +341,1254 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="sec-mixed-intro" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="sec-mixed-intro"><span class="header-section-number">9.1</span> Introduction</h2>
+<p>So far, the linear models (LMs) and generalized linear models (GLMs) we have studied have included two components:</p>
+<ol type="1">
+<li>A <strong>systematic component (or deterministic component)</strong>, which describes how the expected value of the response variable depends on the predictor variables.</li>
+<li>A <strong>stochastic component</strong>, which describes random variation in the response variable around its expected value.</li>
+</ol>
+<p>For example, consider a linear regression describing the relationship between body mass and metabolic rate:</p>
+<p><span class="math display">\[
+Y_i=\beta_0+\beta_1X_i+\varepsilon_i
+\]</span></p>
+<p>The systematic component is <span class="math inline">\(\beta_0+\beta_1X_i\)</span>, which describes the expected metabolic rate for an animal of a given body mass. The stochastic component is <span class="math inline">\(\varepsilon_i\)</span>, which describes the variation in metabolic rate that the systematic component does not explain. In an ordinary linear model, we generally assume that the residuals are independent and identically distributed, with mean zero and variance <span class="math inline">\(\sigma^2_{res}\)</span>. Another way to state that <em>i.i.d.</em> assumption is that the residual variation is unstructured.</p>
+<p>But what if some of that unexplained variation has an identifiable structure?</p>
+<p>Suppose our animals were measured in several different laboratories. Measurements from the same laboratory might be more similar to each other than measurements from different laboratories, perhaps because of differences in equipment, experimental protocols, or environmental conditions. This inter-laboratory variation has a structure, but it is not a structure that we as researchers are interested in. We want to account for it, certainly, but we are not interested in these laboratories themselves as experimental units.</p>
+<p>Our original linear model does not explicitly account for this source of variation. We could add laboratory as a categorical predictor, as we did in <a href="04-linear-models.html#sec-linear-ancova">analysis of covariance (ANCOVA)</a>. If we assume that the metabolic rate measurements were differently calibrated in each laboratory, that model would look like:</p>
+<p><span class="math display">\[
+Y_i=\beta_0+\beta_{1,lab_i}+\beta_2X_i+\varepsilon_i
+\]</span></p>
+<p>This model adds a term <span class="math inline">\(\beta_{1,lab}\)</span> that captures the lab-specific effect. This term functions as an extra intercept, so we could also have written:</p>
+<p>$$ Y_i=_{0,lab_i}+_1X_i+_i</p>
+<p>$$</p>
+<p>Where the lab determines the intercept directly. In either case, we are fitting the effect of lab as we do any other model parameter, such as the slope for body mass. The fitted lab-specific intercepts describe differences among the particular laboratories that made the measurements, potentially reflecting differences in equipment, experimental conditions, or other factors.</p>
+<p>It is worth asking the question: “<strong>Do we care about the differences between Laboratories A, B, and C specifically, or do we primarily want to account for variation among laboratories?</strong>” The former goal, estimating differences among these specific laboratories, helps us understand the data in front of us. The second goal, accounting for variation among laboratories more generally, could allow us to generalize our results beyond the particular laboratories in our dataset.</p>
+<p>Fitting laboratory-specific parameters—that is, including laboratory in the <em>deterministic</em> part of the model—accomplishes the first goal. To accomplish the second, we can instead model variation among laboratories as an additional <em>stochastic</em> component. This allows us to estimate the relationship between body mass and metabolic rate while accounting for differences among laboratories, and to characterize how much that relationship might vary in other laboratories.</p>
+<p>If we assign the random variation between labs to a new, second stochastic part of the model, we define a <strong>random effect</strong> of laboratory. A random effect in a statistical model is a parameter that varies between groups according to some probability distribution. In our example, we can include a <strong>random intercept</strong> to account for variation in measured values between laboratories:</p>
+<p><span class="math display">\[
+Y_i=\beta_{0,lab_i}+\beta_1X_i+\varepsilon_i
+\]</span></p>
+<p><span class="math display">\[
+\beta_{0,lab}\sim\text{Normal}\left(\mu_{\beta_0},\sigma^2_{\beta_0}\right)
+\]</span></p>
+<p>The intercepts <span class="math inline">\(\beta_0\)</span> vary between labs as <span class="math inline">\(\beta_{0,lab}\)</span>, and those intercepts come from a normal distribution with mean <span class="math inline">\(\mu_{\beta_0}\)</span> and variance <span class="math inline">\(\sigma^2_{\beta_0}\)</span>. Another option would be to fit a model with <strong>random slopes</strong>, where the slopes vary according to a normal distribution with mean <span class="math inline">\(\mu_{\beta_1}\)</span> and variance <span class="math inline">\(\sigma^2_{\beta_1}\)</span>.</p>
+<p><span class="math display">\[
+Y_i=\beta_0+\beta_{1,lab_i}X_i+\varepsilon_i
+\]</span></p>
+<p><span class="math display">\[
+\beta_{1,lab}\sim\text{Normal}\left(\mu_{\beta_1},\sigma^2_{\beta_1}\right)
+\]</span></p>
+<p>or even a model with a random intercept <em>and</em> random slope for lab:</p>
+<p><span class="math display">\[
+Y_i=\beta_{0,lab}+\beta_{1,lab_i}X_i+\varepsilon_i
+\]</span></p>
+<p><span class="math display">\[
+\beta_{0,lab}\sim\text{Normal}\left(\mu_{\beta_0},\sigma^2_{\beta_0}\right)\text{; }\beta_{1,lab}\sim\text{Normal}\left(\mu_{\beta_1},\sigma^2_{\beta_1}\right)
+\]</span></p>
+<p>Group-level effects that vary according to a distribution are <strong>random effects</strong>. The other kind of effect, which you are used to seeing, are <strong>fixed effects</strong>. Fixed effects can be thought of as “global effects” that apply across all groups (in the dataset or not) and independent of group-level effects. A model that includes both fixed effects and random effects is a <strong>mixed effects model</strong>.</p>
+<section id="sec-mixed-intro-rand" class="level3" data-number="9.1.1">
+<h3 data-number="9.1.1" class="anchored" data-anchor-id="sec-mixed-intro-rand"><span class="header-section-number">9.1.1</span> Putting the random in random effect</h3>
+<p>You may have noticed that the random effects we defined above all followed normal distributions. At this point in the course, after seeing the <a href="05-glm-01-counts.html#sec-glm1-review">modules on GLMs</a>, you might wonder why we don’t use other distributions to describe random effects.</p>
+<p>Well, I can’t find a good answer for that. There is no mathematical reason we couldn’t use something like a <a href="https://en.wikipedia.org/wiki/Gamma_distribution">gamma distribution</a> for our random effects. The use of the normal is largely for convenience.</p>
+<p>In the effects parameterization of the linear mixed effects model below, the random effect follows a normal distribution with a mean of 0. The normal is convenient here because it is symmetrical about 0, and so we don’t assume any skewness. The normal distribution is also well-justified by the <a href="https://en.wikipedia.org/wiki/Central_limit_theorem">central limit theorem</a>. In our example, laboratory differences might reflect many small, approximately independent influences: equipment calibration, technician behavior, temperature, experimental procedures, and so forth. If the laboratory effect is approximately the sum of many such influences, a normal distribution is a reasonable approximation. The final, and probably biggest reason for assuming normally-distributed random effects is that the normal distribution is computationally very convenient.</p>
+<p>There are legitimate biological or statistical reasons why a non-normal distribution for random effects might be appropriate. For example, a gamma or lognormal distribution might be appropriate for effects which are strictly positive, when effects are multiplicative in nature, or when random effects might be highly right-skewed (many small values, few large values).</p>
+<p>Random effects are usually assumed to follow a normal distribution with a mean of zero and an unknown variance (in effects parameterization). The mean is zero because the random effects represent deviations from the population-level relationship, while the variance describes how much groups differ from one another. The normal distribution is convenient because it accommodates both positive and negative deviations and is relatively easy to work with mathematically. Other distributions are possible, but fitting models with non-normal random effects often requires more specialized methods. In means parameterization, where group-level intercepts or slopes are defined directly, the random distribution has a mean of <span class="math inline">\(\mu_{\beta}\)</span>, not 0.</p>
+<p>I’m not aware of a method for fitting a model with non-normal random effects in R, but coding such a model is trivial in JAGS. Be aware that you will have to work very hard to justify such effects to Reviewer 2.</p>
+</section>
+<section id="sec-mixed-intro-para" class="level3" data-number="9.1.2">
+<h3 data-number="9.1.2" class="anchored" data-anchor-id="sec-mixed-intro-para"><span class="header-section-number">9.1.2</span> Parameterizing mixed models</h3>
+<p>When we fit mixed models, it is important to be aware of whether you are fitting the <strong>effects parameterization</strong> or the <strong>means parameterization</strong> of the model. Consider a simple linear mixed model with a random slope <span class="math inline">\(\beta_{1,j}\)</span>:</p>
+<p><span class="math display">\[y\sim\mathcal{N}\left(\eta,\sigma^2_{res}\right)\]</span></p>
+<p><span class="math display">\[\eta=\beta_0+\beta_{1,j} x\]</span></p>
+<p><span class="math display">\[\beta_1\sim\mathcal{N}\left(\mu_{\beta_1},\sigma^2_{\beta_1}\right)\]</span></p>
+<p>When we write the model this way, with each group-level slope occuring as itself, we are writing the <strong>means parameterization</strong>. It is called this because each parameter is presented as its own point estimate or mean. On the other hand, we could write the linear predictor and random effect this way:</p>
+<p><span class="math display">\[\eta=\beta_0+\left(\beta_1+\gamma_j\right)x\]</span></p>
+<p><span class="math display">\[\gamma_j\sim\mathcal{N}\left(0,\sigma^2_{\gamma}\right)\]</span></p>
+<p>This is called the <strong>effects parameterization</strong>. The random effect is fit as the <em>effect</em>, or difference, between the global slope <span class="math inline">\(\beta_1\)</span> and the group-specific slope <span class="math inline">\(\left(\beta_1+\gamma_j\right)\)</span>. The random component now has mean 0 instead of <span class="math inline">\(\mu_{\beta_1}\)</span>. The number of parameters are the same because</p>
+<p><span class="math display">\[\left(\beta_1+\gamma_j\right)=\beta_{1,j}\]</span></p>
+<p>Which one you fit depends largely on preference. The mixed modeling functions in R packages <code>lme4</code> and <code>nlme</code> use effects parameterization, which has the benefit of making them comparable to the base <code>lm()</code> and <code>glm()</code> functions. So far in JAGS we have been using means parameterization because it involves less bookkeeping in the code (and, in my opinion, makes the outputs easier to interpret).</p>
+</section>
+</section>
+<section id="sec-mixed-lmm" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="sec-mixed-lmm"><span class="header-section-number">9.2</span> Linear mixed models (LMM)</h2>
+<section id="sec-mixed-lmm-def" class="level3" data-number="9.2.1">
+<h3 data-number="9.2.1" class="anchored" data-anchor-id="sec-mixed-lmm-def"><span class="header-section-number">9.2.1</span> Definition</h3>
+<p>The <strong>linear mixed effects model</strong> extends the linear model to include random effects. If we start with a basic linear regression model with one predictor <span class="math inline">\(x\)</span>, we can define three versions: a <strong>random intercept model</strong>, a <strong>random slope model</strong>, and a <strong>full random model</strong>.</p>
+<section id="sec-mixed-lmm-def-randint" class="level4" data-number="9.2.1.1">
+<h4 data-number="9.2.1.1" class="anchored" data-anchor-id="sec-mixed-lmm-def-randint"><span class="header-section-number">9.2.1.1</span> Random intercept model</h4>
+<p>This model has a random effect of group on the intercept. The first part is the response distribution that relates the expected value <span class="math inline">\(\mu_i\)</span> to the observed values in <span class="math inline">\(y_i\)</span>.</p>
+<p><span class="math display">\[y_i\sim\text{Normal}\left(\mu_i,\sigma^2_{res}\right)\]</span></p>
+<p>The systematic part of the model, containing the expression for <span class="math inline">\(\mu_i\)</span>, includes an effect <span class="math inline">\(\gamma_{group_i}\)</span> which is the effect on the intercept associated with the group of observation <span class="math inline">\(i\)</span>. The form below is the <em>effects parameterization</em>, which expresses the random effect as how it changes the intercept. In other words, the realized intercept in group A will be <span class="math inline">\(\beta_0+\gamma_A\)</span></p>
+<p><span class="math display">\[\mu_i=\beta_0+\beta_1x_i+\gamma_{group_i};\text{ }\gamma_{group}\sim \text{Normal}\left(0,\sigma^2_{\gamma_{group}}\right)\]</span></p>
+<p>The group-level effects on the intercept follow a normal distribution with mean <span class="math inline">\(0\)</span> and variance <span class="math inline">\(\sigma^2_{\gamma_{group}}\)</span>.</p>
+<p>Because the global intercept <span class="math inline">\(\beta_0\)</span> and the random intercept are both scalars and occur as a sum in the model, many people omit the <span class="math inline">\(\gamma\)</span> term (“gamma”) and simplify this to:</p>
+<p><span class="math display">\[\mu_i=\beta_{0,group_i}+\beta_1x_i\]</span></p>
+<p><span class="math display">\[\beta_{0,group}\sim \text{Normal}\left(\mu_{\beta_{0,group}},\sigma^2_{\beta_{0,group}}\right)\]</span></p>
+<p>The first version keeps the global intercept and the group-level effect on the intercept separate, while the second version fits a group-level intercept directly.</p>
+</section>
+<section id="sec-mixed-lmm-def-randslope" class="level4" data-number="9.2.1.2">
+<h4 data-number="9.2.1.2" class="anchored" data-anchor-id="sec-mixed-lmm-def-randslope"><span class="header-section-number">9.2.1.2</span> Random intercept model</h4>
+<p>This model has a random effect of group on the slope It has the same response distribution step as the random intercept model above. The systematic part is a bit different: the random effect of group changes the slope of <span class="math inline">\(x\)</span>, not the intercept.</p>
+<p><span class="math display">\[\mu_i=\beta_0+\left(\beta_1+\gamma_{group_i}\right)x_i\]</span></p>
+<p><span class="math display">\[\gamma_{group}\sim\text{Normal}\left(\mu_{\gamma_{group}},\sigma^2_{\gamma_{group}}\right)\]</span></p>
+<p>Just as with the random intercept model, the random slope model can be simplified so as to specify a group-level slope directly:</p>
+<p><span class="math display">\[\mu_i=\beta_0+\beta_{1,group_i}x_i\]</span></p>
+<p><span class="math display">\[\beta_{1,group}\sim\text{Normal}\left(\mu_{\beta_{1,group}},\sigma^2_{\beta_{1,group}}\right)\]</span></p>
+</section>
+<section id="sec-mixed-lmm-def-randboth" class="level4" data-number="9.2.1.3">
+<h4 data-number="9.2.1.3" class="anchored" data-anchor-id="sec-mixed-lmm-def-randboth"><span class="header-section-number">9.2.1.3</span> Random intercept and slope model</h4>
+<p>The <strong>full random model</strong> has a random intercept and a random slope. We get this model by combining the random intercept model and the random slope model:</p>
+<p><span class="math display">\[\mu_i=\beta_{0,group_i}+\beta_{1,group_i}x_i\]</span></p>
+<p><span class="math display">\[\beta_{0,group}\sim \text{Normal}\left(\mu_{\beta_{0,group}},\sigma^2_{\beta_{0,group}}\right)\]</span></p>
+<p><span class="math display">\[\beta_{1,group}\sim\text{Normal}\left(\mu_{\beta_{1,group}},\sigma^2_{\beta_{1,group}}\right)\]</span></p>
+</section>
+</section>
+<section id="sec-mixed-lmm-data" class="level3" data-number="9.2.2">
+<h3 data-number="9.2.2" class="anchored" data-anchor-id="sec-mixed-lmm-data"><span class="header-section-number">9.2.2</span> Data preparation for examples</h3>
+<p>Let’s explore a linear mixed effects model using the NEON small mammal data. If you haven’t already, download the <a href="../datasets/data-neon-ind-meas.csv">individual measurements dataset</a> and the <a href="../datasets/data-neon-metadata-site.csv">site metadata dataset</a>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data-neon-ind-meas.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>met <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data-neon-metadata-site.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We are going to test for sexual dimorphism in body mass among white-footed mice (<em>Peromyscus leucopus</em>). We will also need to control for possible habitat differences.</p>
+<p>Let’s filter and join the data first:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># filter to Perleu</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[dat<span class="sc">$</span>abb<span class="sc">==</span><span class="st">"Perleu"</span>,]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># drop missing body mass</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[<span class="sc">!</span><span class="fu">is.na</span>(dat<span class="sc">$</span>weight),]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># pull site out of tag id</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>site <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">strsplit</span>(dat<span class="sc">$</span>tagID, <span class="st">"_"</span>), <span class="st">"["</span>, <span class="dv">2</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># only need these columns</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>use.cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"site"</span>, <span class="st">"sex"</span>, <span class="st">"weight"</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> dat[,use.cols]</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># merge to site descriptors</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> <span class="fu">merge</span>(dx, met, <span class="at">by=</span><span class="st">"site"</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># remove animals with unknown sex</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> dx[dx<span class="sc">$</span>sex <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"female"</span>, <span class="st">"male"</span>),]</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># remove wildly unrealistic body masses</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> dx[dx<span class="sc">$</span>weight <span class="sc">&gt;=</span> <span class="dv">10</span> <span class="sc">&amp;</span> dx<span class="sc">$</span>weight <span class="sc">&lt;=</span> <span class="dv">30</span>,]</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># restrict to deciduous forest and grasslands</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> dx[dx<span class="sc">$</span>habitat <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"deciduousForest"</span>, <span class="st">"grasslandHerbaceous"</span>),]</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># remove site wood, which has only 1 animal</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> dx[dx<span class="sc">$</span>site <span class="sc">!=</span> <span class="st">"WOOD"</span>,]</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># remove missing cases</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>use.cols <span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"site"</span>, <span class="st">"sex"</span>, <span class="st">"habitat"</span>, <span class="st">"weight"</span>) </span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> dx[,use.cols]</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> dx[<span class="fu">complete.cases</span>(dx),]</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># reduce dataset size by random subsampling</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co"># within site and sex. Keep at most 200 individuals</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co"># per site*sex combination</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co"># don't do this in a real analysis. We are only</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co"># doing it here because JAGS takes forever to run</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co"># with &gt;18000 observations!</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>dx<span class="sc">$</span>sitesex <span class="ot">&lt;-</span> <span class="fu">paste0</span>(dx<span class="sc">$</span>site, dx<span class="sc">$</span>sex)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>unique.sitesex <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(dx<span class="sc">$</span>sitesex))</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>nsitesex <span class="ot">&lt;-</span> <span class="fu">length</span>(unique.sitesex)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>pull.list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length=</span>nsitesex)</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nsitesex){</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  irows <span class="ot">&lt;-</span> <span class="fu">which</span>(dx<span class="sc">$</span>sitesex <span class="sc">==</span> unique.sitesex[i])</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(irows) <span class="sc">&lt;=</span> <span class="dv">500</span>){</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    pull.list[[i]] <span class="ot">&lt;-</span> irows</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    pull.list[[i]] <span class="ot">&lt;-</span> <span class="fu">sample</span>(irows, <span class="dv">500</span>)</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>use.rows <span class="ot">&lt;-</span> <span class="fu">do.call</span>(c, pull.list)</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>dx <span class="ot">&lt;-</span> dx[use.rows,]</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>dx<span class="sc">$</span>sitesex <span class="ot">&lt;-</span> <span class="cn">NULL</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We can check a boxplot of female vs.&nbsp;male body mass. It looks like any effect will be small.</p>
+<div class="cell" data-fig-label="Body mass vs. sex in White-Footed Mice *Peromyscus leucopus*.">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(weight<span class="sc">~</span>sex, <span class="at">data=</span>dx)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-lme1" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Body mass vs. sex in White-Footed Mice Peromyscus leucopus." width="576">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-lme1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.1
+</figcaption>
+<div aria-describedby="fig-lme1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="09-mixed-models_files/figure-html/fig-lme1-1.png" id="fig-lme1" class="img-fluid figure-img" alt="Body mass vs. sex in White-Footed Mice Peromyscus leucopus." width="576">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>What about potential habitat differences? It makes sense that different habitats, like forests or grasslands or croplands, might have different levels of nutrient availability, or predation pressure, or something that might affect body mass.</p>
+<div class="cell" data-fig-label="Body mass vs. sex in White-Footed Mice *Peromyscus leucopus*.">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make a boxplot, but turn it horizontal</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># and enlarge the y axis margin to make the</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># habitat names visible</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">10</span>, <span class="dv">1</span>, <span class="dv">1</span>), <span class="at">las=</span><span class="dv">1</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(weight<span class="sc">~</span>habitat, <span class="at">data=</span>dx,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">horizontal =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab=</span><span class="st">""</span>, <span class="at">xlab=</span><span class="st">"Body mass (g)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-lme2" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Body mass vs. sex in White-Footed Mice Peromyscus leucopus." width="768">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-lme2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.2
+</figcaption>
+<div aria-describedby="fig-lme2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="09-mixed-models_files/figure-html/fig-lme2-1.png" id="fig-lme2" class="img-fluid figure-img" alt="Body mass vs. sex in White-Footed Mice Peromyscus leucopus." width="768">
+</div>
+</figure>
+</div>
+</div>
+</div>
+<p>There is a lot of variability, but it looks like there might be some differences in body mass between the habitats.</p>
+<p>One issue we might want to consider is that each habitat type is represented by several sites, and there might be variability between sites. For example, the “deciduousForest” habitat at GRSM might be different than the same category at HARV. <a href="https://www.neonscience.org/field-sites/grsm">GRSM</a> is in the Great Smoky Mountains National Park in southeastern Tennessee, and <a href="https://www.neonscience.org/field-sites/harv">HARV</a> is Harvard Forest in Massachusetts. Both are dominated by deciduous forest, but they are not the same kind of deciduous forest. <a href="https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states">GRSM is in the Ridge and Valley and Southwestern Appalachian ecoregion, while HARV is in the Northeastern Coastal Zone</a>.</p>
+<p>We want to isolate the effect of habitat while accounting for other differences between the sites. We need to account for site-to-site variability, but recognize that we are not interested in these sites in and of themselves. The sites where “deciduous forest” and “grassland” were sampled are essentially a random sample of all the many possible places where they could have been sampled. That argues for treating site as a <em>random</em> effect.</p>
+<p>The table below shows that deciduous forest and grasslands are each represented by more than 1 site. If we included a habitat represented by only one site, then any apparent effect of that habitat would actually be confounded with that site.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dx<span class="sc">$</span>habitat, dx<span class="sc">$</span>site, <span class="at">useNA=</span><span class="st">"ifany"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     
+                      CLBJ DCFS GRSM HARV KONZ MLBS NOGP OAES ORNL SCBI SERC
+  deciduousForest        0    0 1000 1000    0 1000    0    0 1000 1000 1000
+  grasslandHerbaceous  695   14    0    0 1000    0  238  139    0    0    0
+                     
+                      STEI UKFS
+  deciduousForest     1000 1000
+  grasslandHerbaceous    0    0</code></pre>
+</div>
+</div>
+</section>
+<section id="sec-mixed-lmm-lme4" class="level3" data-number="9.2.3">
+<h3 data-number="9.2.3" class="anchored" data-anchor-id="sec-mixed-lmm-lme4"><span class="header-section-number">9.2.3</span> Example analysis in <code>lme4</code></h3>
+<p>Let’s first run the analysis as a linear mixed effects model using package <code>lme4</code>. The deterministic part of the model will be a two-way ANOVA with <code>habitat</code> and <code>sex</code> plus the interaction between them. We will add a random random intercept for site.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># mixed model with random intercept by site</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(weight<span class="sc">~</span>habitat<span class="sc">*</span>sex<span class="sc">+</span>(<span class="dv">1</span><span class="sc">|</span>site), <span class="at">data=</span>dx)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now check the model fit using ANOVA. Interestingly, the main effect of habitat is nonsignificant, but its interaction with sex is.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod1, <span class="at">type=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Type II Analysis of Variance Table with Satterthwaite's method
+             Sum Sq Mean Sq NumDF   DenDF F value    Pr(&gt;F)    
+habitat        5.93    5.93     1    11.5  0.3534 0.5636812    
+sex         1000.46 1000.46     1 10074.6 59.5724 1.291e-14 ***
+habitat:sex  186.75  186.75     1 10080.6 11.1198 0.0008572 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>Let’s explore that interaction between sex and habitat. First check the coefficients:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(mod1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                       (Intercept)         habitatgrasslandHerbaceous 
+                        20.8065000                          0.0910026 
+                           sexmale habitatgrasslandHerbaceous:sexmale 
+                         0.4927500                          0.6828213 </code></pre>
+</div>
+</div>
+<p>The output tells us:</p>
+<ul>
+<li>The average female in forest habitat is about 20.78 g.</li>
+<li>The average female in grassland habitat is about <span class="math inline">\(20.78+0.05=20.83\)</span> g.</li>
+<li>The average male in forest habitat is about <span class="math inline">\(20.78+0.52=21.3\)</span> g.</li>
+<li>The average male in grassland habitat is about <span class="math inline">\(20.78+0.52+0.71=22.01\)</span> g.</li>
+</ul>
+<p>But some of these fitted coefficients are not statistically significant. The <code>summary()</code> output tells us that grassland females are not significantly larger than forest females, but males are significantly larger than females, and males are even larger than females in grasslands than they are in forests.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">summary</span>(mod1)<span class="sc">$</span>coefficients,<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                   Estimate Std. Error        df t value
+(Intercept)                          20.806      0.470    10.686  44.282
+habitatgrasslandHerbaceous            0.091      0.788    12.057   0.116
+sexmale                               0.493      0.092 10071.327   5.377
+habitatgrasslandHerbaceous:sexmale    0.683      0.205 10080.639   3.335
+                                   Pr(&gt;|t|)
+(Intercept)                           0.000
+habitatgrasslandHerbaceous            0.910
+sexmale                               0.000
+habitatgrasslandHerbaceous:sexmale    0.001</code></pre>
+</div>
+</div>
+<p>We can inspect the random effects in the <code>summary()</code> output and with <code>ranef()</code>. The <code>summary()</code> output shows us that the random effect of site has a variance of about 1.69. In other words, the random intercepts of site follow the distribution <span class="math inline">\(\gamma_{site}\sim\mathcal{N}\left(0,1.69\right)\)</span>. Expressing this in terms of standard deviation rather than variance (because standard deviation is in the same units as the data), and using the properties of the normal distribution, about 68% of sites have an intercept within 1.3 g of the mean site, and about 95% of sites have an intercept within 2.6 g. That doesn’t sound like much, but 2.6 g is huge if you are a mouse.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: weight ~ habitat * sex + (1 | site)
+   Data: dx
+
+REML criterion at convergence: 57127.9
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.5746 -0.7214  0.0107  0.7408  2.5858 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ site     (Intercept)  1.733   1.316   
+ Residual             16.794   4.098   
+Number of obs: 10086, groups:  site, 13
+
+Fixed effects:
+                                    Estimate Std. Error        df t value
+(Intercept)                        2.081e+01  4.699e-01 1.069e+01  44.282
+habitatgrasslandHerbaceous         9.100e-02  7.877e-01 1.206e+01   0.116
+sexmale                            4.928e-01  9.164e-02 1.007e+04   5.377
+habitatgrasslandHerbaceous:sexmale 6.828e-01  2.048e-01 1.008e+04   3.335
+                                   Pr(&gt;|t|)    
+(Intercept)                        1.87e-13 ***
+habitatgrasslandHerbaceous         0.909928    
+sexmale                            7.73e-08 ***
+habitatgrasslandHerbaceous:sexmale 0.000857 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) hbttgH sexmal
+hbttgrsslnH -0.597              
+sexmale     -0.098  0.058       
+hbttgrsslH:  0.044 -0.148 -0.448</code></pre>
+</div>
+</div>
+<p>We can see the random effects with <code>ranef()</code>. These value are the <em>deviations</em> of each group-level intercept and slope from the global intercept of 20.81.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># these are deviations from population-level parameters</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>re3 <span class="ot">&lt;-</span> <span class="fu">ranef</span>(mod1)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>re3<span class="sc">$</span>site</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     (Intercept)
+CLBJ -0.09733071
+DCFS -0.75103093
+GRSM -0.51686512
+HARV  0.15759744
+KONZ  2.57574554
+MLBS -0.27817867
+NOGP -0.72230895
+OAES -1.00507495
+ORNL -1.40327333
+SCBI -0.07613702
+SERC  0.14967424
+STEI -0.61491475
+UKFS  2.58209721</code></pre>
+</div>
+</div>
+<p>The random effects should have mean 0 and an SD corresponding to the variances reported by <code>summary(mod2)</code> (up to sampling error). We can get the actual variances with <code>VarCorr()</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimated variances, standard deviations,</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># and correlations of random effects</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(mod1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Groups   Name        Std.Dev.
+ site     (Intercept) 1.3163  
+ Residual             4.0980  </code></pre>
+</div>
+</div>
+<p>Finally, we can see the group-specific coefficients, which include the fixed and the random effect, with <code>coef()</code>. Notice that only the intercepts vary between sites. If we had specified random effects of habitat or sex, those columns would vary as well.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># group-specific coefficients (fixed + random effects)</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># these are the group-specific coefficients themselves</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(mod1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$site
+     (Intercept) habitatgrasslandHerbaceous sexmale
+CLBJ    20.70917                  0.0910026 0.49275
+DCFS    20.05547                  0.0910026 0.49275
+GRSM    20.28963                  0.0910026 0.49275
+HARV    20.96410                  0.0910026 0.49275
+KONZ    23.38225                  0.0910026 0.49275
+MLBS    20.52832                  0.0910026 0.49275
+NOGP    20.08419                  0.0910026 0.49275
+OAES    19.80143                  0.0910026 0.49275
+ORNL    19.40323                  0.0910026 0.49275
+SCBI    20.73036                  0.0910026 0.49275
+SERC    20.95617                  0.0910026 0.49275
+STEI    20.19159                  0.0910026 0.49275
+UKFS    23.38860                  0.0910026 0.49275
+     habitatgrasslandHerbaceous:sexmale
+CLBJ                          0.6828213
+DCFS                          0.6828213
+GRSM                          0.6828213
+HARV                          0.6828213
+KONZ                          0.6828213
+MLBS                          0.6828213
+NOGP                          0.6828213
+OAES                          0.6828213
+ORNL                          0.6828213
+SCBI                          0.6828213
+SERC                          0.6828213
+STEI                          0.6828213
+UKFS                          0.6828213
+
+attr(,"class")
+[1] "coef.mer"</code></pre>
+</div>
+</div>
+<p>If desired, you can also get confidence intervals of the fixed effects with <code>confint()</code>. This can take a while depending on the number of observations and the complexity of the model.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># confidence intervals</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># this can take a minute</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(mod1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                        2.5 %     97.5 %
+.sig01                              0.8450073  1.9016990
+.sigma                              4.0416900  4.1548669
+(Intercept)                        19.8908824 21.7221176
+habitatgrasslandHerbaceous         -1.4501774  1.6110975
+sexmale                             0.3131497  0.6723503
+habitatgrasslandHerbaceous:sexmale  0.2804409  1.0831267</code></pre>
+</div>
+</div>
+<p>We can calculate 95% CI for the random coefficients, but we need to be careful here. Remember that a random effect allows us to account for variability between sites, but does not allow us to make inferences about the differences between sites. If we want to do that, we need to fit site as a fixed effect. Still, inspecting the coefficients can often give us a clue about the structure of variation in our dataset.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to get the 95% CI estimate of the random coefficients:</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="do">## extract conditional variances (to go along with conditional modes)</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>re <span class="ot">&lt;-</span> <span class="fu">ranef</span>(mod1, <span class="at">condVar =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  pull values as numeric</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> re<span class="sc">$</span>site[, <span class="dv">1</span>]</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="do">## convert to SE (sqrt of var)</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">attr</span>(re<span class="sc">$</span>site, <span class="st">"postVar"</span>)[<span class="dv">1</span>, <span class="dv">1</span>, ])</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="do">## assemble in data frame and estimate CI</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="do">## note that these are the effects from </span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="do">## the population-level value. Add fixef(mod2)[1]</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="do">## to get estimate and 95% CI of conditional modes</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>cond.ci <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">site =</span> <span class="fu">rownames</span>(re<span class="sc">$</span>site),</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">estimate =</span> b,</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> b <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se,</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper =</span> b <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>cond.ci</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   site    estimate       lower       upper
+1  CLBJ -0.09733071 -0.39990562  0.20524421
+2  DCFS -0.75103093 -2.40118512  0.89912326
+3  GRSM -0.51686512 -0.76964250 -0.26408774
+4  HARV  0.15759744 -0.09517994  0.41037482
+5  KONZ  2.57574554  2.32296816  2.82852292
+6  MLBS -0.27817867 -0.53095605 -0.02540129
+7  NOGP -0.72230895 -1.23266837 -0.21194952
+8  OAES -1.00507495 -1.66377524 -0.34637466
+9  ORNL -1.40327333 -1.65605071 -1.15049595
+10 SCBI -0.07613702 -0.32891440  0.17664036
+11 SERC  0.14967424 -0.10310314  0.40245162
+12 STEI -0.61491475 -0.86769213 -0.36213737
+13 UKFS  2.58209721  2.32931983  2.83487459</code></pre>
+</div>
+</div>
+<p>It might be more helpful to plot the random effects:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>lattice<span class="sc">::</span><span class="fu">dotplot</span>(<span class="fu">ranef</span>(mod1, <span class="at">condVar =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$site</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-mixed-models_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Notice that fitting the model was relatively straightforward: <code>lme()</code> is just as easy to use as <code>lm()</code>. All of that post-processing was needed to get the actual model coefficients, because <code>lme()</code> uses effects parameterization just like <code>lm()</code>. This is great for seeing the effects of a factor; less so if you actually want to know the values of the parameters.</p>
+</section>
+<section id="sec-mixed-lmm-jags" class="level3" data-number="9.2.4">
+<h3 data-number="9.2.4" class="anchored" data-anchor-id="sec-mixed-lmm-jags"><span class="header-section-number">9.2.4</span> Example analysis in JAGS</h3>
+<p>Let’s do the analysis in JAGS. This is going to look very similar to the ANCOVA model that we fit in <a href="04-linear-models.html#sec-linear-ancova-inter" class="quarto-xref"><span>Section 4.4.2</span></a>. First, define the model file. Notice the difference between how the interaction effect of sex is specified and how the random effect of site is specified. The fixed interaction effect has group-specific means defined explicitly. The random effects do not have group-level means defined explicitly. The fact that we will get a posterior distribution for the conditional means is a side effect of fitting the model with MCMC.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(R2jags)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjags)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># set up data for JAGS</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>sexes <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(dx<span class="sc">$</span>sex))</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>nsex <span class="ot">&lt;-</span> <span class="fu">length</span>(sexes)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 = female, 2 = male</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>dx<span class="sc">$</span>sex.num <span class="ot">&lt;-</span> <span class="fu">match</span>(dx<span class="sc">$</span>sex, sexes)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>habitats <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(dx<span class="sc">$</span>habitat))</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>nhabitats <span class="ot">&lt;-</span> <span class="fu">length</span>(habitats)</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>dx<span class="sc">$</span>hab.num <span class="ot">&lt;-</span> <span class="fu">match</span>(dx<span class="sc">$</span>habitat, habitats)</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(dx<span class="sc">$</span>site))</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>nsites <span class="ot">&lt;-</span> <span class="fu">length</span>(sites)</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>dx<span class="sc">$</span>site.num <span class="ot">&lt;-</span> <span class="fu">match</span>(dx<span class="sc">$</span>site, sites)</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>jags.data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">n=</span><span class="fu">nrow</span>(dx),</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsites=</span>nsites,</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">sex=</span>dx<span class="sc">$</span>sex.num,</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">hab=</span>dx<span class="sc">$</span>hab.num,</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">site=</span>dx<span class="sc">$</span>site.num,</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">mass=</span>dx<span class="sc">$</span>weight</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a><span class="co"># LMM with 1 fixed factor and 1 random intercept</span></span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>mod.name <span class="ot">&lt;-</span> <span class="st">"jags_lmm_1fac_randint.txt"</span></span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(mod.name)</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span></span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a><span class="st">model {</span></span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a><span class="st">    # priors</span></span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a><span class="st">    ## fixed effects</span></span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a><span class="st">    beta0 ~ dnorm(20, 0.01)</span></span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a><span class="st">    beta.sex ~ dnorm(0, 0.01)</span></span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a><span class="st">    beta.hab ~ dnorm(0, 0.01)</span></span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a><span class="st">    beta.int ~ dnorm(0, 0.01)</span></span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a><span class="st">    ## random intercept for site</span></span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a><span class="st">    sigma.site ~ dunif(0.01, 10)</span></span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a><span class="st">    tau.site &lt;- 1 / pow(sigma.site, 2)</span></span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a><span class="st">    for(j in 1:nsites){</span></span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a><span class="st">        gamma.site[j] ~ dnorm(0, tau.site)</span></span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a><span class="st">    ## residual SD and precision</span></span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a><span class="st">    sigma.res ~ dlnorm(1, 0.25)</span></span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a><span class="st">    tau.res &lt;- 1 / pow(sigma.res, 2)</span></span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a><span class="st">    # likelihood</span></span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a><span class="st">    for(i in 1:n){</span></span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a><span class="st">        mass[i] ~ dnorm(eta[i], tau.res)</span></span>
+<span id="cb28-55"><a href="#cb28-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-56"><a href="#cb28-56" aria-hidden="true" tabindex="-1"></a><span class="st">        eta[i] &lt;- beta0 +</span></span>
+<span id="cb28-57"><a href="#cb28-57" aria-hidden="true" tabindex="-1"></a><span class="st">                  beta.sex * (sex[i] - 1) +</span></span>
+<span id="cb28-58"><a href="#cb28-58" aria-hidden="true" tabindex="-1"></a><span class="st">                  beta.hab * (hab[i] - 1) +</span></span>
+<span id="cb28-59"><a href="#cb28-59" aria-hidden="true" tabindex="-1"></a><span class="st">                  beta.int * (sex[i] - 1) * (hab[i] - 1) +</span></span>
+<span id="cb28-60"><a href="#cb28-60" aria-hidden="true" tabindex="-1"></a><span class="st">                  gamma.site[site[i]]</span></span>
+<span id="cb28-61"><a href="#cb28-61" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb28-62"><a href="#cb28-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-63"><a href="#cb28-63" aria-hidden="true" tabindex="-1"></a><span class="st">    # derived quantities</span></span>
+<span id="cb28-64"><a href="#cb28-64" aria-hidden="true" tabindex="-1"></a><span class="st">    ## sex effect within each habitat</span></span>
+<span id="cb28-65"><a href="#cb28-65" aria-hidden="true" tabindex="-1"></a><span class="st">    effect.male.forest &lt;- beta.sex</span></span>
+<span id="cb28-66"><a href="#cb28-66" aria-hidden="true" tabindex="-1"></a><span class="st">    effect.male.grass &lt;- beta.sex + beta.int</span></span>
+<span id="cb28-67"><a href="#cb28-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-68"><a href="#cb28-68" aria-hidden="true" tabindex="-1"></a><span class="st">    ## habitat effect within each sex</span></span>
+<span id="cb28-69"><a href="#cb28-69" aria-hidden="true" tabindex="-1"></a><span class="st">    effect.grass.female &lt;- beta.hab</span></span>
+<span id="cb28-70"><a href="#cb28-70" aria-hidden="true" tabindex="-1"></a><span class="st">    effect.grass.male &lt;- beta.hab + beta.int</span></span>
+<span id="cb28-71"><a href="#cb28-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-72"><a href="#cb28-72" aria-hidden="true" tabindex="-1"></a><span class="st">    ## interaction</span></span>
+<span id="cb28-73"><a href="#cb28-73" aria-hidden="true" tabindex="-1"></a><span class="st">    effect.interaction &lt;- beta.int</span></span>
+<span id="cb28-74"><a href="#cb28-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-75"><a href="#cb28-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-76"><a href="#cb28-76" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb28-77"><a href="#cb28-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-78"><a href="#cb28-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-79"><a href="#cb28-79" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">fill=</span><span class="cn">TRUE</span>)</span>
+<span id="cb28-80"><a href="#cb28-80" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span>
+<span id="cb28-81"><a href="#cb28-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-82"><a href="#cb28-82" aria-hidden="true" tabindex="-1"></a><span class="co"># parameters to monitor</span></span>
+<span id="cb28-83"><a href="#cb28-83" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"beta0"</span>, <span class="st">"beta.sex"</span>, <span class="st">"beta.hab"</span>, <span class="st">"beta.int"</span>,</span>
+<span id="cb28-84"><a href="#cb28-84" aria-hidden="true" tabindex="-1"></a>            <span class="st">"sigma.site"</span>, <span class="st">"gamma.site"</span>,</span>
+<span id="cb28-85"><a href="#cb28-85" aria-hidden="true" tabindex="-1"></a>            <span class="st">"effect.male.forest"</span>, <span class="st">"effect.male.grass"</span>, </span>
+<span id="cb28-86"><a href="#cb28-86" aria-hidden="true" tabindex="-1"></a>            <span class="st">"effect.grass.female"</span>, <span class="st">"effect.grass.male"</span>,</span>
+<span id="cb28-87"><a href="#cb28-87" aria-hidden="true" tabindex="-1"></a>            <span class="st">"effect.interaction"</span>)</span>
+<span id="cb28-88"><a href="#cb28-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-89"><a href="#cb28-89" aria-hidden="true" tabindex="-1"></a><span class="co"># MCMC parameters</span></span>
+<span id="cb28-90"><a href="#cb28-90" aria-hidden="true" tabindex="-1"></a><span class="co"># smaller than normal because of the</span></span>
+<span id="cb28-91"><a href="#cb28-91" aria-hidden="true" tabindex="-1"></a><span class="co"># huge sample size...model takes</span></span>
+<span id="cb28-92"><a href="#cb28-92" aria-hidden="true" tabindex="-1"></a><span class="co"># forever to run!</span></span>
+<span id="cb28-93"><a href="#cb28-93" aria-hidden="true" tabindex="-1"></a>n.iter <span class="ot">&lt;-</span> <span class="fl">2.5e4</span></span>
+<span id="cb28-94"><a href="#cb28-94" aria-hidden="true" tabindex="-1"></a>n.burnin <span class="ot">&lt;-</span> <span class="fl">5e3</span></span>
+<span id="cb28-95"><a href="#cb28-95" aria-hidden="true" tabindex="-1"></a>n.thin <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb28-96"><a href="#cb28-96" aria-hidden="true" tabindex="-1"></a>nchains <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb28-97"><a href="#cb28-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-98"><a href="#cb28-98" aria-hidden="true" tabindex="-1"></a><span class="co"># function to define initial values for MCMC chains</span></span>
+<span id="cb28-99"><a href="#cb28-99" aria-hidden="true" tabindex="-1"></a><span class="co"># note that we use an informed prior for beta0:</span></span>
+<span id="cb28-100"><a href="#cb28-100" aria-hidden="true" tabindex="-1"></a><span class="co"># the average mass of a P. leucopus is about 20 g.</span></span>
+<span id="cb28-101"><a href="#cb28-101" aria-hidden="true" tabindex="-1"></a>init.fun <span class="ot">&lt;-</span> <span class="cf">function</span>(nc){</span>
+<span id="cb28-102"><a href="#cb28-102" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length=</span>nc)</span>
+<span id="cb28-103"><a href="#cb28-103" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nc){</span>
+<span id="cb28-104"><a href="#cb28-104" aria-hidden="true" tabindex="-1"></a>        res[[i]] <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb28-105"><a href="#cb28-105" aria-hidden="true" tabindex="-1"></a>            <span class="at">beta0 =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">20</span>, <span class="dv">2</span>),</span>
+<span id="cb28-106"><a href="#cb28-106" aria-hidden="true" tabindex="-1"></a>            <span class="at">beta.sex =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>),</span>
+<span id="cb28-107"><a href="#cb28-107" aria-hidden="true" tabindex="-1"></a>            <span class="at">beta.hab =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>),</span>
+<span id="cb28-108"><a href="#cb28-108" aria-hidden="true" tabindex="-1"></a>            <span class="at">beta.int =</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>),</span>
+<span id="cb28-109"><a href="#cb28-109" aria-hidden="true" tabindex="-1"></a>            <span class="at">sigma.site =</span> <span class="fu">runif</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="dv">3</span>),</span>
+<span id="cb28-110"><a href="#cb28-110" aria-hidden="true" tabindex="-1"></a>            <span class="at">sigma.res =</span> <span class="fu">rlnorm</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="fl">0.25</span>)</span>
+<span id="cb28-111"><a href="#cb28-111" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb28-112"><a href="#cb28-112" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb28-113"><a href="#cb28-113" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(res)</span>
+<span id="cb28-114"><a href="#cb28-114" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-115"><a href="#cb28-115" aria-hidden="true" tabindex="-1"></a>inits <span class="ot">&lt;-</span> <span class="fu">init.fun</span>(nchains)</span>
+<span id="cb28-116"><a href="#cb28-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-117"><a href="#cb28-117" aria-hidden="true" tabindex="-1"></a><span class="co"># fit model</span></span>
+<span id="cb28-118"><a href="#cb28-118" aria-hidden="true" tabindex="-1"></a>mod.lmm<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">jags</span>(<span class="at">data=</span>jags.data, <span class="at">inits=</span>inits,</span>
+<span id="cb28-119"><a href="#cb28-119" aria-hidden="true" tabindex="-1"></a>              <span class="at">parameters.to.save=</span>params,</span>
+<span id="cb28-120"><a href="#cb28-120" aria-hidden="true" tabindex="-1"></a>              <span class="at">model.file=</span>mod.name,</span>
+<span id="cb28-121"><a href="#cb28-121" aria-hidden="true" tabindex="-1"></a>              <span class="at">n.chains=</span>nchains, <span class="at">n.iter=</span>n.iter,</span>
+<span id="cb28-122"><a href="#cb28-122" aria-hidden="true" tabindex="-1"></a>              <span class="at">n.burnin=</span>n.burnin, <span class="at">n.thin=</span>n.thin)<span class="co">#jags</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 10086
+   Unobserved stochastic nodes: 19
+   Total graph size: 40414
+
+Initializing model</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>mod.lmm<span class="fl">.1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Inference for Bugs model at "jags_lmm_1fac_randint.txt", fit using jags,
+ 3 chains, each with 25000 iterations (first 5000 discarded), n.thin = 50
+ n.sims = 1200 iterations saved. Running time = 553.95 secs
+                      mu.vect sd.vect      2.5%       25%       50%       75%
+beta.hab                0.084   0.908    -1.687    -0.474     0.093     0.649
+beta.int                0.687   0.207     0.263     0.560     0.696     0.821
+beta.sex                0.495   0.091     0.317     0.434     0.495     0.556
+beta0                  20.775   0.530    19.664    20.452    20.784    21.110
+effect.grass.female     0.084   0.908    -1.687    -0.474     0.093     0.649
+effect.grass.male       0.771   0.913    -1.046     0.176     0.793     1.357
+effect.interaction      0.687   0.207     0.263     0.560     0.696     0.821
+effect.male.forest      0.495   0.091     0.317     0.434     0.495     0.556
+effect.male.grass       1.182   0.184     0.805     1.064     1.187     1.306
+gamma.site[1]          -0.056   0.737    -1.546    -0.493    -0.086     0.409
+gamma.site[2]          -0.794   0.997    -2.652    -1.470    -0.782    -0.154
+gamma.site[3]          -0.481   0.538    -1.519    -0.834    -0.492    -0.149
+gamma.site[4]           0.195   0.545    -0.897    -0.152     0.178     0.519
+gamma.site[5]           2.615   0.739     1.189     2.166     2.590     3.093
+gamma.site[6]          -0.246   0.541    -1.282    -0.600    -0.255     0.068
+gamma.site[7]          -0.703   0.744    -2.109    -1.165    -0.725    -0.238
+gamma.site[8]          -0.993   0.755    -2.485    -1.518    -0.988    -0.500
+gamma.site[9]          -1.370   0.537    -2.408    -1.708    -1.386    -1.037
+gamma.site[10]         -0.051   0.543    -1.082    -0.411    -0.054     0.260
+gamma.site[11]          0.183   0.538    -0.832    -0.185     0.168     0.515
+gamma.site[12]         -0.587   0.538    -1.592    -0.951    -0.587    -0.269
+gamma.site[13]          2.618   0.540     1.584     2.271     2.611     2.936
+sigma.site              1.483   0.392     0.942     1.217     1.412     1.667
+deviance            57076.495   5.483 57067.848 57072.453 57075.616 57079.939
+                        97.5%  Rhat n.eff
+beta.hab                1.849 1.002   840
+beta.int                1.078 1.004   510
+beta.sex                0.667 1.001  1200
+beta0                  21.803 1.000  1200
+effect.grass.female     1.849 1.002   840
+effect.grass.male       2.574 1.004   510
+effect.interaction      1.078 1.004   510
+effect.male.forest      0.667 1.001  1200
+effect.male.grass       1.524 1.004   500
+gamma.site[1]           1.416 1.002   820
+gamma.site[2]           1.163 1.003  1200
+gamma.site[3]           0.610 1.000  1200
+gamma.site[4]           1.341 1.000  1200
+gamma.site[5]           4.057 1.003   650
+gamma.site[6]           0.837 1.000  1200
+gamma.site[7]           0.755 1.004   530
+gamma.site[8]           0.396 1.001  1200
+gamma.site[9]          -0.250 1.000  1200
+gamma.site[10]          1.118 1.000  1200
+gamma.site[11]          1.293 1.000  1200
+gamma.site[12]          0.556 1.000  1200
+gamma.site[13]          3.748 1.000  1200
+sigma.site              2.440 1.000  1200
+deviance            57088.783 1.000     1
+
+For each parameter, n.eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor (at convergence, Rhat=1).
+
+DIC info (using the rule: pV = var(deviance)/2)
+pV = 15.0 and DIC = 57091.5
+DIC is an estimate of expected predictive error (lower deviance is better).</code></pre>
+</div>
+</div>
+<p>Here we can take advantage of a major advantage of Bayesian models. Unlike a mixed model fit by MLE, it is very straightforward to make comparisons between levels of your random effect, because we have a posterior distribution for each level (this can be done in a model fit using MLE, but it’s not as straightforward).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract the posterior samples</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>post1 <span class="ot">&lt;-</span> mod.lmm<span class="fl">.1</span><span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.matrix</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate posterior probability that random </span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co"># intercept for site 4 is positive</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(post1[,<span class="st">"gamma.site[5]"</span>]<span class="sc">&gt;</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9983333</code></pre>
+</div>
+</div>
+<p>We can also compare sites by seeing if the 95% credible intervals of their intercepts overlap.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>diff.site1 <span class="ot">&lt;-</span> post1[,<span class="st">"gamma.site[5]"</span>]<span class="sc">-</span>post1[,<span class="st">"gamma.site[11]"</span>]</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior probability that gamma[5] &gt; gamma[11]</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(diff.site1 <span class="sc">&gt;</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9933333</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># and the 95% CRI of the difference</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(diff.site1, <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     2.5%     97.5% 
+0.5907397 4.2643466 </code></pre>
+</div>
+</div>
+<p>We can say that there is a &gt;99% probability that Site 5 has a greater intercept than Site 11, and we can say that there is a &gt;99% probability that site 5 has a positive effect on body weight. However, we cannot say that being at site 5 <em>causes</em> mice to be bigger. The site effect captures unexplained variation attributable to site, which could reflect environmental conditions, genetic differences, sampling effects, or other unmeasured factors.</p>
+<p>Now let’s fit the model a different way, using the means parameterization.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>jags.data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">n=</span><span class="fu">nrow</span>(dx),</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsites=</span>nsites,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sex=</span>dx<span class="sc">$</span>sex.num,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">hab=</span>dx<span class="sc">$</span>hab.num,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">nhab=</span>nhabitats,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsex=</span>nsex,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">site=</span>dx<span class="sc">$</span>site.num,</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">mass=</span>dx<span class="sc">$</span>weight</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="co"># LMM with 1 fixed factor and 1 random intercept</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>mod.name <span class="ot">&lt;-</span> <span class="st">"jags_lmm_1fac_randint_v2.txt"</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(mod.name)</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a><span class="st">model {</span></span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a><span class="st">    # priors</span></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a><span class="st">    ## mean for each sex x habitat combination</span></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a><span class="st">    for(j in 1:nsex){</span></span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a><span class="st">        for(k in 1:nhab){</span></span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a><span class="st">            mu[j,k] ~ dnorm(20, 0.01)</span></span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a><span class="st">        }</span></span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a><span class="st">    ## random intercept for site</span></span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a><span class="st">    sigma.site ~ dunif(0.01, 10)</span></span>
+<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a><span class="st">    tau.site &lt;- 1 / pow(sigma.site, 2)</span></span>
+<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a><span class="st">    for(j in 1:nsites){</span></span>
+<span id="cb38-32"><a href="#cb38-32" aria-hidden="true" tabindex="-1"></a><span class="st">        gamma.site[j] ~ dnorm(0, tau.site)</span></span>
+<span id="cb38-33"><a href="#cb38-33" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb38-34"><a href="#cb38-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-35"><a href="#cb38-35" aria-hidden="true" tabindex="-1"></a><span class="st">    ## residual SD and precision</span></span>
+<span id="cb38-36"><a href="#cb38-36" aria-hidden="true" tabindex="-1"></a><span class="st">    sigma.res ~ dlnorm(1, 0.25)</span></span>
+<span id="cb38-37"><a href="#cb38-37" aria-hidden="true" tabindex="-1"></a><span class="st">    tau.res &lt;- 1 / pow(sigma.res, 2)</span></span>
+<span id="cb38-38"><a href="#cb38-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-39"><a href="#cb38-39" aria-hidden="true" tabindex="-1"></a><span class="st">    # likelihood</span></span>
+<span id="cb38-40"><a href="#cb38-40" aria-hidden="true" tabindex="-1"></a><span class="st">    for(i in 1:n){</span></span>
+<span id="cb38-41"><a href="#cb38-41" aria-hidden="true" tabindex="-1"></a><span class="st">        mass[i] ~ dnorm(eta[i], tau.res)</span></span>
+<span id="cb38-42"><a href="#cb38-42" aria-hidden="true" tabindex="-1"></a><span class="st">        eta[i] &lt;- mu[sex[i], hab[i]] + gamma.site[site[i]]</span></span>
+<span id="cb38-43"><a href="#cb38-43" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb38-44"><a href="#cb38-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-45"><a href="#cb38-45" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb38-46"><a href="#cb38-46" aria-hidden="true" tabindex="-1"></a><span class="st">    # derived quantities</span></span>
+<span id="cb38-47"><a href="#cb38-47" aria-hidden="true" tabindex="-1"></a><span class="st">    ## sex effect within each habitat</span></span>
+<span id="cb38-48"><a href="#cb38-48" aria-hidden="true" tabindex="-1"></a><span class="st">    effect.male.forest &lt;- mu[2,1] - mu[1,1]</span></span>
+<span id="cb38-49"><a href="#cb38-49" aria-hidden="true" tabindex="-1"></a><span class="st">    effect.male.grass &lt;- mu[2,2] - mu[1,2]</span></span>
+<span id="cb38-50"><a href="#cb38-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-51"><a href="#cb38-51" aria-hidden="true" tabindex="-1"></a><span class="st">    ## habitat effect within each sex</span></span>
+<span id="cb38-52"><a href="#cb38-52" aria-hidden="true" tabindex="-1"></a><span class="st">    effect.grass.female &lt;- mu[1,2] - mu[1,1]</span></span>
+<span id="cb38-53"><a href="#cb38-53" aria-hidden="true" tabindex="-1"></a><span class="st">    effect.grass.male &lt;- mu[2,2] - mu[2,1]</span></span>
+<span id="cb38-54"><a href="#cb38-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-55"><a href="#cb38-55" aria-hidden="true" tabindex="-1"></a><span class="st">    ## interaction</span></span>
+<span id="cb38-56"><a href="#cb38-56" aria-hidden="true" tabindex="-1"></a><span class="st">    effect.interaction &lt;- effect.male.grass - effect.male.forest</span></span>
+<span id="cb38-57"><a href="#cb38-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-58"><a href="#cb38-58" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb38-59"><a href="#cb38-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-60"><a href="#cb38-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-61"><a href="#cb38-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-62"><a href="#cb38-62" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>, <span class="at">fill=</span><span class="cn">TRUE</span>)</span>
+<span id="cb38-63"><a href="#cb38-63" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span>
+<span id="cb38-64"><a href="#cb38-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-65"><a href="#cb38-65" aria-hidden="true" tabindex="-1"></a><span class="co"># parameters to monitor</span></span>
+<span id="cb38-66"><a href="#cb38-66" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"mu"</span>, <span class="st">"sigma.site"</span>, <span class="st">"gamma.site"</span>,</span>
+<span id="cb38-67"><a href="#cb38-67" aria-hidden="true" tabindex="-1"></a>            <span class="st">"effect.male.forest"</span>, <span class="st">"effect.male.grass"</span>,</span>
+<span id="cb38-68"><a href="#cb38-68" aria-hidden="true" tabindex="-1"></a>            <span class="st">"effect.grass.female"</span>, <span class="st">"effect.grass.male"</span>,</span>
+<span id="cb38-69"><a href="#cb38-69" aria-hidden="true" tabindex="-1"></a>            <span class="st">"effect.interaction"</span>)</span>
+<span id="cb38-70"><a href="#cb38-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-71"><a href="#cb38-71" aria-hidden="true" tabindex="-1"></a><span class="co"># MCMC parameters</span></span>
+<span id="cb38-72"><a href="#cb38-72" aria-hidden="true" tabindex="-1"></a><span class="co"># smaller than normal because of the</span></span>
+<span id="cb38-73"><a href="#cb38-73" aria-hidden="true" tabindex="-1"></a><span class="co"># huge sample size...model takes</span></span>
+<span id="cb38-74"><a href="#cb38-74" aria-hidden="true" tabindex="-1"></a><span class="co"># forever to run!</span></span>
+<span id="cb38-75"><a href="#cb38-75" aria-hidden="true" tabindex="-1"></a>n.iter <span class="ot">&lt;-</span> <span class="fl">2.5e4</span></span>
+<span id="cb38-76"><a href="#cb38-76" aria-hidden="true" tabindex="-1"></a>n.burnin <span class="ot">&lt;-</span> <span class="fl">5e3</span></span>
+<span id="cb38-77"><a href="#cb38-77" aria-hidden="true" tabindex="-1"></a>n.thin <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb38-78"><a href="#cb38-78" aria-hidden="true" tabindex="-1"></a>nchains <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb38-79"><a href="#cb38-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-80"><a href="#cb38-80" aria-hidden="true" tabindex="-1"></a><span class="co"># function to define initial values for MCMC chains</span></span>
+<span id="cb38-81"><a href="#cb38-81" aria-hidden="true" tabindex="-1"></a><span class="co"># note that we use an informed prior for beta0:</span></span>
+<span id="cb38-82"><a href="#cb38-82" aria-hidden="true" tabindex="-1"></a><span class="co"># the average mass of a P. leucopus is about 20 g.</span></span>
+<span id="cb38-83"><a href="#cb38-83" aria-hidden="true" tabindex="-1"></a>init.fun <span class="ot">&lt;-</span> <span class="cf">function</span>(nc){</span>
+<span id="cb38-84"><a href="#cb38-84" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length=</span>nc)</span>
+<span id="cb38-85"><a href="#cb38-85" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nc){</span>
+<span id="cb38-86"><a href="#cb38-86" aria-hidden="true" tabindex="-1"></a>        res[[i]] <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb38-87"><a href="#cb38-87" aria-hidden="true" tabindex="-1"></a>            <span class="at">mu =</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(nsex <span class="sc">*</span> nhabitats, <span class="dv">20</span>, <span class="dv">2</span>),</span>
+<span id="cb38-88"><a href="#cb38-88" aria-hidden="true" tabindex="-1"></a>                        <span class="at">nrow=</span>nsex, <span class="at">ncol=</span>nhabitats),</span>
+<span id="cb38-89"><a href="#cb38-89" aria-hidden="true" tabindex="-1"></a>            <span class="at">sigma.site =</span> <span class="fu">runif</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="dv">3</span>),</span>
+<span id="cb38-90"><a href="#cb38-90" aria-hidden="true" tabindex="-1"></a>            <span class="at">sigma.res =</span> <span class="fu">rlnorm</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb38-91"><a href="#cb38-91" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb38-92"><a href="#cb38-92" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb38-93"><a href="#cb38-93" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(res)</span>
+<span id="cb38-94"><a href="#cb38-94" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb38-95"><a href="#cb38-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-96"><a href="#cb38-96" aria-hidden="true" tabindex="-1"></a>inits <span class="ot">&lt;-</span> <span class="fu">init.fun</span>(nchains)</span>
+<span id="cb38-97"><a href="#cb38-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-98"><a href="#cb38-98" aria-hidden="true" tabindex="-1"></a><span class="co"># fit model</span></span>
+<span id="cb38-99"><a href="#cb38-99" aria-hidden="true" tabindex="-1"></a>mod.lmm<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">jags</span>(<span class="at">data=</span>jags.data, <span class="at">inits=</span>inits,</span>
+<span id="cb38-100"><a href="#cb38-100" aria-hidden="true" tabindex="-1"></a>              <span class="at">parameters.to.save=</span>params,</span>
+<span id="cb38-101"><a href="#cb38-101" aria-hidden="true" tabindex="-1"></a>              <span class="at">model.file=</span>mod.name,</span>
+<span id="cb38-102"><a href="#cb38-102" aria-hidden="true" tabindex="-1"></a>              <span class="at">n.chains=</span>nchains, <span class="at">n.iter=</span>n.iter,</span>
+<span id="cb38-103"><a href="#cb38-103" aria-hidden="true" tabindex="-1"></a>              <span class="at">n.burnin=</span>n.burnin, <span class="at">n.thin=</span>n.thin)<span class="co">#jags</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 10086
+   Unobserved stochastic nodes: 19
+   Total graph size: 40409
+
+Initializing model</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>mod.lmm<span class="fl">.2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Inference for Bugs model at "jags_lmm_1fac_randint_v2.txt", fit using jags,
+ 3 chains, each with 25000 iterations (first 5000 discarded), n.thin = 50
+ n.sims = 1200 iterations saved. Running time = 395.49 secs
+                      mu.vect sd.vect      2.5%       25%       50%       75%
+effect.grass.female     0.073   0.925    -1.760    -0.530     0.076     0.647
+effect.grass.male       0.757   0.926    -1.031     0.180     0.749     1.366
+effect.interaction      0.684   0.200     0.288     0.543     0.686     0.831
+effect.male.forest      0.489   0.092     0.305     0.427     0.491     0.547
+effect.male.grass       1.173   0.184     0.824     1.047     1.170     1.302
+gamma.site[1]          -0.087   0.756    -1.492    -0.575    -0.100     0.365
+gamma.site[2]          -0.746   1.057    -3.006    -1.414    -0.737    -0.032
+gamma.site[3]          -0.515   0.565    -1.578    -0.872    -0.515    -0.166
+gamma.site[4]           0.163   0.571    -0.867    -0.183     0.155     0.525
+gamma.site[5]           2.599   0.748     1.190     2.136     2.574     3.031
+gamma.site[6]          -0.277   0.567    -1.352    -0.636    -0.284     0.081
+gamma.site[7]          -0.706   0.759    -2.154    -1.200    -0.743    -0.274
+gamma.site[8]          -1.005   0.790    -2.499    -1.517    -1.012    -0.557
+gamma.site[9]          -1.407   0.569    -2.477    -1.753    -1.409    -1.053
+gamma.site[10]         -0.068   0.568    -1.139    -0.430    -0.083     0.279
+gamma.site[11]          0.155   0.571    -0.903    -0.204     0.144     0.529
+gamma.site[12]         -0.609   0.568    -1.697    -0.963    -0.610    -0.256
+gamma.site[13]          2.592   0.574     1.534     2.223     2.584     2.955
+mu[1,1]                20.804   0.560    19.677    20.445    20.818    21.161
+mu[2,1]                21.292   0.558    20.154    20.934    21.303    21.644
+mu[1,2]                20.877   0.748    19.373    20.440    20.893    21.359
+mu[2,2]                22.049   0.749    20.430    21.613    22.063    22.511
+sigma.site              1.493   0.380     0.952     1.223     1.432     1.678
+deviance            57076.810   5.532 57067.858 57072.812 57076.253 57079.877
+                        97.5%  Rhat n.eff
+effect.grass.female     1.847 1.000  1200
+effect.grass.male       2.608 1.001  1200
+effect.interaction      1.074 1.002  1200
+effect.male.forest      0.670 1.000  1200
+effect.male.grass       1.530 1.000  1200
+gamma.site[1]           1.609 1.001  1200
+gamma.site[2]           1.183 1.000  1200
+gamma.site[3]           0.626 1.001  1200
+gamma.site[4]           1.297 1.003   670
+gamma.site[5]           4.234 1.008  1200
+gamma.site[6]           0.830 1.002   760
+gamma.site[7]           0.852 1.001  1200
+gamma.site[8]           0.557 1.000  1200
+gamma.site[9]          -0.280 1.002  1000
+gamma.site[10]          1.045 1.003   690
+gamma.site[11]          1.268 1.002   960
+gamma.site[12]          0.548 1.002  1000
+gamma.site[13]          3.717 1.001  1200
+mu[1,1]                21.849 1.002  1000
+mu[2,1]                22.315 1.002  1000
+mu[1,2]                22.310 1.002  1200
+mu[2,2]                23.468 1.002  1200
+sigma.site              2.441 1.000  1200
+deviance            57090.142 1.000     1
+
+For each parameter, n.eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor (at convergence, Rhat=1).
+
+DIC info (using the rule: pV = var(deviance)/2)
+pV = 15.3 and DIC = 57092.1
+DIC is an estimate of expected predictive error (lower deviance is better).</code></pre>
+</div>
+</div>
+<p>The result shows us that the estimates are approximately the same. Let’s compare the fixed effects directly.</p>
+<p>For the effects parameterization version of the model, we get:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(mod.lmm<span class="fl">.1</span><span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,],<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         mean    sd      2.5%       25%       50%       75%
+beta.hab                0.084 0.908    -1.687    -0.474     0.093     0.649
+beta.int                0.687 0.207     0.263     0.560     0.696     0.821
+beta.sex                0.495 0.091     0.317     0.434     0.495     0.556
+beta0                  20.775 0.530    19.664    20.452    20.784    21.110
+deviance            57076.495 5.483 57067.848 57072.453 57075.616 57079.939
+effect.grass.female     0.084 0.908    -1.687    -0.474     0.093     0.649
+effect.grass.male       0.771 0.913    -1.046     0.176     0.793     1.357
+effect.interaction      0.687 0.207     0.263     0.560     0.696     0.821
+effect.male.forest      0.495 0.091     0.317     0.434     0.495     0.556
+effect.male.grass       1.182 0.184     0.805     1.064     1.187     1.306
+                        97.5%  Rhat n.eff
+beta.hab                1.849 1.002   840
+beta.int                1.078 1.004   510
+beta.sex                0.667 1.001  1200
+beta0                  21.803 1.000  1200
+deviance            57088.783 1.000     1
+effect.grass.female     1.849 1.002   840
+effect.grass.male       2.574 1.004   510
+effect.interaction      1.078 1.004   510
+effect.male.forest      0.667 1.001  1200
+effect.male.grass       1.524 1.004   500</code></pre>
+</div>
+</div>
+<ul>
+<li>Like the MLE version of the model, we have an intercept of about 20.8, representing the mean mass of females in forest habitat.</li>
+<li>In the MLE model, grassland females were not significantly larger or smaller than forest females (<code>0.091</code>). The Bayesian version has a smaller point estimate (0.045), with a 95% CRI that overlaps 0.</li>
+<li>In the MLE model forest males were about 0.493 g larger than forest females, while in the Bayesian model we see a similar effect size of 0.490 g (<code>beta.sex</code>) with a 95% CRI that does not include 0.</li>
+<li>In the MLE model grassland males were about 0.683 g larger than grassland females. The Bayesian model had a similar effect size of 0.691 (<code>beta.int</code>).</li>
+</ul>
+<p>The derived parameters starting with <code>effects</code> summarize the total effects incorporating both the main and interaction effects:</p>
+<ul>
+<li><code>effect.grass.female</code> is the habitat effect for females</li>
+<li><code>effect.grass.male</code> is the habitat effect for males</li>
+<li><code>effect.male.forest</code> is the sex effect in forest</li>
+<li><code>effect.male.grass</code> is the sex effect in grass</li>
+<li><code>effect.interaction</code> is the difference in sexual dimorphism between grassland and forest</li>
+</ul>
+<p>Now let’s examine the outputs of the second version of the model.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(mod.lmm<span class="fl">.2</span><span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>,<span class="dv">20</span><span class="sc">:</span><span class="dv">23</span>),],<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      mean    sd   2.5%    25%    50%    75%  97.5%  Rhat n.eff
+effect.grass.female  0.073 0.925 -1.760 -0.530  0.076  0.647  1.847 1.000  1200
+effect.grass.male    0.757 0.926 -1.031  0.180  0.749  1.366  2.608 1.001  1200
+effect.interaction   0.684 0.200  0.288  0.543  0.686  0.831  1.074 1.002  1200
+effect.male.forest   0.489 0.092  0.305  0.427  0.491  0.547  0.670 1.000  1200
+effect.male.grass    1.173 0.184  0.824  1.047  1.170  1.302  1.530 1.000  1200
+mu[1,1]             20.804 0.560 19.677 20.445 20.818 21.161 21.849 1.002  1000
+mu[2,1]             21.292 0.558 20.154 20.934 21.303 21.644 22.315 1.002  1000
+mu[1,2]             20.877 0.748 19.373 20.440 20.893 21.359 22.310 1.002  1200
+mu[2,2]             22.049 0.749 20.430 21.613 22.063 22.511 23.468 1.002  1200</code></pre>
+</div>
+</div>
+<p>The matrix <code>mu</code> contains the posterior means and their CRI for the four groups: forest females (<code>mu[1,1]</code>), grassland females (<code>mu[2,1]</code>), forest males (<code>mu[1,2]</code>), and grassland males (<code>mu[2,2]</code>).</p>
+<p>The effects we see correspond to the effects in the LMM and the first version of the Bayesian model.</p>
+<ul>
+<li><code>effect.grass.female</code> is the habitat effect for females</li>
+<li><code>effect.grass.male</code> is the habitat effect for males</li>
+<li><code>effect.male.forest</code> is the sex effect in forest habitat</li>
+<li><code>effect.male.grass</code> is the sex effect in grassland habitat</li>
+<li><code>effect.interaction</code> is the difference between the sex effects between habitats.</li>
+</ul>
+</section>
+<section id="sec-mixed-lmm-brms" class="level3" data-number="9.2.5">
+<h3 data-number="9.2.5" class="anchored" data-anchor-id="sec-mixed-lmm-brms"><span class="header-section-number">9.2.5</span> Example analysis in <code>brms</code></h3>
+<p>Finally, we will fit the LMM in <code>brms</code>. Note that <code>brm()</code> uses a formula syntax very similar to that in <code>lme4</code>. We also need to provide <code>sex</code>, <code>habitat</code>, and <code>site</code> as factors rather than numbers as we did for JAGS.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(brms)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>mod.brms <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    weight <span class="sc">~</span> sex <span class="sc">*</span> habitat <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> site),</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> dx,</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">prior =</span> <span class="fu">c</span>(</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">5</span>), <span class="at">class =</span> <span class="st">"b"</span>),</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">20</span>, <span class="dv">5</span>), <span class="at">class =</span> <span class="st">"Intercept"</span>),</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">prior</span>(<span class="fu">exponential</span>(<span class="dv">1</span>), <span class="at">class =</span> <span class="st">"sd"</span>),</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">prior</span>(<span class="fu">exponential</span>(<span class="dv">1</span>), <span class="at">class =</span> <span class="st">"sigma"</span>)</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">iter =</span> <span class="dv">2000</span>,</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">backend =</span> <span class="st">"cmdstanr"</span></span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 4 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 3 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 1 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 4 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 3 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 4 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 1 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 3 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 2 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 4 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 1 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 3 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 2 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 4 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 2 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 1 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 3 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 4 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 2 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 1 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 3 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 4 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 2 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 1 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 3 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 4 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 2 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 1 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 3 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 4 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 2 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 3 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 4 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 4 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 3 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 2 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 4 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 2 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 4 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 3 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 4 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 2 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 4 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 3 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 3 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 1 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 2 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 4 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 74.6 seconds.
+Chain 2 finished in 74.7 seconds.
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 75.3 seconds.
+Chain 3 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 78.4 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 75.7 seconds.
+Total execution time: 78.7 seconds.</code></pre>
+</div>
+</div>
+<p>The post-processing functions in <code>lme4</code> have close equivalents in <code>brms</code>:</p>
+<div id="tbl-lme4-brms" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lme4-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9.1: Comparison of functions for fitting and summarizing mixed models using the frequentist <code>lme4</code> package and Bayesian <code>brms</code> package in R. Although many functions have the same names, <code>lme4</code> generally returns point estimates, whereas <code>brms</code> provides posterior summaries and credible intervals.
+</figcaption>
+<div aria-describedby="tbl-lme4-brms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Task</th>
+<th style="text-align: left;"><code>lme4</code></th>
+<th style="text-align: left;"><code>brms</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Fit linear mixed model</td>
+<td style="text-align: left;"><code>lmer()</code></td>
+<td style="text-align: left;"><code>brm()</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fixed-effect estimates</td>
+<td style="text-align: left;"><code>fixef()</code></td>
+<td style="text-align: left;"><code>fixef()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Site-specific random effects</td>
+<td style="text-align: left;"><code>ranef()</code></td>
+<td style="text-align: left;"><code>ranef()</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fixed + random effects</td>
+<td style="text-align: left;"><code>coef()</code></td>
+<td style="text-align: left;"><code>coef()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Variance components</td>
+<td style="text-align: left;"><code>VarCorr()</code></td>
+<td style="text-align: left;"><code>VarCorr()</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Model summary</td>
+<td style="text-align: left;"><code>summary()</code></td>
+<td style="text-align: left;"><code>summary()</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>One important difference from <code>lme4</code> is that brms::ranef() returns posterior summaries for each site’s random effects, including credible intervals. You can also obtain the full posterior draws for comparisons between sites.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.brms)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity 
+Formula: weight ~ sex * habitat + (1 | site) 
+   Data: dx (Number of observations: 10086) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Multilevel Hyperparameters:
+~site (Number of levels: 13) 
+              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sd(Intercept)     1.36      0.30     0.91     2.07 1.00     1598     2113
+
+Regression Coefficients:
+                                   Estimate Est.Error l-95% CI u-95% CI Rhat
+Intercept                             20.81      0.50    19.83    21.79 1.00
+sexmale                                0.49      0.09     0.32     0.68 1.00
+habitatgrasslandHerbaceous             0.09      0.82    -1.50     1.72 1.00
+sexmale:habitatgrasslandHerbaceous     0.68      0.21     0.27     1.10 1.00
+                                   Bulk_ESS Tail_ESS
+Intercept                               908     1467
+sexmale                                3963     2618
+habitatgrasslandHerbaceous             1149     1582
+sexmale:habitatgrasslandHerbaceous     3855     2522
+
+Further Distributional Parameters:
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma     4.10      0.03     4.04     4.15 1.00     4674     2390
+
+Draws were sampled using sample(hmc). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(mod.brms)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$site
+, , Intercept
+
+     Estimate Est.Error     Q2.5    Q97.5
+CLBJ 20.71494 0.8229319 19.05174 22.33186
+DCFS 20.06104 1.0995555 17.91619 22.25438
+GRSM 20.29021 0.1367708 20.01941 20.56025
+HARV 20.96689 0.1379503 20.69470 21.23966
+KONZ 23.38685 0.8220931 21.72694 25.00901
+MLBS 20.52859 0.1351067 20.25904 20.79482
+NOGP 20.08124 0.8477177 18.40041 21.75486
+OAES 19.79990 0.8518674 18.05588 21.40660
+ORNL 19.40490 0.1373578 19.13840 19.66944
+SCBI 20.72927 0.1355386 20.46344 21.00048
+SERC 20.95669 0.1342711 20.70355 21.22407
+STEI 20.19058 0.1352447 19.92003 20.44961
+UKFS 23.38562 0.1392804 23.11605 23.66014
+
+, , sexmale
+
+      Estimate  Est.Error      Q2.5     Q97.5
+CLBJ 0.4943125 0.09102504 0.3187065 0.6761891
+DCFS 0.4943125 0.09102504 0.3187065 0.6761891
+GRSM 0.4943125 0.09102504 0.3187065 0.6761891
+HARV 0.4943125 0.09102504 0.3187065 0.6761891
+KONZ 0.4943125 0.09102504 0.3187065 0.6761891
+MLBS 0.4943125 0.09102504 0.3187065 0.6761891
+NOGP 0.4943125 0.09102504 0.3187065 0.6761891
+OAES 0.4943125 0.09102504 0.3187065 0.6761891
+ORNL 0.4943125 0.09102504 0.3187065 0.6761891
+SCBI 0.4943125 0.09102504 0.3187065 0.6761891
+SERC 0.4943125 0.09102504 0.3187065 0.6761891
+STEI 0.4943125 0.09102504 0.3187065 0.6761891
+UKFS 0.4943125 0.09102504 0.3187065 0.6761891
+
+, , habitatgrasslandHerbaceous
+
+       Estimate Est.Error    Q2.5    Q97.5
+CLBJ 0.08866465 0.8226777 -1.4995 1.715365
+DCFS 0.08866465 0.8226777 -1.4995 1.715365
+GRSM 0.08866465 0.8226777 -1.4995 1.715365
+HARV 0.08866465 0.8226777 -1.4995 1.715365
+KONZ 0.08866465 0.8226777 -1.4995 1.715365
+MLBS 0.08866465 0.8226777 -1.4995 1.715365
+NOGP 0.08866465 0.8226777 -1.4995 1.715365
+OAES 0.08866465 0.8226777 -1.4995 1.715365
+ORNL 0.08866465 0.8226777 -1.4995 1.715365
+SCBI 0.08866465 0.8226777 -1.4995 1.715365
+SERC 0.08866465 0.8226777 -1.4995 1.715365
+STEI 0.08866465 0.8226777 -1.4995 1.715365
+UKFS 0.08866465 0.8226777 -1.4995 1.715365
+
+, , sexmale:habitatgrasslandHerbaceous
+
+      Estimate Est.Error      Q2.5    Q97.5
+CLBJ 0.6806034 0.2053122 0.2741804 1.095408
+DCFS 0.6806034 0.2053122 0.2741804 1.095408
+GRSM 0.6806034 0.2053122 0.2741804 1.095408
+HARV 0.6806034 0.2053122 0.2741804 1.095408
+KONZ 0.6806034 0.2053122 0.2741804 1.095408
+MLBS 0.6806034 0.2053122 0.2741804 1.095408
+NOGP 0.6806034 0.2053122 0.2741804 1.095408
+OAES 0.6806034 0.2053122 0.2741804 1.095408
+ORNL 0.6806034 0.2053122 0.2741804 1.095408
+SCBI 0.6806034 0.2053122 0.2741804 1.095408
+SERC 0.6806034 0.2053122 0.2741804 1.095408
+STEI 0.6806034 0.2053122 0.2741804 1.095408
+UKFS 0.6806034 0.2053122 0.2741804 1.095408</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(mod.brms)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                      Estimate  Est.Error       Q2.5      Q97.5
+Intercept                          20.80651917 0.49659286 19.8327847 21.7859413
+sexmale                             0.49431252 0.09102504  0.3187065  0.6761891
+habitatgrasslandHerbaceous          0.08866465 0.82267774 -1.4995001  1.7153651
+sexmale:habitatgrasslandHerbaceous  0.68060339 0.20531222  0.2741804  1.0954083</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-mixed-glmm" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="sec-mixed-glmm"><span class="header-section-number">9.3</span> Generalized linear mixed model (GLMM)</h2>
+<p>Coming soon!</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -679,5 +2008,5 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/edit/main/chapters/09-mixed-models.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/edit/main/chapters/09-mixed-models.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/greenquanteco/bayesian-inference-biologists/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

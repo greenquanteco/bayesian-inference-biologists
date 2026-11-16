@@ -267,7 +267,7 @@
 
 \title{Bayesian Inference for Biologists}
 \author{Nick Green}
-\date{November 2, 2026}
+\date{November 15, 2026}
 \begin{document}
 \maketitle
 
@@ -4511,7 +4511,7 @@ Initializing model
 \begin{verbatim}
 Inference for Bugs model at "jags_anova2way_means.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 6.77 secs
+ n.sims = 1200 iterations saved. Running time = 9.38 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 mu[1,1]   16.416   1.005  14.441  15.734  16.450  17.110  18.233 1.004   550
 mu[2,1]   30.378   0.994  28.510  29.673  30.373  31.028  32.372 1.004   680
@@ -5197,8 +5197,7 @@ intercepts and slopes.)}
 
 \textbf{\emph{Put figure here}}
 
-\subsection{ANCOVA with main effects
-only}\label{ancova-with-main-effects-only}
+\subsection{ANCOVA with main effects only}\label{sec-linear-ancova-main}
 
 As always, we'll simulate a dataset and then analyze it. Before that we
 need to think about how we want to write the ANCOVA model. The
@@ -5459,7 +5458,7 @@ styles, etc.
 
 \pandocbounded{\includegraphics[keepaspectratio]{chapters/04-linear-models_files/figure-pdf/unnamed-chunk-25-1.pdf}}
 
-\subsection{ANCOVA with interaction}\label{ancova-with-interaction}
+\subsection{ANCOVA with interaction}\label{sec-linear-ancova-inter}
 
 The ANCOVA with interaction effect model will be constructed by
 combining bits of the main effects ANCOVA model with the ``parameters as
@@ -6527,7 +6526,7 @@ version 4-17, and R2jags version 0.8-9.
 
 \end{tcolorbox}
 
-\section{GLM refresher}\label{glm-refresher}
+\section{GLM refresher}\label{sec-glm1-review}
 
 Generalized linear models (GLM) extend the
 \href{\%7B@sec-linear\%7D}{linear model} by relaxing two assumptions:
@@ -6844,7 +6843,7 @@ And inspect the results:
 \begin{verbatim}
 Inference for Bugs model at "jags-glm-poisson.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 41.21 secs
+ n.sims = 1200 iterations saved. Running time = 44.89 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      1.456    0.07   1.327   1.410   1.455   1.500   1.596 1.001  1200
 beta1      0.211    0.01   0.192   0.205   0.212   0.217   0.230 1.000  1200
@@ -7118,11 +7117,11 @@ Chain 3 Iteration: 1700 / 2000 [ 85%]  (Sampling)
 Chain 3 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
 Chain 3 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
 Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 3 finished in 0.2 seconds.
+Chain 3 finished in 0.3 seconds.
 
 All 3 chains finished successfully.
 Mean chain execution time: 0.2 seconds.
-Total execution time: 1.0 seconds.
+Total execution time: 1.2 seconds.
 \end{verbatim}
 
 The first time you run the model, R will have to compile the model into
@@ -7613,7 +7612,7 @@ And inspect the results:
 \begin{verbatim}
 Inference for Bugs model at "jags-glm-negbin-v1.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 91.39 secs
+ n.sims = 1200 iterations saved. Running time = 93.28 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      1.463   0.079   1.310   1.405   1.463   1.517   1.611 1.004   490
 beta1      0.210   0.012   0.188   0.202   0.210   0.218   0.234 1.003   680
@@ -7693,7 +7692,7 @@ And we see essentially the same estimates for \texttt{beta0},
 \begin{verbatim}
 Inference for Bugs model at "jags-glm-negbin-v2.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 55.48 secs
+ n.sims = 1200 iterations saved. Running time = 64.47 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      1.456   0.078   1.307   1.404   1.455   1.510   1.607 1.001  1200
 beta1      0.211   0.011   0.189   0.204   0.211   0.219   0.234 1.001  1100
@@ -7804,6 +7803,1706 @@ Now we can construct our plot:
 \chapter{Nonlinear models in JAGS}\label{sec-non}
 
 \chapter{Mixed models and random effects}\label{sec-mixed}
+
+\section{Introduction}\label{sec-mixed-intro}
+
+So far, the linear models (LMs) and generalized linear models (GLMs) we
+have studied have included two components:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  A \textbf{systematic component (or deterministic component)}, which
+  describes how the expected value of the response variable depends on
+  the predictor variables.
+\item
+  A \textbf{stochastic component}, which describes random variation in
+  the response variable around its expected value.
+\end{enumerate}
+
+For example, consider a linear regression describing the relationship
+between body mass and metabolic rate:
+
+\[
+Y_i=\beta_0+\beta_1X_i+\varepsilon_i
+\]
+
+The systematic component is \(\beta_0+\beta_1X_i\), which describes the
+expected metabolic rate for an animal of a given body mass. The
+stochastic component is \(\varepsilon_i\), which describes the variation
+in metabolic rate that the systematic component does not explain. In an
+ordinary linear model, we generally assume that the residuals are
+independent and identically distributed, with mean zero and variance
+\(\sigma^2_{res}\). Another way to state that \emph{i.i.d.} assumption
+is that the residual variation is unstructured.
+
+But what if some of that unexplained variation has an identifiable
+structure?
+
+Suppose our animals were measured in several different laboratories.
+Measurements from the same laboratory might be more similar to each
+other than measurements from different laboratories, perhaps because of
+differences in equipment, experimental protocols, or environmental
+conditions. This inter-laboratory variation has a structure, but it is
+not a structure that we as researchers are interested in. We want to
+account for it, certainly, but we are not interested in these
+laboratories themselves as experimental units.
+
+Our original linear model does not explicitly account for this source of
+variation. We could add laboratory as a categorical predictor, as we did
+in \hyperref[sec-linear-ancova]{analysis of covariance (ANCOVA)}. If we
+assume that the metabolic rate measurements were differently calibrated
+in each laboratory, that model would look like:
+
+\[
+Y_i=\beta_0+\beta_{1,lab_i}+\beta_2X_i+\varepsilon_i
+\]
+
+This model adds a term \(\beta_{1,lab}\) that captures the lab-specific
+effect. This term functions as an extra intercept, so we could also have
+written:
+
+\$\$ Y\_i=\beta\_\{0,lab\_i\}+\beta\_1X\_i+\varepsilon\_i
+
+\$\$
+
+Where the lab determines the intercept directly. In either case, we are
+fitting the effect of lab as we do any other model parameter, such as
+the slope for body mass. The fitted lab-specific intercepts describe
+differences among the particular laboratories that made the
+measurements, potentially reflecting differences in equipment,
+experimental conditions, or other factors.
+
+It is worth asking the question: ``\textbf{Do we care about the
+differences between Laboratories A, B, and C specifically, or do we
+primarily want to account for variation among laboratories?}'' The
+former goal, estimating differences among these specific laboratories,
+helps us understand the data in front of us. The second goal, accounting
+for variation among laboratories more generally, could allow us to
+generalize our results beyond the particular laboratories in our
+dataset.
+
+Fitting laboratory-specific parameters---that is, including laboratory
+in the \emph{deterministic} part of the model---accomplishes the first
+goal. To accomplish the second, we can instead model variation among
+laboratories as an additional \emph{stochastic} component. This allows
+us to estimate the relationship between body mass and metabolic rate
+while accounting for differences among laboratories, and to characterize
+how much that relationship might vary in other laboratories.
+
+If we assign the random variation between labs to a new, second
+stochastic part of the model, we define a \textbf{random effect} of
+laboratory. A random effect in a statistical model is a parameter that
+varies between groups according to some probability distribution. In our
+example, we can include a \textbf{random intercept} to account for
+variation in measured values between laboratories:
+
+\[
+Y_i=\beta_{0,lab_i}+\beta_1X_i+\varepsilon_i
+\]
+
+\[
+\beta_{0,lab}\sim\text{Normal}\left(\mu_{\beta_0},\sigma^2_{\beta_0}\right)
+\]
+
+The intercepts \(\beta_0\) vary between labs as \(\beta_{0,lab}\), and
+those intercepts come from a normal distribution with mean
+\(\mu_{\beta_0}\) and variance \(\sigma^2_{\beta_0}\). Another option
+would be to fit a model with \textbf{random slopes}, where the slopes
+vary according to a normal distribution with mean \(\mu_{\beta_1}\) and
+variance \(\sigma^2_{\beta_1}\).
+
+\[
+Y_i=\beta_0+\beta_{1,lab_i}X_i+\varepsilon_i
+\]
+
+\[
+\beta_{1,lab}\sim\text{Normal}\left(\mu_{\beta_1},\sigma^2_{\beta_1}\right)
+\]
+
+or even a model with a random intercept \emph{and} random slope for lab:
+
+\[
+Y_i=\beta_{0,lab}+\beta_{1,lab_i}X_i+\varepsilon_i
+\]
+
+\[
+\beta_{0,lab}\sim\text{Normal}\left(\mu_{\beta_0},\sigma^2_{\beta_0}\right)\text{; }\beta_{1,lab}\sim\text{Normal}\left(\mu_{\beta_1},\sigma^2_{\beta_1}\right)
+\]
+
+Group-level effects that vary according to a distribution are
+\textbf{random effects}. The other kind of effect, which you are used to
+seeing, are \textbf{fixed effects}. Fixed effects can be thought of as
+``global effects'' that apply across all groups (in the dataset or not)
+and independent of group-level effects. A model that includes both fixed
+effects and random effects is a \textbf{mixed effects model}.
+
+\subsection{Putting the random in random
+effect}\label{sec-mixed-intro-rand}
+
+You may have noticed that the random effects we defined above all
+followed normal distributions. At this point in the course, after seeing
+the \hyperref[sec-glm1-review]{modules on GLMs}, you might wonder why we
+don't use other distributions to describe random effects.
+
+Well, I can't find a good answer for that. There is no mathematical
+reason we couldn't use something like a
+\href{https://en.wikipedia.org/wiki/Gamma_distribution}{gamma
+distribution} for our random effects. The use of the normal is largely
+for convenience.
+
+In the effects parameterization of the linear mixed effects model below,
+the random effect follows a normal distribution with a mean of 0. The
+normal is convenient here because it is symmetrical about 0, and so we
+don't assume any skewness. The normal distribution is also
+well-justified by the
+\href{https://en.wikipedia.org/wiki/Central_limit_theorem}{central limit
+theorem}. In our example, laboratory differences might reflect many
+small, approximately independent influences: equipment calibration,
+technician behavior, temperature, experimental procedures, and so forth.
+If the laboratory effect is approximately the sum of many such
+influences, a normal distribution is a reasonable approximation. The
+final, and probably biggest reason for assuming normally-distributed
+random effects is that the normal distribution is computationally very
+convenient.
+
+There are legitimate biological or statistical reasons why a non-normal
+distribution for random effects might be appropriate. For example, a
+gamma or lognormal distribution might be appropriate for effects which
+are strictly positive, when effects are multiplicative in nature, or
+when random effects might be highly right-skewed (many small values, few
+large values).
+
+Random effects are usually assumed to follow a normal distribution with
+a mean of zero and an unknown variance (in effects parameterization).
+The mean is zero because the random effects represent deviations from
+the population-level relationship, while the variance describes how much
+groups differ from one another. The normal distribution is convenient
+because it accommodates both positive and negative deviations and is
+relatively easy to work with mathematically. Other distributions are
+possible, but fitting models with non-normal random effects often
+requires more specialized methods. In means parameterization, where
+group-level intercepts or slopes are defined directly, the random
+distribution has a mean of \(\mu_{\beta}\), not 0.
+
+I'm not aware of a method for fitting a model with non-normal random
+effects in R, but coding such a model is trivial in JAGS. Be aware that
+you will have to work very hard to justify such effects to Reviewer 2.
+
+\subsection{Parameterizing mixed models}\label{sec-mixed-intro-para}
+
+When we fit mixed models, it is important to be aware of whether you are
+fitting the \textbf{effects parameterization} or the \textbf{means
+parameterization} of the model. Consider a simple linear mixed model
+with a random slope \(\beta_{1,j}\):
+
+\[y\sim\mathcal{N}\left(\eta,\sigma^2_{res}\right)\]
+
+\[\eta=\beta_0+\beta_{1,j} x\]
+
+\[\beta_1\sim\mathcal{N}\left(\mu_{\beta_1},\sigma^2_{\beta_1}\right)\]
+
+When we write the model this way, with each group-level slope occuring
+as itself, we are writing the \textbf{means parameterization}. It is
+called this because each parameter is presented as its own point
+estimate or mean. On the other hand, we could write the linear predictor
+and random effect this way:
+
+\[\eta=\beta_0+\left(\beta_1+\gamma_j\right)x\]
+
+\[\gamma_j\sim\mathcal{N}\left(0,\sigma^2_{\gamma}\right)\]
+
+This is called the \textbf{effects parameterization}. The random effect
+is fit as the \emph{effect}, or difference, between the global slope
+\(\beta_1\) and the group-specific slope
+\(\left(\beta_1+\gamma_j\right)\). The random component now has mean 0
+instead of \(\mu_{\beta_1}\). The number of parameters are the same
+because
+
+\[\left(\beta_1+\gamma_j\right)=\beta_{1,j}\]
+
+Which one you fit depends largely on preference. The mixed modeling
+functions in R packages \texttt{lme4} and \texttt{nlme} use effects
+parameterization, which has the benefit of making them comparable to the
+base \texttt{lm()} and \texttt{glm()} functions. So far in JAGS we have
+been using means parameterization because it involves less bookkeeping
+in the code (and, in my opinion, makes the outputs easier to interpret).
+
+\section{Linear mixed models (LMM)}\label{sec-mixed-lmm}
+
+\subsection{Definition}\label{sec-mixed-lmm-def}
+
+The \textbf{linear mixed effects model} extends the linear model to
+include random effects. If we start with a basic linear regression model
+with one predictor \(x\), we can define three versions: a \textbf{random
+intercept model}, a \textbf{random slope model}, and a \textbf{full
+random model}.
+
+\subsubsection{Random intercept model}\label{sec-mixed-lmm-def-randint}
+
+This model has a random effect of group on the intercept. The first part
+is the response distribution that relates the expected value \(\mu_i\)
+to the observed values in \(y_i\).
+
+\[y_i\sim\text{Normal}\left(\mu_i,\sigma^2_{res}\right)\]
+
+The systematic part of the model, containing the expression for
+\(\mu_i\), includes an effect \(\gamma_{group_i}\) which is the effect
+on the intercept associated with the group of observation \(i\). The
+form below is the \emph{effects parameterization}, which expresses the
+random effect as how it changes the intercept. In other words, the
+realized intercept in group A will be \(\beta_0+\gamma_A\)
+
+\[\mu_i=\beta_0+\beta_1x_i+\gamma_{group_i};\text{ }\gamma_{group}\sim \text{Normal}\left(0,\sigma^2_{\gamma_{group}}\right)\]
+
+The group-level effects on the intercept follow a normal distribution
+with mean \(0\) and variance \(\sigma^2_{\gamma_{group}}\).
+
+Because the global intercept \(\beta_0\) and the random intercept are
+both scalars and occur as a sum in the model, many people omit the
+\(\gamma\) term (``gamma'') and simplify this to:
+
+\[\mu_i=\beta_{0,group_i}+\beta_1x_i\]
+
+\[\beta_{0,group}\sim \text{Normal}\left(\mu_{\beta_{0,group}},\sigma^2_{\beta_{0,group}}\right)\]
+
+The first version keeps the global intercept and the group-level effect
+on the intercept separate, while the second version fits a group-level
+intercept directly.
+
+\subsubsection{Random intercept
+model}\label{sec-mixed-lmm-def-randslope}
+
+This model has a random effect of group on the slope It has the same
+response distribution step as the random intercept model above. The
+systematic part is a bit different: the random effect of group changes
+the slope of \(x\), not the intercept.
+
+\[\mu_i=\beta_0+\left(\beta_1+\gamma_{group_i}\right)x_i\]
+
+\[\gamma_{group}\sim\text{Normal}\left(\mu_{\gamma_{group}},\sigma^2_{\gamma_{group}}\right)\]
+
+Just as with the random intercept model, the random slope model can be
+simplified so as to specify a group-level slope directly:
+
+\[\mu_i=\beta_0+\beta_{1,group_i}x_i\]
+
+\[\beta_{1,group}\sim\text{Normal}\left(\mu_{\beta_{1,group}},\sigma^2_{\beta_{1,group}}\right)\]
+
+\subsubsection{Random intercept and slope
+model}\label{sec-mixed-lmm-def-randboth}
+
+The \textbf{full random model} has a random intercept and a random
+slope. We get this model by combining the random intercept model and the
+random slope model:
+
+\[\mu_i=\beta_{0,group_i}+\beta_{1,group_i}x_i\]
+
+\[\beta_{0,group}\sim \text{Normal}\left(\mu_{\beta_{0,group}},\sigma^2_{\beta_{0,group}}\right)\]
+
+\[\beta_{1,group}\sim\text{Normal}\left(\mu_{\beta_{1,group}},\sigma^2_{\beta_{1,group}}\right)\]
+
+\subsection{Data preparation for examples}\label{sec-mixed-lmm-data}
+
+Let's explore a linear mixed effects model using the NEON small mammal
+data. If you haven't already, download the
+\href{../datasets/data-neon-ind-meas.csv}{individual measurements
+dataset} and the \href{../datasets/data-neon-metadata-site.csv}{site
+metadata dataset}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"data{-}neon{-}ind{-}meas.csv"}\NormalTok{)}
+\NormalTok{met }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"data{-}neon{-}metadata{-}site.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We are going to test for sexual dimorphism in body mass among
+white-footed mice (\emph{Peromyscus leucopus}). We will also need to
+control for possible habitat differences.
+
+Let's filter and join the data first:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# filter to Perleu}
+\NormalTok{dat }\OtherTok{\textless{}{-}}\NormalTok{ dat[dat}\SpecialCharTok{$}\NormalTok{abb}\SpecialCharTok{==}\StringTok{"Perleu"}\NormalTok{,]}
+\CommentTok{\# drop missing body mass}
+\NormalTok{dat }\OtherTok{\textless{}{-}}\NormalTok{ dat[}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(dat}\SpecialCharTok{$}\NormalTok{weight),]}
+\CommentTok{\# pull site out of tag id}
+\NormalTok{dat}\SpecialCharTok{$}\NormalTok{site }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(}\FunctionTok{strsplit}\NormalTok{(dat}\SpecialCharTok{$}\NormalTok{tagID, }\StringTok{"\_"}\NormalTok{), }\StringTok{"["}\NormalTok{, }\DecValTok{2}\NormalTok{)}
+
+\CommentTok{\# only need these columns}
+\NormalTok{use.cols }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"site"}\NormalTok{, }\StringTok{"sex"}\NormalTok{, }\StringTok{"weight"}\NormalTok{)}
+\NormalTok{dx }\OtherTok{\textless{}{-}}\NormalTok{ dat[,use.cols]}
+
+\CommentTok{\# merge to site descriptors}
+\NormalTok{dx }\OtherTok{\textless{}{-}} \FunctionTok{merge}\NormalTok{(dx, met, }\AttributeTok{by=}\StringTok{"site"}\NormalTok{)}
+
+\CommentTok{\# remove animals with unknown sex}
+\NormalTok{dx }\OtherTok{\textless{}{-}}\NormalTok{ dx[dx}\SpecialCharTok{$}\NormalTok{sex }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"female"}\NormalTok{, }\StringTok{"male"}\NormalTok{),]}
+
+\CommentTok{\# remove wildly unrealistic body masses}
+\NormalTok{dx }\OtherTok{\textless{}{-}}\NormalTok{ dx[dx}\SpecialCharTok{$}\NormalTok{weight }\SpecialCharTok{\textgreater{}=} \DecValTok{10} \SpecialCharTok{\&}\NormalTok{ dx}\SpecialCharTok{$}\NormalTok{weight }\SpecialCharTok{\textless{}=} \DecValTok{30}\NormalTok{,]}
+
+\CommentTok{\# restrict to deciduous forest and grasslands}
+\NormalTok{dx }\OtherTok{\textless{}{-}}\NormalTok{ dx[dx}\SpecialCharTok{$}\NormalTok{habitat }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"deciduousForest"}\NormalTok{, }\StringTok{"grasslandHerbaceous"}\NormalTok{),]}
+
+\CommentTok{\# remove site wood, which has only 1 animal}
+\NormalTok{dx }\OtherTok{\textless{}{-}}\NormalTok{ dx[dx}\SpecialCharTok{$}\NormalTok{site }\SpecialCharTok{!=} \StringTok{"WOOD"}\NormalTok{,]}
+
+\CommentTok{\# remove missing cases}
+\NormalTok{use.cols }\OtherTok{\textless{}{-}}\FunctionTok{c}\NormalTok{(}\StringTok{"site"}\NormalTok{, }\StringTok{"sex"}\NormalTok{, }\StringTok{"habitat"}\NormalTok{, }\StringTok{"weight"}\NormalTok{) }
+\NormalTok{dx }\OtherTok{\textless{}{-}}\NormalTok{ dx[,use.cols]}
+\NormalTok{dx }\OtherTok{\textless{}{-}}\NormalTok{ dx[}\FunctionTok{complete.cases}\NormalTok{(dx),]}
+
+\CommentTok{\# reduce dataset size by random subsampling}
+\CommentTok{\# within site and sex. Keep at most 200 individuals}
+\CommentTok{\# per site*sex combination}
+\CommentTok{\# don\textquotesingle{}t do this in a real analysis. We are only}
+\CommentTok{\# doing it here because JAGS takes forever to run}
+\CommentTok{\# with \textgreater{}18000 observations!}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{dx}\SpecialCharTok{$}\NormalTok{sitesex }\OtherTok{\textless{}{-}} \FunctionTok{paste0}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{site, dx}\SpecialCharTok{$}\NormalTok{sex)}
+\NormalTok{unique.sitesex }\OtherTok{\textless{}{-}} \FunctionTok{sort}\NormalTok{(}\FunctionTok{unique}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{sitesex))}
+\NormalTok{nsitesex }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(unique.sitesex)}
+\NormalTok{pull.list }\OtherTok{\textless{}{-}} \FunctionTok{vector}\NormalTok{(}\StringTok{"list"}\NormalTok{, }\AttributeTok{length=}\NormalTok{nsitesex)}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{nsitesex)\{}
+\NormalTok{  irows }\OtherTok{\textless{}{-}} \FunctionTok{which}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{sitesex }\SpecialCharTok{==}\NormalTok{ unique.sitesex[i])}
+  \ControlFlowTok{if}\NormalTok{(}\FunctionTok{length}\NormalTok{(irows) }\SpecialCharTok{\textless{}=} \DecValTok{500}\NormalTok{)\{}
+\NormalTok{    pull.list[[i]] }\OtherTok{\textless{}{-}}\NormalTok{ irows}
+\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
+\NormalTok{    pull.list[[i]] }\OtherTok{\textless{}{-}} \FunctionTok{sample}\NormalTok{(irows, }\DecValTok{500}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{\}}
+\NormalTok{use.rows }\OtherTok{\textless{}{-}} \FunctionTok{do.call}\NormalTok{(c, pull.list)}
+\NormalTok{dx }\OtherTok{\textless{}{-}}\NormalTok{ dx[use.rows,]}
+\NormalTok{dx}\SpecialCharTok{$}\NormalTok{sitesex }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\end{Highlighting}
+\end{Shaded}
+
+We can check a boxplot of female vs.~male body mass. It looks like any
+effect will be small.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{boxplot}\NormalTok{(weight}\SpecialCharTok{\textasciitilde{}}\NormalTok{sex, }\AttributeTok{data=}\NormalTok{dx)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+\caption{\label{fig-lme1}}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio,alt={Body mass vs. sex in White-Footed Mice Peromyscus leucopus.}]{chapters/09-mixed-models_files/figure-pdf/fig-lme1-1.pdf}}
+
+}
+
+\end{figure}%
+
+What about potential habitat differences? It makes sense that different
+habitats, like forests or grasslands or croplands, might have different
+levels of nutrient availability, or predation pressure, or something
+that might affect body mass.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# make a boxplot, but turn it horizontal}
+\CommentTok{\# and enlarge the y axis margin to make the}
+\CommentTok{\# habitat names visible}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mar=}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{), }\AttributeTok{las=}\DecValTok{1}\NormalTok{)}
+\FunctionTok{boxplot}\NormalTok{(weight}\SpecialCharTok{\textasciitilde{}}\NormalTok{habitat, }\AttributeTok{data=}\NormalTok{dx,}
+        \AttributeTok{horizontal =} \ConstantTok{TRUE}\NormalTok{,}
+        \AttributeTok{ylab=}\StringTok{""}\NormalTok{, }\AttributeTok{xlab=}\StringTok{"Body mass (g)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+\caption{\label{fig-lme2}}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio,alt={Body mass vs. sex in White-Footed Mice Peromyscus leucopus.}]{chapters/09-mixed-models_files/figure-pdf/fig-lme2-1.pdf}}
+
+}
+
+\end{figure}%
+
+There is a lot of variability, but it looks like there might be some
+differences in body mass between the habitats.
+
+One issue we might want to consider is that each habitat type is
+represented by several sites, and there might be variability between
+sites. For example, the ``deciduousForest'' habitat at GRSM might be
+different than the same category at HARV.
+\href{https://www.neonscience.org/field-sites/grsm}{GRSM} is in the
+Great Smoky Mountains National Park in southeastern Tennessee, and
+\href{https://www.neonscience.org/field-sites/harv}{HARV} is Harvard
+Forest in Massachusetts. Both are dominated by deciduous forest, but
+they are not the same kind of deciduous forest.
+\href{https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states}{GRSM
+is in the Ridge and Valley and Southwestern Appalachian ecoregion, while
+HARV is in the Northeastern Coastal Zone}.
+
+We want to isolate the effect of habitat while accounting for other
+differences between the sites. We need to account for site-to-site
+variability, but recognize that we are not interested in these sites in
+and of themselves. The sites where ``deciduous forest'' and
+``grassland'' were sampled are essentially a random sample of all the
+many possible places where they could have been sampled. That argues for
+treating site as a \emph{random} effect.
+
+The table below shows that deciduous forest and grasslands are each
+represented by more than 1 site. If we included a habitat represented by
+only one site, then any apparent effect of that habitat would actually
+be confounded with that site.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{habitat, dx}\SpecialCharTok{$}\NormalTok{site, }\AttributeTok{useNA=}\StringTok{"ifany"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                     
+                      CLBJ DCFS GRSM HARV KONZ MLBS NOGP OAES ORNL SCBI SERC
+  deciduousForest        0    0 1000 1000    0 1000    0    0 1000 1000 1000
+  grasslandHerbaceous  695   14    0    0 1000    0  238  139    0    0    0
+                     
+                      STEI UKFS
+  deciduousForest     1000 1000
+  grasslandHerbaceous    0    0
+\end{verbatim}
+
+\subsection{\texorpdfstring{Example analysis in
+\texttt{lme4}}{Example analysis in lme4}}\label{sec-mixed-lmm-lme4}
+
+Let's first run the analysis as a linear mixed effects model using
+package \texttt{lme4}. The deterministic part of the model will be a
+two-way ANOVA with \texttt{habitat} and \texttt{sex} plus the
+interaction between them. We will add a random random intercept for
+site.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(lme4)}
+\FunctionTok{library}\NormalTok{(lmerTest)}
+
+\CommentTok{\# mixed model with random intercept by site}
+\NormalTok{mod1 }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(weight}\SpecialCharTok{\textasciitilde{}}\NormalTok{habitat}\SpecialCharTok{*}\NormalTok{sex}\SpecialCharTok{+}\NormalTok{(}\DecValTok{1}\SpecialCharTok{|}\NormalTok{site), }\AttributeTok{data=}\NormalTok{dx)}
+\end{Highlighting}
+\end{Shaded}
+
+Now check the model fit using ANOVA. Interestingly, the main effect of
+habitat is nonsignificant, but its interaction with sex is.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{anova}\NormalTok{(mod1, }\AttributeTok{type=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Type II Analysis of Variance Table with Satterthwaite's method
+             Sum Sq Mean Sq NumDF   DenDF F value    Pr(>F)    
+habitat        5.93    5.93     1    11.5  0.3534 0.5636812    
+sex         1000.46 1000.46     1 10074.6 59.5724 1.291e-14 ***
+habitat:sex  186.75  186.75     1 10080.6 11.1198 0.0008572 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+Let's explore that interaction between sex and habitat. First check the
+coefficients:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{fixef}\NormalTok{(mod1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                       (Intercept)         habitatgrasslandHerbaceous 
+                        20.8065000                          0.0910026 
+                           sexmale habitatgrasslandHerbaceous:sexmale 
+                         0.4927500                          0.6828213 
+\end{verbatim}
+
+The output tells us:
+
+\begin{itemize}
+\tightlist
+\item
+  The average female in forest habitat is about 20.78 g.
+\item
+  The average female in grassland habitat is about \(20.78+0.05=20.83\)
+  g.
+\item
+  The average male in forest habitat is about \(20.78+0.52=21.3\) g.
+\item
+  The average male in grassland habitat is about
+  \(20.78+0.52+0.71=22.01\) g.
+\end{itemize}
+
+But some of these fitted coefficients are not statistically significant.
+The \texttt{summary()} output tells us that grassland females are not
+significantly larger than forest females, but males are significantly
+larger than females, and males are even larger than females in
+grasslands than they are in forests.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{round}\NormalTok{(}\FunctionTok{summary}\NormalTok{(mod1)}\SpecialCharTok{$}\NormalTok{coefficients,}\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                                   Estimate Std. Error        df t value
+(Intercept)                          20.806      0.470    10.686  44.282
+habitatgrasslandHerbaceous            0.091      0.788    12.057   0.116
+sexmale                               0.493      0.092 10071.327   5.377
+habitatgrasslandHerbaceous:sexmale    0.683      0.205 10080.639   3.335
+                                   Pr(>|t|)
+(Intercept)                           0.000
+habitatgrasslandHerbaceous            0.910
+sexmale                               0.000
+habitatgrasslandHerbaceous:sexmale    0.001
+\end{verbatim}
+
+We can inspect the random effects in the \texttt{summary()} output and
+with \texttt{ranef()}. The \texttt{summary()} output shows us that the
+random effect of site has a variance of about 1.69. In other words, the
+random intercepts of site follow the distribution
+\(\gamma_{site}\sim\mathcal{N}\left(0,1.69\right)\). Expressing this in
+terms of standard deviation rather than variance (because standard
+deviation is in the same units as the data), and using the properties of
+the normal distribution, about 68\% of sites have an intercept within
+1.3 g of the mean site, and about 95\% of sites have an intercept within
+2.6 g. That doesn't sound like much, but 2.6 g is huge if you are a
+mouse.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(mod1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: weight ~ habitat * sex + (1 | site)
+   Data: dx
+
+REML criterion at convergence: 57127.9
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.5746 -0.7214  0.0107  0.7408  2.5858 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ site     (Intercept)  1.733   1.316   
+ Residual             16.794   4.098   
+Number of obs: 10086, groups:  site, 13
+
+Fixed effects:
+                                    Estimate Std. Error        df t value
+(Intercept)                        2.081e+01  4.699e-01 1.069e+01  44.282
+habitatgrasslandHerbaceous         9.100e-02  7.877e-01 1.206e+01   0.116
+sexmale                            4.928e-01  9.164e-02 1.007e+04   5.377
+habitatgrasslandHerbaceous:sexmale 6.828e-01  2.048e-01 1.008e+04   3.335
+                                   Pr(>|t|)    
+(Intercept)                        1.87e-13 ***
+habitatgrasslandHerbaceous         0.909928    
+sexmale                            7.73e-08 ***
+habitatgrasslandHerbaceous:sexmale 0.000857 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) hbttgH sexmal
+hbttgrsslnH -0.597              
+sexmale     -0.098  0.058       
+hbttgrsslH:  0.044 -0.148 -0.448
+\end{verbatim}
+
+We can see the random effects with \texttt{ranef()}. These value are the
+\emph{deviations} of each group-level intercept and slope from the
+global intercept of 20.81.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# these are deviations from population{-}level parameters}
+\NormalTok{re3 }\OtherTok{\textless{}{-}} \FunctionTok{ranef}\NormalTok{(mod1)}
+\NormalTok{re3}\SpecialCharTok{$}\NormalTok{site}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+     (Intercept)
+CLBJ -0.09733071
+DCFS -0.75103093
+GRSM -0.51686512
+HARV  0.15759744
+KONZ  2.57574554
+MLBS -0.27817867
+NOGP -0.72230895
+OAES -1.00507495
+ORNL -1.40327333
+SCBI -0.07613702
+SERC  0.14967424
+STEI -0.61491475
+UKFS  2.58209721
+\end{verbatim}
+
+The random effects should have mean 0 and an SD corresponding to the
+variances reported by \texttt{summary(mod2)} (up to sampling error). We
+can get the actual variances with \texttt{VarCorr()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# estimated variances, standard deviations,}
+\CommentTok{\# and correlations of random effects}
+\FunctionTok{VarCorr}\NormalTok{(mod1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ Groups   Name        Std.Dev.
+ site     (Intercept) 1.3163  
+ Residual             4.0980  
+\end{verbatim}
+
+Finally, we can see the group-specific coefficients, which include the
+fixed and the random effect, with \texttt{coef()}. Notice that only the
+intercepts vary between sites. If we had specified random effects of
+habitat or sex, those columns would vary as well.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# group{-}specific coefficients (fixed + random effects)}
+\CommentTok{\# these are the group{-}specific coefficients themselves}
+\FunctionTok{coef}\NormalTok{(mod1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+$site
+     (Intercept) habitatgrasslandHerbaceous sexmale
+CLBJ    20.70917                  0.0910026 0.49275
+DCFS    20.05547                  0.0910026 0.49275
+GRSM    20.28963                  0.0910026 0.49275
+HARV    20.96410                  0.0910026 0.49275
+KONZ    23.38225                  0.0910026 0.49275
+MLBS    20.52832                  0.0910026 0.49275
+NOGP    20.08419                  0.0910026 0.49275
+OAES    19.80143                  0.0910026 0.49275
+ORNL    19.40323                  0.0910026 0.49275
+SCBI    20.73036                  0.0910026 0.49275
+SERC    20.95617                  0.0910026 0.49275
+STEI    20.19159                  0.0910026 0.49275
+UKFS    23.38860                  0.0910026 0.49275
+     habitatgrasslandHerbaceous:sexmale
+CLBJ                          0.6828213
+DCFS                          0.6828213
+GRSM                          0.6828213
+HARV                          0.6828213
+KONZ                          0.6828213
+MLBS                          0.6828213
+NOGP                          0.6828213
+OAES                          0.6828213
+ORNL                          0.6828213
+SCBI                          0.6828213
+SERC                          0.6828213
+STEI                          0.6828213
+UKFS                          0.6828213
+
+attr(,"class")
+[1] "coef.mer"
+\end{verbatim}
+
+If desired, you can also get confidence intervals of the fixed effects
+with \texttt{confint()}. This can take a while depending on the number
+of observations and the complexity of the model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# confidence intervals}
+\CommentTok{\# this can take a minute}
+\FunctionTok{confint}\NormalTok{(mod1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                                        2.5 %     97.5 %
+.sig01                              0.8450073  1.9016990
+.sigma                              4.0416900  4.1548669
+(Intercept)                        19.8908824 21.7221176
+habitatgrasslandHerbaceous         -1.4501774  1.6110975
+sexmale                             0.3131497  0.6723503
+habitatgrasslandHerbaceous:sexmale  0.2804409  1.0831267
+\end{verbatim}
+
+We can calculate 95\% CI for the random coefficients, but we need to be
+careful here. Remember that a random effect allows us to account for
+variability between sites, but does not allow us to make inferences
+about the differences between sites. If we want to do that, we need to
+fit site as a fixed effect. Still, inspecting the coefficients can often
+give us a clue about the structure of variation in our dataset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# to get the 95\% CI estimate of the random coefficients:}
+\DocumentationTok{\#\# extract conditional variances (to go along with conditional modes)}
+\NormalTok{re }\OtherTok{\textless{}{-}} \FunctionTok{ranef}\NormalTok{(mod1, }\AttributeTok{condVar =} \ConstantTok{TRUE}\NormalTok{)}
+
+\DocumentationTok{\#\#  pull values as numeric}
+\NormalTok{b }\OtherTok{\textless{}{-}}\NormalTok{ re}\SpecialCharTok{$}\NormalTok{site[, }\DecValTok{1}\NormalTok{]}
+
+\DocumentationTok{\#\# convert to SE (sqrt of var)}
+\NormalTok{se }\OtherTok{\textless{}{-}} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{attr}\NormalTok{(re}\SpecialCharTok{$}\NormalTok{site, }\StringTok{"postVar"}\NormalTok{)[}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, ])}
+
+\DocumentationTok{\#\# assemble in data frame and estimate CI}
+\DocumentationTok{\#\# note that these are the effects from }
+\DocumentationTok{\#\# the population{-}level value. Add fixef(mod2)[1]}
+\DocumentationTok{\#\# to get estimate and 95\% CI of conditional modes}
+\NormalTok{cond.ci }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+    \AttributeTok{site =} \FunctionTok{rownames}\NormalTok{(re}\SpecialCharTok{$}\NormalTok{site),}
+    \AttributeTok{estimate =}\NormalTok{ b,}
+    \AttributeTok{lower =}\NormalTok{ b }\SpecialCharTok{{-}} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ se,}
+    \AttributeTok{upper =}\NormalTok{ b }\SpecialCharTok{+} \FloatTok{1.96} \SpecialCharTok{*}\NormalTok{ se}
+\NormalTok{)}
+\NormalTok{cond.ci}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+   site    estimate       lower       upper
+1  CLBJ -0.09733071 -0.39990562  0.20524421
+2  DCFS -0.75103093 -2.40118512  0.89912326
+3  GRSM -0.51686512 -0.76964250 -0.26408774
+4  HARV  0.15759744 -0.09517994  0.41037482
+5  KONZ  2.57574554  2.32296816  2.82852292
+6  MLBS -0.27817867 -0.53095605 -0.02540129
+7  NOGP -0.72230895 -1.23266837 -0.21194952
+8  OAES -1.00507495 -1.66377524 -0.34637466
+9  ORNL -1.40327333 -1.65605071 -1.15049595
+10 SCBI -0.07613702 -0.32891440  0.17664036
+11 SERC  0.14967424 -0.10310314  0.40245162
+12 STEI -0.61491475 -0.86769213 -0.36213737
+13 UKFS  2.58209721  2.32931983  2.83487459
+\end{verbatim}
+
+It might be more helpful to plot the random effects:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lattice}\SpecialCharTok{::}\FunctionTok{dotplot}\NormalTok{(}\FunctionTok{ranef}\NormalTok{(mod1, }\AttributeTok{condVar =} \ConstantTok{TRUE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+$site
+\end{verbatim}
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/09-mixed-models_files/figure-pdf/unnamed-chunk-15-1.pdf}}
+
+Notice that fitting the model was relatively straightforward:
+\texttt{lme()} is just as easy to use as \texttt{lm()}. All of that
+post-processing was needed to get the actual model coefficients, because
+\texttt{lme()} uses effects parameterization just like \texttt{lm()}.
+This is great for seeing the effects of a factor; less so if you
+actually want to know the values of the parameters.
+
+\subsection{Example analysis in JAGS}\label{sec-mixed-lmm-jags}
+
+Let's do the analysis in JAGS. This is going to look very similar to the
+ANCOVA model that we fit in Section~\ref{sec-linear-ancova-inter}.
+First, define the model file. Notice the difference between how the
+interaction effect of sex is specified and how the random effect of site
+is specified. The fixed interaction effect has group-specific means
+defined explicitly. The random effects do not have group-level means
+defined explicitly. The fact that we will get a posterior distribution
+for the conditional means is a side effect of fitting the model with
+MCMC.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(R2jags)}
+\FunctionTok{library}\NormalTok{(rjags)}
+
+\CommentTok{\# set up data for JAGS}
+\NormalTok{sexes }\OtherTok{\textless{}{-}} \FunctionTok{sort}\NormalTok{(}\FunctionTok{unique}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{sex))}
+\NormalTok{nsex }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(sexes)}
+\CommentTok{\# 1 = female, 2 = male}
+\NormalTok{dx}\SpecialCharTok{$}\NormalTok{sex.num }\OtherTok{\textless{}{-}} \FunctionTok{match}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{sex, sexes)}
+
+\NormalTok{habitats }\OtherTok{\textless{}{-}} \FunctionTok{sort}\NormalTok{(}\FunctionTok{unique}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{habitat))}
+\NormalTok{nhabitats }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(habitats)}
+\NormalTok{dx}\SpecialCharTok{$}\NormalTok{hab.num }\OtherTok{\textless{}{-}} \FunctionTok{match}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{habitat, habitats)}
+
+\NormalTok{sites }\OtherTok{\textless{}{-}} \FunctionTok{sort}\NormalTok{(}\FunctionTok{unique}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{site))}
+\NormalTok{nsites }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(sites)}
+\NormalTok{dx}\SpecialCharTok{$}\NormalTok{site.num }\OtherTok{\textless{}{-}} \FunctionTok{match}\NormalTok{(dx}\SpecialCharTok{$}\NormalTok{site, sites)}
+
+\NormalTok{jags.data }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+  \AttributeTok{n=}\FunctionTok{nrow}\NormalTok{(dx),}
+  \AttributeTok{nsites=}\NormalTok{nsites,}
+  \AttributeTok{sex=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{sex.num,}
+  \AttributeTok{hab=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{hab.num,}
+  \AttributeTok{site=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{site.num,}
+  \AttributeTok{mass=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{weight}
+\NormalTok{)}
+
+\CommentTok{\# LMM with 1 fixed factor and 1 random intercept}
+\NormalTok{mod.name }\OtherTok{\textless{}{-}} \StringTok{"jags\_lmm\_1fac\_randint.txt"}
+\FunctionTok{sink}\NormalTok{(mod.name)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}
+
+\StringTok{model \{}
+\StringTok{    \# priors}
+\StringTok{    \#\# fixed effects}
+\StringTok{    beta0 \textasciitilde{} dnorm(20, 0.01)}
+\StringTok{    beta.sex \textasciitilde{} dnorm(0, 0.01)}
+\StringTok{    beta.hab \textasciitilde{} dnorm(0, 0.01)}
+\StringTok{    beta.int \textasciitilde{} dnorm(0, 0.01)}
+
+\StringTok{    \#\# random intercept for site}
+\StringTok{    sigma.site \textasciitilde{} dunif(0.01, 10)}
+\StringTok{    tau.site \textless{}{-} 1 / pow(sigma.site, 2)}
+
+\StringTok{    for(j in 1:nsites)\{}
+\StringTok{        gamma.site[j] \textasciitilde{} dnorm(0, tau.site)}
+\StringTok{    \}}
+
+\StringTok{    \#\# residual SD and precision}
+\StringTok{    sigma.res \textasciitilde{} dlnorm(1, 0.25)}
+\StringTok{    tau.res \textless{}{-} 1 / pow(sigma.res, 2)}
+
+\StringTok{    \# likelihood}
+\StringTok{    for(i in 1:n)\{}
+\StringTok{        mass[i] \textasciitilde{} dnorm(eta[i], tau.res)}
+
+\StringTok{        eta[i] \textless{}{-} beta0 +}
+\StringTok{                  beta.sex * (sex[i] {-} 1) +}
+\StringTok{                  beta.hab * (hab[i] {-} 1) +}
+\StringTok{                  beta.int * (sex[i] {-} 1) * (hab[i] {-} 1) +}
+\StringTok{                  gamma.site[site[i]]}
+\StringTok{    \}}
+
+\StringTok{    \# derived quantities}
+\StringTok{    \#\# sex effect within each habitat}
+\StringTok{    effect.male.forest \textless{}{-} beta.sex}
+\StringTok{    effect.male.grass \textless{}{-} beta.sex + beta.int}
+
+\StringTok{    \#\# habitat effect within each sex}
+\StringTok{    effect.grass.female \textless{}{-} beta.hab}
+\StringTok{    effect.grass.male \textless{}{-} beta.hab + beta.int}
+
+\StringTok{    \#\# interaction}
+\StringTok{    effect.interaction \textless{}{-} beta.int}
+
+
+\StringTok{\}}
+
+
+\StringTok{"}\NormalTok{, }\AttributeTok{fill=}\ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{sink}\NormalTok{()}
+
+\CommentTok{\# parameters to monitor}
+\NormalTok{params }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"beta0"}\NormalTok{, }\StringTok{"beta.sex"}\NormalTok{, }\StringTok{"beta.hab"}\NormalTok{, }\StringTok{"beta.int"}\NormalTok{,}
+            \StringTok{"sigma.site"}\NormalTok{, }\StringTok{"gamma.site"}\NormalTok{,}
+            \StringTok{"effect.male.forest"}\NormalTok{, }\StringTok{"effect.male.grass"}\NormalTok{, }
+            \StringTok{"effect.grass.female"}\NormalTok{, }\StringTok{"effect.grass.male"}\NormalTok{,}
+            \StringTok{"effect.interaction"}\NormalTok{)}
+
+\CommentTok{\# MCMC parameters}
+\CommentTok{\# smaller than normal because of the}
+\CommentTok{\# huge sample size...model takes}
+\CommentTok{\# forever to run!}
+\NormalTok{n.iter }\OtherTok{\textless{}{-}} \FloatTok{2.5e4}
+\NormalTok{n.burnin }\OtherTok{\textless{}{-}} \FloatTok{5e3}
+\NormalTok{n.thin }\OtherTok{\textless{}{-}} \DecValTok{50}
+\NormalTok{nchains }\OtherTok{\textless{}{-}} \DecValTok{3}
+
+\CommentTok{\# function to define initial values for MCMC chains}
+\CommentTok{\# note that we use an informed prior for beta0:}
+\CommentTok{\# the average mass of a P. leucopus is about 20 g.}
+\NormalTok{init.fun }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(nc)\{}
+\NormalTok{    res }\OtherTok{\textless{}{-}} \FunctionTok{vector}\NormalTok{(}\StringTok{"list"}\NormalTok{, }\AttributeTok{length=}\NormalTok{nc)}
+    \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{nc)\{}
+\NormalTok{        res[[i]] }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+            \AttributeTok{beta0 =} \FunctionTok{rnorm}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{20}\NormalTok{, }\DecValTok{2}\NormalTok{),}
+            \AttributeTok{beta.sex =} \FunctionTok{rnorm}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{2}\NormalTok{),}
+            \AttributeTok{beta.hab =} \FunctionTok{rnorm}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{2}\NormalTok{),}
+            \AttributeTok{beta.int =} \FunctionTok{rnorm}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{2}\NormalTok{),}
+            \AttributeTok{sigma.site =} \FunctionTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{3}\NormalTok{),}
+            \AttributeTok{sigma.res =} \FunctionTok{rlnorm}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\FloatTok{0.25}\NormalTok{)}
+\NormalTok{        )}
+\NormalTok{    \}}
+    \FunctionTok{return}\NormalTok{(res)}
+\NormalTok{\}}
+\NormalTok{inits }\OtherTok{\textless{}{-}} \FunctionTok{init.fun}\NormalTok{(nchains)}
+
+\CommentTok{\# fit model}
+\NormalTok{mod.lmm}\FloatTok{.1} \OtherTok{\textless{}{-}} \FunctionTok{jags}\NormalTok{(}\AttributeTok{data=}\NormalTok{jags.data, }\AttributeTok{inits=}\NormalTok{inits,}
+              \AttributeTok{parameters.to.save=}\NormalTok{params,}
+              \AttributeTok{model.file=}\NormalTok{mod.name,}
+              \AttributeTok{n.chains=}\NormalTok{nchains, }\AttributeTok{n.iter=}\NormalTok{n.iter,}
+              \AttributeTok{n.burnin=}\NormalTok{n.burnin, }\AttributeTok{n.thin=}\NormalTok{n.thin)}\CommentTok{\#jags}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 10086
+   Unobserved stochastic nodes: 19
+   Total graph size: 40414
+
+Initializing model
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod.lmm}\FloatTok{.1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Inference for Bugs model at "jags_lmm_1fac_randint.txt", fit using jags,
+ 3 chains, each with 25000 iterations (first 5000 discarded), n.thin = 50
+ n.sims = 1200 iterations saved. Running time = 492.22 secs
+                      mu.vect sd.vect      2.5%       25%       50%       75%
+beta.hab                0.084   0.908    -1.687    -0.474     0.093     0.649
+beta.int                0.687   0.207     0.263     0.560     0.696     0.821
+beta.sex                0.495   0.091     0.317     0.434     0.495     0.556
+beta0                  20.775   0.530    19.664    20.452    20.784    21.110
+effect.grass.female     0.084   0.908    -1.687    -0.474     0.093     0.649
+effect.grass.male       0.771   0.913    -1.046     0.176     0.793     1.357
+effect.interaction      0.687   0.207     0.263     0.560     0.696     0.821
+effect.male.forest      0.495   0.091     0.317     0.434     0.495     0.556
+effect.male.grass       1.182   0.184     0.805     1.064     1.187     1.306
+gamma.site[1]          -0.056   0.737    -1.546    -0.493    -0.086     0.409
+gamma.site[2]          -0.794   0.997    -2.652    -1.470    -0.782    -0.154
+gamma.site[3]          -0.481   0.538    -1.519    -0.834    -0.492    -0.149
+gamma.site[4]           0.195   0.545    -0.897    -0.152     0.178     0.519
+gamma.site[5]           2.615   0.739     1.189     2.166     2.590     3.093
+gamma.site[6]          -0.246   0.541    -1.282    -0.600    -0.255     0.068
+gamma.site[7]          -0.703   0.744    -2.109    -1.165    -0.725    -0.238
+gamma.site[8]          -0.993   0.755    -2.485    -1.518    -0.988    -0.500
+gamma.site[9]          -1.370   0.537    -2.408    -1.708    -1.386    -1.037
+gamma.site[10]         -0.051   0.543    -1.082    -0.411    -0.054     0.260
+gamma.site[11]          0.183   0.538    -0.832    -0.185     0.168     0.515
+gamma.site[12]         -0.587   0.538    -1.592    -0.951    -0.587    -0.269
+gamma.site[13]          2.618   0.540     1.584     2.271     2.611     2.936
+sigma.site              1.483   0.392     0.942     1.217     1.412     1.667
+deviance            57076.495   5.483 57067.848 57072.453 57075.616 57079.939
+                        97.5%  Rhat n.eff
+beta.hab                1.849 1.002   840
+beta.int                1.078 1.004   510
+beta.sex                0.667 1.001  1200
+beta0                  21.803 1.000  1200
+effect.grass.female     1.849 1.002   840
+effect.grass.male       2.574 1.004   510
+effect.interaction      1.078 1.004   510
+effect.male.forest      0.667 1.001  1200
+effect.male.grass       1.524 1.004   500
+gamma.site[1]           1.416 1.002   820
+gamma.site[2]           1.163 1.003  1200
+gamma.site[3]           0.610 1.000  1200
+gamma.site[4]           1.341 1.000  1200
+gamma.site[5]           4.057 1.003   650
+gamma.site[6]           0.837 1.000  1200
+gamma.site[7]           0.755 1.004   530
+gamma.site[8]           0.396 1.001  1200
+gamma.site[9]          -0.250 1.000  1200
+gamma.site[10]          1.118 1.000  1200
+gamma.site[11]          1.293 1.000  1200
+gamma.site[12]          0.556 1.000  1200
+gamma.site[13]          3.748 1.000  1200
+sigma.site              2.440 1.000  1200
+deviance            57088.783 1.000     1
+
+For each parameter, n.eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor (at convergence, Rhat=1).
+
+DIC info (using the rule: pV = var(deviance)/2)
+pV = 15.0 and DIC = 57091.5
+DIC is an estimate of expected predictive error (lower deviance is better).
+\end{verbatim}
+
+Here we can take advantage of a major advantage of Bayesian models.
+Unlike a mixed model fit by MLE, it is very straightforward to make
+comparisons between levels of your random effect, because we have a
+posterior distribution for each level (this can be done in a model fit
+using MLE, but it's not as straightforward).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# extract the posterior samples}
+\NormalTok{post1 }\OtherTok{\textless{}{-}}\NormalTok{ mod.lmm}\FloatTok{.1}\SpecialCharTok{$}\NormalTok{BUGSoutput}\SpecialCharTok{$}\NormalTok{sims.matrix}
+
+\CommentTok{\# calculate posterior probability that random }
+\CommentTok{\# intercept for site 4 is positive}
+\FunctionTok{mean}\NormalTok{(post1[,}\StringTok{"gamma.site[5]"}\NormalTok{]}\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.9983333
+\end{verbatim}
+
+We can also compare sites by seeing if the 95\% credible intervals of
+their intercepts overlap.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{diff.site1 }\OtherTok{\textless{}{-}}\NormalTok{ post1[,}\StringTok{"gamma.site[5]"}\NormalTok{]}\SpecialCharTok{{-}}\NormalTok{post1[,}\StringTok{"gamma.site[11]"}\NormalTok{]}
+
+\CommentTok{\# posterior probability that gamma[5] \textgreater{} gamma[11]}
+\FunctionTok{mean}\NormalTok{(diff.site1 }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 0.9933333
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# and the 95\% CRI of the difference}
+\FunctionTok{quantile}\NormalTok{(diff.site1, }\FunctionTok{c}\NormalTok{(}\FloatTok{0.025}\NormalTok{, }\FloatTok{0.975}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+     2.5%     97.5% 
+0.5907397 4.2643466 
+\end{verbatim}
+
+We can say that there is a \textgreater99\% probability that Site 5 has
+a greater intercept than Site 11, and we can say that there is a
+\textgreater99\% probability that site 5 has a positive effect on body
+weight. However, we cannot say that being at site 5 \emph{causes} mice
+to be bigger. The site effect captures unexplained variation
+attributable to site, which could reflect environmental conditions,
+genetic differences, sampling effects, or other unmeasured factors.
+
+Now let's fit the model a different way, using the means
+parameterization.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{jags.data }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+  \AttributeTok{n=}\FunctionTok{nrow}\NormalTok{(dx),}
+  \AttributeTok{nsites=}\NormalTok{nsites,}
+  \AttributeTok{sex=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{sex.num,}
+  \AttributeTok{hab=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{hab.num,}
+  \AttributeTok{nhab=}\NormalTok{nhabitats,}
+  \AttributeTok{nsex=}\NormalTok{nsex,}
+  \AttributeTok{site=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{site.num,}
+  \AttributeTok{mass=}\NormalTok{dx}\SpecialCharTok{$}\NormalTok{weight}
+\NormalTok{)}
+
+\CommentTok{\# LMM with 1 fixed factor and 1 random intercept}
+\NormalTok{mod.name }\OtherTok{\textless{}{-}} \StringTok{"jags\_lmm\_1fac\_randint\_v2.txt"}
+\FunctionTok{sink}\NormalTok{(mod.name)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}
+
+
+\StringTok{model \{}
+\StringTok{    \# priors}
+\StringTok{    \#\# mean for each sex x habitat combination}
+\StringTok{    for(j in 1:nsex)\{}
+\StringTok{        for(k in 1:nhab)\{}
+\StringTok{            mu[j,k] \textasciitilde{} dnorm(20, 0.01)}
+\StringTok{        \}}
+\StringTok{    \}}
+
+\StringTok{    \#\# random intercept for site}
+\StringTok{    sigma.site \textasciitilde{} dunif(0.01, 10)}
+\StringTok{    tau.site \textless{}{-} 1 / pow(sigma.site, 2)}
+
+\StringTok{    for(j in 1:nsites)\{}
+\StringTok{        gamma.site[j] \textasciitilde{} dnorm(0, tau.site)}
+\StringTok{    \}}
+
+\StringTok{    \#\# residual SD and precision}
+\StringTok{    sigma.res \textasciitilde{} dlnorm(1, 0.25)}
+\StringTok{    tau.res \textless{}{-} 1 / pow(sigma.res, 2)}
+
+\StringTok{    \# likelihood}
+\StringTok{    for(i in 1:n)\{}
+\StringTok{        mass[i] \textasciitilde{} dnorm(eta[i], tau.res)}
+\StringTok{        eta[i] \textless{}{-} mu[sex[i], hab[i]] + gamma.site[site[i]]}
+\StringTok{    \}}
+
+\StringTok{    }
+\StringTok{    \# derived quantities}
+\StringTok{    \#\# sex effect within each habitat}
+\StringTok{    effect.male.forest \textless{}{-} mu[2,1] {-} mu[1,1]}
+\StringTok{    effect.male.grass \textless{}{-} mu[2,2] {-} mu[1,2]}
+
+\StringTok{    \#\# habitat effect within each sex}
+\StringTok{    effect.grass.female \textless{}{-} mu[1,2] {-} mu[1,1]}
+\StringTok{    effect.grass.male \textless{}{-} mu[2,2] {-} mu[2,1]}
+
+\StringTok{    \#\# interaction}
+\StringTok{    effect.interaction \textless{}{-} effect.male.grass {-} effect.male.forest}
+
+\StringTok{\}}
+
+
+
+\StringTok{"}\NormalTok{, }\AttributeTok{fill=}\ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{sink}\NormalTok{()}
+
+\CommentTok{\# parameters to monitor}
+\NormalTok{params }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"mu"}\NormalTok{, }\StringTok{"sigma.site"}\NormalTok{, }\StringTok{"gamma.site"}\NormalTok{,}
+            \StringTok{"effect.male.forest"}\NormalTok{, }\StringTok{"effect.male.grass"}\NormalTok{,}
+            \StringTok{"effect.grass.female"}\NormalTok{, }\StringTok{"effect.grass.male"}\NormalTok{,}
+            \StringTok{"effect.interaction"}\NormalTok{)}
+
+\CommentTok{\# MCMC parameters}
+\CommentTok{\# smaller than normal because of the}
+\CommentTok{\# huge sample size...model takes}
+\CommentTok{\# forever to run!}
+\NormalTok{n.iter }\OtherTok{\textless{}{-}} \FloatTok{2.5e4}
+\NormalTok{n.burnin }\OtherTok{\textless{}{-}} \FloatTok{5e3}
+\NormalTok{n.thin }\OtherTok{\textless{}{-}} \DecValTok{50}
+\NormalTok{nchains }\OtherTok{\textless{}{-}} \DecValTok{3}
+
+\CommentTok{\# function to define initial values for MCMC chains}
+\CommentTok{\# note that we use an informed prior for beta0:}
+\CommentTok{\# the average mass of a P. leucopus is about 20 g.}
+\NormalTok{init.fun }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(nc)\{}
+\NormalTok{    res }\OtherTok{\textless{}{-}} \FunctionTok{vector}\NormalTok{(}\StringTok{"list"}\NormalTok{, }\AttributeTok{length=}\NormalTok{nc)}
+    \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{nc)\{}
+\NormalTok{        res[[i]] }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+            \AttributeTok{mu =} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{rnorm}\NormalTok{(nsex }\SpecialCharTok{*}\NormalTok{ nhabitats, }\DecValTok{20}\NormalTok{, }\DecValTok{2}\NormalTok{),}
+                        \AttributeTok{nrow=}\NormalTok{nsex, }\AttributeTok{ncol=}\NormalTok{nhabitats),}
+            \AttributeTok{sigma.site =} \FunctionTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\DecValTok{3}\NormalTok{),}
+            \AttributeTok{sigma.res =} \FunctionTok{rlnorm}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{)}
+\NormalTok{        )}
+\NormalTok{    \}}
+    \FunctionTok{return}\NormalTok{(res)}
+\NormalTok{\}}
+
+\NormalTok{inits }\OtherTok{\textless{}{-}} \FunctionTok{init.fun}\NormalTok{(nchains)}
+
+\CommentTok{\# fit model}
+\NormalTok{mod.lmm}\FloatTok{.2} \OtherTok{\textless{}{-}} \FunctionTok{jags}\NormalTok{(}\AttributeTok{data=}\NormalTok{jags.data, }\AttributeTok{inits=}\NormalTok{inits,}
+              \AttributeTok{parameters.to.save=}\NormalTok{params,}
+              \AttributeTok{model.file=}\NormalTok{mod.name,}
+              \AttributeTok{n.chains=}\NormalTok{nchains, }\AttributeTok{n.iter=}\NormalTok{n.iter,}
+              \AttributeTok{n.burnin=}\NormalTok{n.burnin, }\AttributeTok{n.thin=}\NormalTok{n.thin)}\CommentTok{\#jags}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 10086
+   Unobserved stochastic nodes: 19
+   Total graph size: 40409
+
+Initializing model
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod.lmm}\FloatTok{.2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Inference for Bugs model at "jags_lmm_1fac_randint_v2.txt", fit using jags,
+ 3 chains, each with 25000 iterations (first 5000 discarded), n.thin = 50
+ n.sims = 1200 iterations saved. Running time = 418.28 secs
+                      mu.vect sd.vect      2.5%       25%       50%       75%
+effect.grass.female     0.073   0.925    -1.760    -0.530     0.076     0.647
+effect.grass.male       0.757   0.926    -1.031     0.180     0.749     1.366
+effect.interaction      0.684   0.200     0.288     0.543     0.686     0.831
+effect.male.forest      0.489   0.092     0.305     0.427     0.491     0.547
+effect.male.grass       1.173   0.184     0.824     1.047     1.170     1.302
+gamma.site[1]          -0.087   0.756    -1.492    -0.575    -0.100     0.365
+gamma.site[2]          -0.746   1.057    -3.006    -1.414    -0.737    -0.032
+gamma.site[3]          -0.515   0.565    -1.578    -0.872    -0.515    -0.166
+gamma.site[4]           0.163   0.571    -0.867    -0.183     0.155     0.525
+gamma.site[5]           2.599   0.748     1.190     2.136     2.574     3.031
+gamma.site[6]          -0.277   0.567    -1.352    -0.636    -0.284     0.081
+gamma.site[7]          -0.706   0.759    -2.154    -1.200    -0.743    -0.274
+gamma.site[8]          -1.005   0.790    -2.499    -1.517    -1.012    -0.557
+gamma.site[9]          -1.407   0.569    -2.477    -1.753    -1.409    -1.053
+gamma.site[10]         -0.068   0.568    -1.139    -0.430    -0.083     0.279
+gamma.site[11]          0.155   0.571    -0.903    -0.204     0.144     0.529
+gamma.site[12]         -0.609   0.568    -1.697    -0.963    -0.610    -0.256
+gamma.site[13]          2.592   0.574     1.534     2.223     2.584     2.955
+mu[1,1]                20.804   0.560    19.677    20.445    20.818    21.161
+mu[2,1]                21.292   0.558    20.154    20.934    21.303    21.644
+mu[1,2]                20.877   0.748    19.373    20.440    20.893    21.359
+mu[2,2]                22.049   0.749    20.430    21.613    22.063    22.511
+sigma.site              1.493   0.380     0.952     1.223     1.432     1.678
+deviance            57076.810   5.532 57067.858 57072.812 57076.253 57079.877
+                        97.5%  Rhat n.eff
+effect.grass.female     1.847 1.000  1200
+effect.grass.male       2.608 1.001  1200
+effect.interaction      1.074 1.002  1200
+effect.male.forest      0.670 1.000  1200
+effect.male.grass       1.530 1.000  1200
+gamma.site[1]           1.609 1.001  1200
+gamma.site[2]           1.183 1.000  1200
+gamma.site[3]           0.626 1.001  1200
+gamma.site[4]           1.297 1.003   670
+gamma.site[5]           4.234 1.008  1200
+gamma.site[6]           0.830 1.002   760
+gamma.site[7]           0.852 1.001  1200
+gamma.site[8]           0.557 1.000  1200
+gamma.site[9]          -0.280 1.002  1000
+gamma.site[10]          1.045 1.003   690
+gamma.site[11]          1.268 1.002   960
+gamma.site[12]          0.548 1.002  1000
+gamma.site[13]          3.717 1.001  1200
+mu[1,1]                21.849 1.002  1000
+mu[2,1]                22.315 1.002  1000
+mu[1,2]                22.310 1.002  1200
+mu[2,2]                23.468 1.002  1200
+sigma.site              2.441 1.000  1200
+deviance            57090.142 1.000     1
+
+For each parameter, n.eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor (at convergence, Rhat=1).
+
+DIC info (using the rule: pV = var(deviance)/2)
+pV = 15.3 and DIC = 57092.1
+DIC is an estimate of expected predictive error (lower deviance is better).
+\end{verbatim}
+
+The result shows us that the estimates are approximately the same. Let's
+compare the fixed effects directly.
+
+For the effects parameterization version of the model, we get:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{round}\NormalTok{(mod.lmm}\FloatTok{.1}\SpecialCharTok{$}\NormalTok{BUGSoutput}\SpecialCharTok{$}\NormalTok{summary[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{10}\NormalTok{,],}\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                         mean    sd      2.5%       25%       50%       75%
+beta.hab                0.084 0.908    -1.687    -0.474     0.093     0.649
+beta.int                0.687 0.207     0.263     0.560     0.696     0.821
+beta.sex                0.495 0.091     0.317     0.434     0.495     0.556
+beta0                  20.775 0.530    19.664    20.452    20.784    21.110
+deviance            57076.495 5.483 57067.848 57072.453 57075.616 57079.939
+effect.grass.female     0.084 0.908    -1.687    -0.474     0.093     0.649
+effect.grass.male       0.771 0.913    -1.046     0.176     0.793     1.357
+effect.interaction      0.687 0.207     0.263     0.560     0.696     0.821
+effect.male.forest      0.495 0.091     0.317     0.434     0.495     0.556
+effect.male.grass       1.182 0.184     0.805     1.064     1.187     1.306
+                        97.5%  Rhat n.eff
+beta.hab                1.849 1.002   840
+beta.int                1.078 1.004   510
+beta.sex                0.667 1.001  1200
+beta0                  21.803 1.000  1200
+deviance            57088.783 1.000     1
+effect.grass.female     1.849 1.002   840
+effect.grass.male       2.574 1.004   510
+effect.interaction      1.078 1.004   510
+effect.male.forest      0.667 1.001  1200
+effect.male.grass       1.524 1.004   500
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Like the MLE version of the model, we have an intercept of about 20.8,
+  representing the mean mass of females in forest habitat.
+\item
+  In the MLE model, grassland females were not significantly larger or
+  smaller than forest females (\texttt{0.091}). The Bayesian version has
+  a smaller point estimate (0.045), with a 95\% CRI that overlaps 0.
+\item
+  In the MLE model forest males were about 0.493 g larger than forest
+  females, while in the Bayesian model we see a similar effect size of
+  0.490 g (\texttt{beta.sex}) with a 95\% CRI that does not include 0.
+\item
+  In the MLE model grassland males were about 0.683 g larger than
+  grassland females. The Bayesian model had a similar effect size of
+  0.691 (\texttt{beta.int}).
+\end{itemize}
+
+The derived parameters starting with \texttt{effects} summarize the
+total effects incorporating both the main and interaction effects:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{effect.grass.female} is the habitat effect for females
+\item
+  \texttt{effect.grass.male} is the habitat effect for males
+\item
+  \texttt{effect.male.forest} is the sex effect in forest
+\item
+  \texttt{effect.male.grass} is the sex effect in grass
+\item
+  \texttt{effect.interaction} is the difference in sexual dimorphism
+  between grassland and forest
+\end{itemize}
+
+Now let's examine the outputs of the second version of the model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{round}\NormalTok{(mod.lmm}\FloatTok{.2}\SpecialCharTok{$}\NormalTok{BUGSoutput}\SpecialCharTok{$}\NormalTok{summary[}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\SpecialCharTok{:}\DecValTok{6}\NormalTok{,}\DecValTok{20}\SpecialCharTok{:}\DecValTok{23}\NormalTok{),],}\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                      mean    sd   2.5%    25%    50%    75%  97.5%  Rhat n.eff
+effect.grass.female  0.073 0.925 -1.760 -0.530  0.076  0.647  1.847 1.000  1200
+effect.grass.male    0.757 0.926 -1.031  0.180  0.749  1.366  2.608 1.001  1200
+effect.interaction   0.684 0.200  0.288  0.543  0.686  0.831  1.074 1.002  1200
+effect.male.forest   0.489 0.092  0.305  0.427  0.491  0.547  0.670 1.000  1200
+effect.male.grass    1.173 0.184  0.824  1.047  1.170  1.302  1.530 1.000  1200
+mu[1,1]             20.804 0.560 19.677 20.445 20.818 21.161 21.849 1.002  1000
+mu[2,1]             21.292 0.558 20.154 20.934 21.303 21.644 22.315 1.002  1000
+mu[1,2]             20.877 0.748 19.373 20.440 20.893 21.359 22.310 1.002  1200
+mu[2,2]             22.049 0.749 20.430 21.613 22.063 22.511 23.468 1.002  1200
+\end{verbatim}
+
+The matrix \texttt{mu} contains the posterior means and their CRI for
+the four groups: forest females (\texttt{mu{[}1,1{]}}), grassland
+females (\texttt{mu{[}2,1{]}}), forest males (\texttt{mu{[}1,2{]}}), and
+grassland males (\texttt{mu{[}2,2{]}}).
+
+The effects we see correspond to the effects in the LMM and the first
+version of the Bayesian model.
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{effect.grass.female} is the habitat effect for females
+\item
+  \texttt{effect.grass.male} is the habitat effect for males
+\item
+  \texttt{effect.male.forest} is the sex effect in forest habitat
+\item
+  \texttt{effect.male.grass} is the sex effect in grassland habitat
+\item
+  \texttt{effect.interaction} is the difference between the sex effects
+  between habitats.
+\end{itemize}
+
+\subsection{\texorpdfstring{Example analysis in
+\texttt{brms}}{Example analysis in brms}}\label{sec-mixed-lmm-brms}
+
+Finally, we will fit the LMM in \texttt{brms}. Note that \texttt{brm()}
+uses a formula syntax very similar to that in \texttt{lme4}. We also
+need to provide \texttt{sex}, \texttt{habitat}, and \texttt{site} as
+factors rather than numbers as we did for JAGS.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(brms)}
+
+
+\NormalTok{mod.brms }\OtherTok{\textless{}{-}} \FunctionTok{brm}\NormalTok{(}
+\NormalTok{    weight }\SpecialCharTok{\textasciitilde{}}\NormalTok{ sex }\SpecialCharTok{*}\NormalTok{ habitat }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{|}\NormalTok{ site),}
+    \AttributeTok{data =}\NormalTok{ dx,}
+    \AttributeTok{family =} \FunctionTok{gaussian}\NormalTok{(),}
+    \AttributeTok{prior =} \FunctionTok{c}\NormalTok{(}
+        \FunctionTok{prior}\NormalTok{(}\FunctionTok{normal}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{5}\NormalTok{), }\AttributeTok{class =} \StringTok{"b"}\NormalTok{),}
+        \FunctionTok{prior}\NormalTok{(}\FunctionTok{normal}\NormalTok{(}\DecValTok{20}\NormalTok{, }\DecValTok{5}\NormalTok{), }\AttributeTok{class =} \StringTok{"Intercept"}\NormalTok{),}
+        \FunctionTok{prior}\NormalTok{(}\FunctionTok{exponential}\NormalTok{(}\DecValTok{1}\NormalTok{), }\AttributeTok{class =} \StringTok{"sd"}\NormalTok{),}
+        \FunctionTok{prior}\NormalTok{(}\FunctionTok{exponential}\NormalTok{(}\DecValTok{1}\NormalTok{), }\AttributeTok{class =} \StringTok{"sigma"}\NormalTok{)}
+\NormalTok{    ),}
+    \AttributeTok{chains =} \DecValTok{4}\NormalTok{,}
+    \AttributeTok{iter =} \DecValTok{2000}\NormalTok{,}
+    \AttributeTok{cores =} \DecValTok{4}\NormalTok{,}
+    \AttributeTok{backend =} \StringTok{"cmdstanr"}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Running MCMC with 4 parallel chains...
+
+Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
+Chain 1 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 4 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 3 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 1 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  100 / 2000 [  5%]  (Warmup) 
+Chain 4 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 1 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 3 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 2 Iteration:  200 / 2000 [ 10%]  (Warmup) 
+Chain 4 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 1 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 3 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 2 Iteration:  300 / 2000 [ 15%]  (Warmup) 
+Chain 4 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 1 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 2 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 3 Iteration:  400 / 2000 [ 20%]  (Warmup) 
+Chain 4 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 1 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 2 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 4 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 3 Iteration:  500 / 2000 [ 25%]  (Warmup) 
+Chain 1 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 2 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 4 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 3 Iteration:  600 / 2000 [ 30%]  (Warmup) 
+Chain 1 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 2 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 4 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 3 Iteration:  700 / 2000 [ 35%]  (Warmup) 
+Chain 1 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 2 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 4 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 3 Iteration:  800 / 2000 [ 40%]  (Warmup) 
+Chain 2 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 3 Iteration:  900 / 2000 [ 45%]  (Warmup) 
+Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 4 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
+Chain 2 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
+Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 4 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 2 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 3 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
+Chain 1 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 4 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 2 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 3 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
+Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 4 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 3 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
+Chain 1 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 2 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 4 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 3 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
+Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 4 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 3 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
+Chain 1 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 2 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 4 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 3 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
+Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 4 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 1 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
+Chain 2 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 4 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 1 finished in 71.4 seconds.
+Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
+Chain 2 finished in 72.1 seconds.
+Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 4 finished in 73.3 seconds.
+Chain 3 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
+Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
+Chain 3 finished in 77.1 seconds.
+
+All 4 chains finished successfully.
+Mean chain execution time: 73.5 seconds.
+Total execution time: 77.4 seconds.
+\end{verbatim}
+
+The post-processing functions in \texttt{lme4} have close equivalents in
+\texttt{brms}:
+
+\begin{longtable}[]{@{}lll@{}}
+\caption{Comparison of functions for fitting and summarizing mixed
+models using the frequentist \protect\texttt{lme4} package and Bayesian
+\protect\texttt{brms} package in R. Although many functions have the
+same names, \protect\texttt{lme4} generally returns point estimates,
+whereas \protect\texttt{brms} provides posterior summaries and credible
+intervals.}\label{tbl-lme4-brms}\tabularnewline
+\toprule\noalign{}
+Task & \texttt{lme4} & \texttt{brms} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Task & \texttt{lme4} & \texttt{brms} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Fit linear mixed model & \texttt{lmer()} & \texttt{brm()} \\
+Fixed-effect estimates & \texttt{fixef()} & \texttt{fixef()} \\
+Site-specific random effects & \texttt{ranef()} & \texttt{ranef()} \\
+Fixed + random effects & \texttt{coef()} & \texttt{coef()} \\
+Variance components & \texttt{VarCorr()} & \texttt{VarCorr()} \\
+Model summary & \texttt{summary()} & \texttt{summary()} \\
+\end{longtable}
+
+One important difference from \texttt{lme4} is that brms::ranef()
+returns posterior summaries for each site's random effects, including
+credible intervals. You can also obtain the full posterior draws for
+comparisons between sites.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(mod.brms)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+ Family: gaussian 
+  Links: mu = identity 
+Formula: weight ~ sex * habitat + (1 | site) 
+   Data: dx (Number of observations: 10086) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Multilevel Hyperparameters:
+~site (Number of levels: 13) 
+              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sd(Intercept)     1.36      0.30     0.91     2.07 1.00     1598     2113
+
+Regression Coefficients:
+                                   Estimate Est.Error l-95% CI u-95% CI Rhat
+Intercept                             20.81      0.50    19.83    21.79 1.00
+sexmale                                0.49      0.09     0.32     0.68 1.00
+habitatgrasslandHerbaceous             0.09      0.82    -1.50     1.72 1.00
+sexmale:habitatgrasslandHerbaceous     0.68      0.21     0.27     1.10 1.00
+                                   Bulk_ESS Tail_ESS
+Intercept                               908     1467
+sexmale                                3963     2618
+habitatgrasslandHerbaceous             1149     1582
+sexmale:habitatgrasslandHerbaceous     3855     2522
+
+Further Distributional Parameters:
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma     4.10      0.03     4.04     4.15 1.00     4674     2390
+
+Draws were sampled using sample(hmc). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{coef}\NormalTok{(mod.brms)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+$site
+, , Intercept
+
+     Estimate Est.Error     Q2.5    Q97.5
+CLBJ 20.71494 0.8229319 19.05174 22.33186
+DCFS 20.06104 1.0995555 17.91619 22.25438
+GRSM 20.29021 0.1367708 20.01941 20.56025
+HARV 20.96689 0.1379503 20.69470 21.23966
+KONZ 23.38685 0.8220931 21.72694 25.00901
+MLBS 20.52859 0.1351067 20.25904 20.79482
+NOGP 20.08124 0.8477177 18.40041 21.75486
+OAES 19.79990 0.8518674 18.05588 21.40660
+ORNL 19.40490 0.1373578 19.13840 19.66944
+SCBI 20.72927 0.1355386 20.46344 21.00048
+SERC 20.95669 0.1342711 20.70355 21.22407
+STEI 20.19058 0.1352447 19.92003 20.44961
+UKFS 23.38562 0.1392804 23.11605 23.66014
+
+, , sexmale
+
+      Estimate  Est.Error      Q2.5     Q97.5
+CLBJ 0.4943125 0.09102504 0.3187065 0.6761891
+DCFS 0.4943125 0.09102504 0.3187065 0.6761891
+GRSM 0.4943125 0.09102504 0.3187065 0.6761891
+HARV 0.4943125 0.09102504 0.3187065 0.6761891
+KONZ 0.4943125 0.09102504 0.3187065 0.6761891
+MLBS 0.4943125 0.09102504 0.3187065 0.6761891
+NOGP 0.4943125 0.09102504 0.3187065 0.6761891
+OAES 0.4943125 0.09102504 0.3187065 0.6761891
+ORNL 0.4943125 0.09102504 0.3187065 0.6761891
+SCBI 0.4943125 0.09102504 0.3187065 0.6761891
+SERC 0.4943125 0.09102504 0.3187065 0.6761891
+STEI 0.4943125 0.09102504 0.3187065 0.6761891
+UKFS 0.4943125 0.09102504 0.3187065 0.6761891
+
+, , habitatgrasslandHerbaceous
+
+       Estimate Est.Error    Q2.5    Q97.5
+CLBJ 0.08866465 0.8226777 -1.4995 1.715365
+DCFS 0.08866465 0.8226777 -1.4995 1.715365
+GRSM 0.08866465 0.8226777 -1.4995 1.715365
+HARV 0.08866465 0.8226777 -1.4995 1.715365
+KONZ 0.08866465 0.8226777 -1.4995 1.715365
+MLBS 0.08866465 0.8226777 -1.4995 1.715365
+NOGP 0.08866465 0.8226777 -1.4995 1.715365
+OAES 0.08866465 0.8226777 -1.4995 1.715365
+ORNL 0.08866465 0.8226777 -1.4995 1.715365
+SCBI 0.08866465 0.8226777 -1.4995 1.715365
+SERC 0.08866465 0.8226777 -1.4995 1.715365
+STEI 0.08866465 0.8226777 -1.4995 1.715365
+UKFS 0.08866465 0.8226777 -1.4995 1.715365
+
+, , sexmale:habitatgrasslandHerbaceous
+
+      Estimate Est.Error      Q2.5    Q97.5
+CLBJ 0.6806034 0.2053122 0.2741804 1.095408
+DCFS 0.6806034 0.2053122 0.2741804 1.095408
+GRSM 0.6806034 0.2053122 0.2741804 1.095408
+HARV 0.6806034 0.2053122 0.2741804 1.095408
+KONZ 0.6806034 0.2053122 0.2741804 1.095408
+MLBS 0.6806034 0.2053122 0.2741804 1.095408
+NOGP 0.6806034 0.2053122 0.2741804 1.095408
+OAES 0.6806034 0.2053122 0.2741804 1.095408
+ORNL 0.6806034 0.2053122 0.2741804 1.095408
+SCBI 0.6806034 0.2053122 0.2741804 1.095408
+SERC 0.6806034 0.2053122 0.2741804 1.095408
+STEI 0.6806034 0.2053122 0.2741804 1.095408
+UKFS 0.6806034 0.2053122 0.2741804 1.095408
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{fixef}\NormalTok{(mod.brms)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+                                      Estimate  Est.Error       Q2.5      Q97.5
+Intercept                          20.80651917 0.49659286 19.8327847 21.7859413
+sexmale                             0.49431252 0.09102504  0.3187065  0.6761891
+habitatgrasslandHerbaceous          0.08866465 0.82267774 -1.4995001  1.7153651
+sexmale:habitatgrasslandHerbaceous  0.68060339 0.20531222  0.2741804  1.0954083
+\end{verbatim}
+
+\section{Generalized linear mixed model (GLMM)}\label{sec-mixed-glmm}
+
+Coming soon!
 
 \part{Special applications of Bayesian inference}
 

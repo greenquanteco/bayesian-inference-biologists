@@ -322,7 +322,7 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#glm-refresher" id="toc-glm-refresher" class="nav-link active" data-scroll-target="#glm-refresher"><span class="header-section-number">5.1</span> GLM refresher</a></li>
+  <li><a href="#sec-glm1-review" id="toc-sec-glm1-review" class="nav-link active" data-scroll-target="#sec-glm1-review"><span class="header-section-number">5.1</span> GLM refresher</a></li>
   <li><a href="#sec-glm1-pois" id="toc-sec-glm1-pois" class="nav-link" data-scroll-target="#sec-glm1-pois"><span class="header-section-number">5.2</span> Poisson GLM for counts</a>
   <ul class="collapse">
   <li><a href="#sec-glm1-pois-def" id="toc-sec-glm1-pois-def" class="nav-link" data-scroll-target="#sec-glm1-pois-def"><span class="header-section-number">5.2.1</span> Definition</a></li>
@@ -387,8 +387,8 @@ window.Quarto = {
 <p>For this module you will need a recent versions of R, JAGS, and the R packages rjags and R2jags (<span class="citation" data-cites="plummer2003jags">Plummer (<a href="../references.html#ref-plummer2003jags" role="doc-biblioref">2003</a>)</span>, <span class="citation" data-cites="plummer2021">Plummer (<a href="../references.html#ref-plummer2021" role="doc-biblioref">2021</a>)</span>, <span class="citation" data-cites="rcore2025">R Core Team (<a href="../references.html#ref-rcore2025" role="doc-biblioref">2025</a>)</span>, <span class="citation" data-cites="su2021">Su and Masanao Yajima (<a href="../references.html#ref-su2021" role="doc-biblioref">2021</a>)</span>). This module and all code examples were developed and tested using R version 4.5.1, JAGS 4.3.1, rjags version 4-17, and R2jags version 0.8-9.</p>
 </div>
 </div>
-<section id="glm-refresher" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="glm-refresher"><span class="header-section-number">5.1</span> GLM refresher</h2>
+<section id="sec-glm1-review" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="sec-glm1-review"><span class="header-section-number">5.1</span> GLM refresher</h2>
 <p>Generalized linear models (GLM) extend the <a href="{@sec-linear}">linear model</a> by relaxing two assumptions:</p>
 <ol type="1">
 <li>GLM allows response distributions other than the normal distribution</li>
@@ -600,7 +600,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags-glm-poisson.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 48.28 secs
+ n.sims = 1200 iterations saved. Running time = 52.91 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      1.456    0.07   1.327   1.410   1.455   1.500   1.596 1.001  1200
 beta1      0.211    0.01   0.192   0.205   0.212   0.217   0.230 1.000  1200
@@ -836,7 +836,7 @@ Chain 3 finished in 0.3 seconds.
 
 All 3 chains finished successfully.
 Mean chain execution time: 0.3 seconds.
-Total execution time: 1.4 seconds.</code></pre>
+Total execution time: 1.2 seconds.</code></pre>
 </div>
 </div>
 <p>The first time you run the model, R will have to compile the model into stan. This might take a few minutes. After compilation, the MCMC sampling begins. If everything works, the model object will be returned and you can inspect the output.</p>
@@ -1130,7 +1130,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags-glm-negbin-v1.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 91.5 secs
+ n.sims = 1200 iterations saved. Running time = 99.43 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      1.463   0.079   1.310   1.405   1.463   1.517   1.611 1.004   490
 beta1      0.210   0.012   0.188   0.202   0.210   0.218   0.234 1.003   680
@@ -1193,7 +1193,7 @@ Initializing model</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Inference for Bugs model at "jags-glm-negbin-v2.txt", fit using jags,
  3 chains, each with 50000 iterations (first 10000 discarded), n.thin = 100
- n.sims = 1200 iterations saved. Running time = 60.61 secs
+ n.sims = 1200 iterations saved. Running time = 57.68 secs
          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 beta0      1.456   0.078   1.307   1.404   1.455   1.510   1.607 1.001  1200
 beta1      0.211   0.011   0.189   0.204   0.211   0.219   0.234 1.001  1100
