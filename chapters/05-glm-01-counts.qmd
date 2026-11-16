@@ -16,7 +16,7 @@ This module explores GLMs for **count** data. Count data are exactly what they s
 For this module you will need a recent versions of R, JAGS, and the R packages rjags and R2jags (@plummer2003jags, @plummer2021, @rcore2025, @su2021). This module and all code examples were developed and tested using R version 4.5.1, JAGS 4.3.1, rjags version 4-17, and R2jags version 0.8-9. 
 :::
 
-## GLM refresher
+## GLM refresher {#sec-glm1-review}
 
 Generalized linear models (GLM) extend the [linear model]( {@sec-linear}) by relaxing two assumptions:
 

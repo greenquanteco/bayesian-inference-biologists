@@ -1,1 +1,760 @@
 # Mixed models and random effects {#sec-mixed}
+
+## Introduction {#sec-mixed-intro}
+
+So far, the linear models (LMs) and generalized linear models (GLMs) we have studied have included two components:
+
+1. A **systematic component (or deterministic component)**, which describes how the expected value of the response variable depends on the predictor variables.
+2. A **stochastic component**, which describes random variation in the response variable around its expected value.
+
+For example, consider a linear regression describing the relationship between body mass and metabolic rate:
+
+$$
+Y_i=\beta_0+\beta_1X_i+\varepsilon_i
+$$
+
+The systematic component is $\beta_0+\beta_1X_i$, which describes the expected metabolic rate for an animal of a given body mass. The stochastic component is $\varepsilon_i$, which describes the variation in metabolic rate that the systematic component does not explain. In an ordinary linear model, we generally assume that the residuals are independent and identically distributed, with mean zero and variance $\sigma^2_{res}$. Another way to state that *i.i.d.* assumption is that the residual variation is unstructured.
+
+But what if some of that unexplained variation has an identifiable structure?
+
+Suppose our animals were measured in several different laboratories. Measurements from the same laboratory might be more similar to each other than measurements from different laboratories, perhaps because of differences in equipment, experimental protocols, or environmental conditions. This inter-laboratory variation has a structure, but it is not a structure that we as researchers are interested in. We want to account for it, certainly, but we are not interested in these laboratories themselves as experimental units.
+
+Our original linear model does not explicitly account for this source of variation. We could add laboratory as a categorical predictor, as we did in [analysis of covariance (ANCOVA)](#sec-linear-ancova). If we assume that the metabolic rate measurements were differently calibrated in each laboratory, that model would look like:
+
+$$
+Y_i=\beta_0+\beta_{1,lab_i}+\beta_2X_i+\varepsilon_i
+$$
+
+This model adds a term $\beta_{1,lab}$ that captures the lab-specific effect. This term functions as an extra intercept, so we could also have written:
+
+$$
+Y_i=\beta_{0,lab_i}+\beta_1X_i+\varepsilon_i
+
+$$
+
+Where the lab determines the intercept directly. In either case, we are fitting the effect of lab as we do any other model parameter, such as the slope for body mass. The fitted lab-specific intercepts describe differences among the particular laboratories that made the measurements, potentially reflecting differences in equipment, experimental conditions, or other factors. 
+
+It is worth asking the question: "**Do we care about the differences between Laboratories A, B, and C specifically, or do we primarily want to account for variation among laboratories?**" The former goal, estimating differences among these specific laboratories, helps us understand the data in front of us. The second goal, accounting for variation among laboratories more generally, could allow us to generalize our results beyond the particular laboratories in our dataset.
+
+Fitting laboratory-specific parameters—that is, including laboratory in the *deterministic* part of the model—accomplishes the first goal. To accomplish the second, we can instead model variation among laboratories as an additional *stochastic* component. This allows us to estimate the relationship between body mass and metabolic rate while accounting for differences among laboratories, and to characterize how much that relationship might vary in other laboratories.
+
+If we assign the random variation between labs to a new, second stochastic part of the model, we define a **random effect** of laboratory. A random effect in a statistical model is a parameter that varies between groups according to some probability distribution. In our example, we can include a **random intercept** to account for variation in measured values between laboratories:
+
+$$
+Y_i=\beta_{0,lab_i}+\beta_1X_i+\varepsilon_i
+$$
+
+$$
+\beta_{0,lab}\sim\text{Normal}\left(\mu_{\beta_0},\sigma^2_{\beta_0}\right)
+$$
+
+The intercepts $\beta_0$ vary between labs as $\beta_{0,lab}$, and those intercepts come from a normal distribution with mean $\mu_{\beta_0}$ and variance $\sigma^2_{\beta_0}$. Another option would be to fit a model with **random slopes**, where the slopes vary according to a normal distribution with mean $\mu_{\beta_1}$ and variance $\sigma^2_{\beta_1}$.
+
+$$
+Y_i=\beta_0+\beta_{1,lab_i}X_i+\varepsilon_i
+$$
+
+$$
+\beta_{1,lab}\sim\text{Normal}\left(\mu_{\beta_1},\sigma^2_{\beta_1}\right)
+$$
+
+or even a model with a random intercept *and* random slope for lab:
+
+$$
+Y_i=\beta_{0,lab}+\beta_{1,lab_i}X_i+\varepsilon_i
+$$
+
+$$
+\beta_{0,lab}\sim\text{Normal}\left(\mu_{\beta_0},\sigma^2_{\beta_0}\right)\text{; }\beta_{1,lab}\sim\text{Normal}\left(\mu_{\beta_1},\sigma^2_{\beta_1}\right)
+$$
+
+Group-level effects that vary according to a distribution are **random effects**. The other kind of effect, which you are used to seeing, are **fixed effects**. Fixed effects can be thought of as "global effects" that apply across all groups (in the dataset or not) and independent of group-level effects. A model that includes both fixed effects and random effects is a **mixed effects model**.
+
+### Putting the random in random effect {#sec-mixed-intro-rand}
+
+You may have noticed that the random effects we defined above all followed normal distributions. At this point in the course, after seeing the [modules on GLMs](#sec-glm1-review), you might wonder why we don't use other distributions to describe random effects.
+
+Well, I can't find a good answer for that. There is no mathematical reason we couldn't use something like a [gamma distribution](https://en.wikipedia.org/wiki/Gamma_distribution) for our random effects. The use of the normal is largely for convenience.
+
+In the effects parameterization of the linear mixed effects model below, the random effect follows a normal distribution with a mean of 0. The normal is convenient here because it is symmetrical about 0, and so we don't assume any skewness. The normal distribution is also well-justified by the [central limit theorem](https://en.wikipedia.org/wiki/Central_limit_theorem). In our example, laboratory differences might reflect many small, approximately independent influences: equipment calibration, technician behavior, temperature, experimental procedures, and so forth. If the laboratory effect is approximately the sum of many such influences, a normal distribution is a reasonable approximation. The final, and probably biggest reason for assuming normally-distributed random effects is that the normal distribution is computationally very convenient. 
+
+There are legitimate biological or statistical reasons why a non-normal distribution for random effects might be appropriate. For example, a gamma or lognormal distribution might be appropriate for effects which are strictly positive, when effects are multiplicative in nature, or when random effects might be highly right-skewed (many small values, few large values). 
+
+Random effects are usually assumed to follow a normal distribution with a mean of zero and an unknown variance (in effects parameterization). The mean is zero because the random effects represent deviations from the population-level relationship, while the variance describes how much groups differ from one another. The normal distribution is convenient because it accommodates both positive and negative deviations and is relatively easy to work with mathematically. Other distributions are possible, but fitting models with non-normal random effects often requires more specialized methods. 
+In means parameterization, where group-level intercepts or slopes are defined directly, the random distribution has a mean of $\mu_{\beta}$, not 0. 
+
+I'm not aware of a method for fitting a model with non-normal random effects in R, but coding such a model is trivial in JAGS. Be aware that you will have to work very hard to justify such effects to Reviewer 2.
+
+### Parameterizing mixed models  {#sec-mixed-intro-para}
+
+When we fit mixed models, it is important to be aware of whether you are fitting the **effects parameterization** or the **means parameterization** of the model. Consider a simple linear mixed model with a random slope $\beta_{1,j}$:
+
+$$y\sim\mathcal{N}\left(\eta,\sigma^2_{res}\right)$$
+
+$$\eta=\beta_0+\beta_{1,j} x$$
+
+$$\beta_1\sim\mathcal{N}\left(\mu_{\beta_1},\sigma^2_{\beta_1}\right)$$
+
+When we write the model this way, with each group-level slope occuring as itself, we are writing the **means parameterization**. It is called this because each parameter is presented as its own point estimate or mean. On the other hand, we could write the linear predictor and random effect this way:
+
+$$\eta=\beta_0+\left(\beta_1+\gamma_j\right)x$$
+
+$$\gamma_j\sim\mathcal{N}\left(0,\sigma^2_{\gamma}\right)$$
+
+This is called the **effects parameterization**. The random effect is fit as the *effect*, or difference, between the global slope $\beta_1$ and the group-specific slope $\left(\beta_1+\gamma_j\right)$. The random component now has mean 0 instead of $\mu_{\beta_1}$. The number of parameters are the same because 
+
+$$\left(\beta_1+\gamma_j\right)=\beta_{1,j}$$
+
+Which one you fit depends largely on preference. The mixed modeling functions in R packages `lme4` and `nlme` use effects parameterization, which has the benefit of making them comparable to the base `lm()` and `glm()` functions. So far in JAGS we have been using means parameterization because it involves less bookkeeping in the code (and, in my opinion, makes the outputs easier to interpret).
+
+## Linear mixed models (LMM) {#sec-mixed-lmm}
+
+### Definition {#sec-mixed-lmm-def} 
+
+The **linear mixed effects model** extends the linear model to include random effects. If we start with a basic linear regression model with one predictor $x$, we can define three versions: a **random intercept model**, a **random slope model**, and a **full random model**. 
+
+#### Random intercept model {#sec-mixed-lmm-def-randint}
+
+This model has a random effect of group on the intercept. The first part is the response distribution that relates the expected value $\mu_i$ to the observed values in $y_i$.
+
+$$y_i\sim\text{Normal}\left(\mu_i,\sigma^2_{res}\right)$$
+
+The systematic part of the model, containing the expression for $\mu_i$, includes an effect $\gamma_{group_i}$ which is the effect on the intercept associated with the group of observation $i$. The form below is the *effects parameterization*, which expresses the random effect as how it changes the intercept. In other words, the realized intercept in group A will be $\beta_0+\gamma_A$
+
+$$\mu_i=\beta_0+\beta_1x_i+\gamma_{group_i};\text{ }\gamma_{group}\sim \text{Normal}\left(0,\sigma^2_{\gamma_{group}}\right)$$
+
+The group-level effects on the intercept follow a normal distribution with mean $0$ and variance $\sigma^2_{\gamma_{group}}$. 
+
+Because the global intercept $\beta_0$ and the random intercept are both scalars and occur as a sum in the model, many people omit the $\gamma$ term ("gamma") and simplify this to:
+
+$$\mu_i=\beta_{0,group_i}+\beta_1x_i$$
+
+$$\beta_{0,group}\sim \text{Normal}\left(\mu_{\beta_{0,group}},\sigma^2_{\beta_{0,group}}\right)$$
+
+The first version keeps the global intercept and the group-level effect on the intercept separate, while the second version fits a group-level intercept directly.
+
+#### Random intercept model {#sec-mixed-lmm-def-randslope}
+
+This model has a random effect of group on the slope It has the same response distribution step as the random intercept model above. The systematic part is a bit different: the random effect of group changes the slope of $x$, not the intercept.
+
+$$\mu_i=\beta_0+\left(\beta_1+\gamma_{group_i}\right)x_i$$
+
+$$\gamma_{group}\sim\text{Normal}\left(\mu_{\gamma_{group}},\sigma^2_{\gamma_{group}}\right)$$
+
+Just as with the random intercept model, the random slope model can be simplified so as to specify a group-level slope directly:
+
+$$\mu_i=\beta_0+\beta_{1,group_i}x_i$$
+
+$$\beta_{1,group}\sim\text{Normal}\left(\mu_{\beta_{1,group}},\sigma^2_{\beta_{1,group}}\right)$$
+
+#### Random intercept and slope model {#sec-mixed-lmm-def-randboth}
+
+The **full random model** has a random intercept and a random slope. We get this model by combining the random intercept model and the random slope model:
+
+$$\mu_i=\beta_{0,group_i}+\beta_{1,group_i}x_i$$
+
+$$\beta_{0,group}\sim \text{Normal}\left(\mu_{\beta_{0,group}},\sigma^2_{\beta_{0,group}}\right)$$
+
+$$\beta_{1,group}\sim\text{Normal}\left(\mu_{\beta_{1,group}},\sigma^2_{\beta_{1,group}}\right)$$
+
+
+### Data preparation for examples {#sec-mixed-lmm-data}
+
+Let's explore a linear mixed effects model using the NEON small mammal data. If you haven't already, download the [individual measurements dataset](../datasets/data-neon-ind-meas.csv) and the [site metadata dataset](../datasets/data-neon-metadata-site.csv). 
+
+```{r}
+#| include: false
+dat <- read.csv("../datasets/data-neon-ind-meas.csv")
+met <- read.csv("../datasets/data-neon-metadata-site.csv")
+
+```
+
+```{r}
+#| eval: false
+dat <- read.csv("data-neon-ind-meas.csv")
+met <- read.csv("data-neon-metadata-site.csv")
+```
+
+We are going to test for sexual dimorphism in body mass among white-footed mice (*Peromyscus leucopus*). We will also need to control for possible habitat differences.
+
+Let's filter and join the data first:
+
+```{r}
+# filter to Perleu
+dat <- dat[dat$abb=="Perleu",]
+# drop missing body mass
+dat <- dat[!is.na(dat$weight),]
+# pull site out of tag id
+dat$site <- sapply(strsplit(dat$tagID, "_"), "[", 2)
+
+# only need these columns
+use.cols <- c("site", "sex", "weight")
+dx <- dat[,use.cols]
+
+# merge to site descriptors
+dx <- merge(dx, met, by="site")
+
+# remove animals with unknown sex
+dx <- dx[dx$sex %in% c("female", "male"),]
+
+# remove wildly unrealistic body masses
+dx <- dx[dx$weight >= 10 & dx$weight <= 30,]
+
+# restrict to deciduous forest and grasslands
+dx <- dx[dx$habitat %in% c("deciduousForest", "grasslandHerbaceous"),]
+
+# remove site wood, which has only 1 animal
+dx <- dx[dx$site != "WOOD",]
+
+# remove missing cases
+use.cols <-c("site", "sex", "habitat", "weight") 
+dx <- dx[,use.cols]
+dx <- dx[complete.cases(dx),]
+
+# reduce dataset size by random subsampling
+# within site and sex. Keep at most 200 individuals
+# per site*sex combination
+# don't do this in a real analysis. We are only
+# doing it here because JAGS takes forever to run
+# with >18000 observations!
+set.seed(123)
+dx$sitesex <- paste0(dx$site, dx$sex)
+unique.sitesex <- sort(unique(dx$sitesex))
+nsitesex <- length(unique.sitesex)
+pull.list <- vector("list", length=nsitesex)
+for(i in 1:nsitesex){
+  irows <- which(dx$sitesex == unique.sitesex[i])
+  if(length(irows) <= 500){
+    pull.list[[i]] <- irows
+  } else {
+    pull.list[[i]] <- sample(irows, 500)
+  }
+}
+use.rows <- do.call(c, pull.list)
+dx <- dx[use.rows,]
+dx$sitesex <- NULL
+```
+
+We can check a boxplot of female vs. male body mass. It looks like any effect will be small.
+
+```{r}
+#| fig-width: 6
+#| fig-height: 8
+#| fig-label: "Body mass vs. sex in White-Footed Mice *Peromyscus leucopus*."
+#| fig-alt: "Body mass vs. sex in White-Footed Mice Peromyscus leucopus."
+#| label: fig-lme1
+
+boxplot(weight~sex, data=dx)
+```
+
+What about potential habitat differences? It makes sense that different habitats, like forests or grasslands or croplands, might have different levels of nutrient availability, or predation pressure, or something that might affect body mass.
+
+```{r}
+#| fig.height: 8
+#| fig.width: 8
+#| fig-label: "Body mass vs. sex in White-Footed Mice *Peromyscus leucopus*."
+#| fig-alt: "Body mass vs. sex in White-Footed Mice Peromyscus leucopus."
+#| label: fig-lme2
+
+
+# make a boxplot, but turn it horizontal
+# and enlarge the y axis margin to make the
+# habitat names visible
+par(mar=c(4, 10, 1, 1), las=1)
+boxplot(weight~habitat, data=dx,
+        horizontal = TRUE,
+        ylab="", xlab="Body mass (g)")
+```
+
+There is a lot of variability, but it looks like there might be some differences in body mass between the habitats.
+
+One issue we might want to consider is that each habitat type is represented by several sites, and there might be variability between sites. For example, the "deciduousForest" habitat at GRSM might be different than the same category at HARV. [GRSM](https://www.neonscience.org/field-sites/grsm) is in the Great Smoky Mountains National Park in southeastern Tennessee, and [HARV](https://www.neonscience.org/field-sites/harv) is Harvard Forest in Massachusetts. Both are dominated by deciduous forest, but they are not the same kind of deciduous forest. [GRSM is in the Ridge and Valley and Southwestern Appalachian ecoregion, while HARV is in the Northeastern Coastal Zone](https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states). 
+
+We want to isolate the effect of habitat while accounting for other differences between the sites. We need to account for site-to-site variability, but recognize that we are not interested in these sites in and of themselves. The sites where "deciduous forest" and "grassland" were sampled are essentially a random sample of all the many possible places where they could have been sampled. That argues for treating site as a *random* effect.
+
+The table below shows that deciduous forest and grasslands are each represented by more than 1 site. If we included a habitat represented by only one site, then any apparent effect of that habitat would actually be confounded with that site.
+
+```{r}
+table(dx$habitat, dx$site, useNA="ifany")
+```
+
+### Example analysis in `lme4` {#sec-mixed-lmm-lme4}
+
+Let's first run the analysis as a linear mixed effects model using package `lme4`. The deterministic part of the model will be a two-way ANOVA with `habitat` and `sex` plus the interaction between them. We will add a random random intercept for site.
+
+```{r}
+library(lme4)
+library(lmerTest)
+
+# mixed model with random intercept by site
+mod1 <- lmer(weight~habitat*sex+(1|site), data=dx)
+```
+
+Now check the model fit using ANOVA. Interestingly, the main effect of habitat is nonsignificant, but its interaction with sex is. 
+
+```{r}
+anova(mod1, type=2)
+```
+
+Let's explore that interaction between sex and habitat. First check the coefficients:
+
+```{r}
+fixef(mod1)
+```
+
+The output tells us:
+
+- The average female in forest habitat is about 20.78 g.
+- The average female in grassland habitat is about $20.78+0.05=20.83$ g. 
+- The average male in forest habitat is about $20.78+0.52=21.3$ g.
+- The average male in grassland habitat is about $20.78+0.52+0.71=22.01$ g.
+
+But some of these fitted coefficients are not statistically significant. The `summary()` output tells us that grassland females are not significantly larger than forest females, but males are significantly larger than females, and males are even larger than females in grasslands than they are in forests.
+
+```{r}
+round(summary(mod1)$coefficients,3)
+```
+
+We can inspect the random effects in the `summary()` output and with `ranef()`. The `summary()` output shows us that the random effect of site has a variance of about 1.69. In other words, the random intercepts of site follow the distribution $\gamma_{site}\sim\mathcal{N}\left(0,1.69\right)$. Expressing this in terms of standard deviation rather than variance (because standard deviation is in the same units as the data), and using the properties of the normal distribution, about 68% of sites have an intercept within 1.3 g of the mean site, and about 95% of sites have an intercept within 2.6 g. That doesn't sound like much, but 2.6 g is huge if you are a mouse. 
+
+```{r}
+summary(mod1)
+```
+
+We can see the random effects with `ranef()`. These value are the *deviations* of each group-level intercept and slope from the global intercept of 20.81.
+
+```{r}
+# these are deviations from population-level parameters
+re3 <- ranef(mod1)
+re3$site
+```
+
+The random effects should have mean 0 and an SD corresponding to the variances reported by `summary(mod2)` (up to sampling error). We can get the actual variances with `VarCorr()`.
+
+```{r}
+# estimated variances, standard deviations,
+# and correlations of random effects
+VarCorr(mod1)
+```
+
+Finally, we can see the group-specific coefficients, which include the fixed and the random effect, with `coef()`. Notice that only the intercepts vary between sites. If we had specified random effects of habitat or sex, those columns would vary as well.
+
+```{r}
+# group-specific coefficients (fixed + random effects)
+# these are the group-specific coefficients themselves
+coef(mod1)
+```
+
+If desired, you can also get confidence intervals of the fixed effects with `confint()`. This can take a while depending on the number of observations and the complexity of the model.
+
+```{r}
+
+# confidence intervals
+# this can take a minute
+confint(mod1)
+```
+
+We can calculate 95% CI for the random coefficients, but we need to be careful here. Remember that a random effect allows us to account for variability between sites, but does not allow us to make inferences about the differences between sites. If we want to do that, we need to fit site as a fixed effect. Still, inspecting the coefficients can often give us a clue about the structure of variation in our dataset.
+
+```{r}
+
+# to get the 95% CI estimate of the random coefficients:
+## extract conditional variances (to go along with conditional modes)
+re <- ranef(mod1, condVar = TRUE)
+
+##  pull values as numeric
+b <- re$site[, 1]
+
+## convert to SE (sqrt of var)
+se <- sqrt(attr(re$site, "postVar")[1, 1, ])
+
+## assemble in data frame and estimate CI
+## note that these are the effects from 
+## the population-level value. Add fixef(mod2)[1]
+## to get estimate and 95% CI of conditional modes
+cond.ci <- data.frame(
+    site = rownames(re$site),
+    estimate = b,
+    lower = b - 1.96 * se,
+    upper = b + 1.96 * se
+)
+cond.ci
+```
+
+It might be more helpful to plot the random effects:
+
+```{r}
+lattice::dotplot(ranef(mod1, condVar = TRUE))
+```
+
+Notice that fitting the model was relatively straightforward: `lme()` is just as easy to use as `lm()`. All of that post-processing was needed to get the actual model coefficients, because `lme()` uses effects parameterization just like `lm()`. This is great for seeing the effects of a factor; less so if you actually want to know the values of the parameters.
+
+### Example analysis in JAGS {#sec-mixed-lmm-jags}
+
+Let's do the analysis in JAGS. This is going to look very similar to the ANCOVA model that we fit in @sec-linear-ancova-inter. First, define the model file. Notice the difference between how the interaction effect of sex is specified and how the random effect of site is specified. The fixed interaction effect has group-specific means defined explicitly. The random effects do not have group-level means defined explicitly. The fact that we will get a posterior distribution for the conditional means is a side effect of fitting the model with MCMC.
+
+
+```{r}
+#| label: fit-ancovainter-jags
+#| cache: true
+library(R2jags)
+library(rjags)
+
+# set up data for JAGS
+sexes <- sort(unique(dx$sex))
+nsex <- length(sexes)
+# 1 = female, 2 = male
+dx$sex.num <- match(dx$sex, sexes)
+
+habitats <- sort(unique(dx$habitat))
+nhabitats <- length(habitats)
+dx$hab.num <- match(dx$habitat, habitats)
+
+sites <- sort(unique(dx$site))
+nsites <- length(sites)
+dx$site.num <- match(dx$site, sites)
+
+jags.data <- list(
+  n=nrow(dx),
+  nsites=nsites,
+  sex=dx$sex.num,
+  hab=dx$hab.num,
+  site=dx$site.num,
+  mass=dx$weight
+)
+
+# LMM with 1 fixed factor and 1 random intercept
+mod.name <- "jags_lmm_1fac_randint.txt"
+sink(mod.name)
+cat("
+
+model {
+    # priors
+    ## fixed effects
+    beta0 ~ dnorm(20, 0.01)
+    beta.sex ~ dnorm(0, 0.01)
+    beta.hab ~ dnorm(0, 0.01)
+    beta.int ~ dnorm(0, 0.01)
+
+    ## random intercept for site
+    sigma.site ~ dunif(0.01, 10)
+    tau.site <- 1 / pow(sigma.site, 2)
+
+    for(j in 1:nsites){
+        gamma.site[j] ~ dnorm(0, tau.site)
+    }
+
+    ## residual SD and precision
+    sigma.res ~ dlnorm(1, 0.25)
+    tau.res <- 1 / pow(sigma.res, 2)
+
+    # likelihood
+    for(i in 1:n){
+        mass[i] ~ dnorm(eta[i], tau.res)
+
+        eta[i] <- beta0 +
+                  beta.sex * (sex[i] - 1) +
+                  beta.hab * (hab[i] - 1) +
+                  beta.int * (sex[i] - 1) * (hab[i] - 1) +
+                  gamma.site[site[i]]
+    }
+
+    # derived quantities
+    ## sex effect within each habitat
+    effect.male.forest <- beta.sex
+    effect.male.grass <- beta.sex + beta.int
+
+    ## habitat effect within each sex
+    effect.grass.female <- beta.hab
+    effect.grass.male <- beta.hab + beta.int
+
+    ## interaction
+    effect.interaction <- beta.int
+
+
+}
+
+
+", fill=TRUE)
+sink()
+
+# parameters to monitor
+params <- c("beta0", "beta.sex", "beta.hab", "beta.int",
+            "sigma.site", "gamma.site",
+            "effect.male.forest", "effect.male.grass", 
+            "effect.grass.female", "effect.grass.male",
+            "effect.interaction")
+
+# MCMC parameters
+# smaller than normal because of the
+# huge sample size...model takes
+# forever to run!
+n.iter <- 2.5e4
+n.burnin <- 5e3
+n.thin <- 50
+nchains <- 3
+
+# function to define initial values for MCMC chains
+# note that we use an informed prior for beta0:
+# the average mass of a P. leucopus is about 20 g.
+init.fun <- function(nc){
+    res <- vector("list", length=nc)
+    for(i in 1:nc){
+        res[[i]] <- list(
+            beta0 = rnorm(1, 20, 2),
+            beta.sex = rnorm(1, 0, 2),
+            beta.hab = rnorm(1, 0, 2),
+            beta.int = rnorm(1, 0, 2),
+            sigma.site = runif(1, 0.5, 3),
+            sigma.res = rlnorm(1, 1, 0.25)
+        )
+    }
+    return(res)
+}
+inits <- init.fun(nchains)
+
+# fit model
+mod.lmm.1 <- jags(data=jags.data, inits=inits,
+              parameters.to.save=params,
+              model.file=mod.name,
+              n.chains=nchains, n.iter=n.iter,
+              n.burnin=n.burnin, n.thin=n.thin)#jags
+mod.lmm.1
+```
+
+Here we can take advantage of a major advantage of Bayesian models. Unlike a mixed model fit by MLE, it is very straightforward to make comparisons between levels of your random effect, because we have a posterior distribution for each level (this can be done in a model fit using MLE, but it's not as straightforward).
+
+```{r}
+# extract the posterior samples
+post1 <- mod.lmm.1$BUGSoutput$sims.matrix
+
+# calculate posterior probability that random 
+# intercept for site 4 is positive
+mean(post1[,"gamma.site[5]"]> 0)
+```
+
+We can also compare sites by seeing if the 95% credible intervals of their intercepts overlap.
+
+```{r}
+diff.site1 <- post1[,"gamma.site[5]"]-post1[,"gamma.site[11]"]
+
+# posterior probability that gamma[5] > gamma[11]
+mean(diff.site1 > 0)
+```
+
+```{r}
+# and the 95% CRI of the difference
+quantile(diff.site1, c(0.025, 0.975))
+```
+
+We can say that there is a >99% probability that Site 5 has a greater intercept than Site 11, and we can say that there is a >99% probability that site 5 has a positive effect on body weight. However, we cannot say that being at site 5 *causes* mice to be bigger. The site effect captures unexplained variation attributable to site, which could reflect environmental conditions, genetic differences, sampling effects, or other unmeasured factors.
+
+Now let's fit the model a different way, using the means parameterization.
+
+```{r}
+#| label: fit-ancovainter-jags2
+#| cache: true
+
+jags.data <- list(
+  n=nrow(dx),
+  nsites=nsites,
+  sex=dx$sex.num,
+  hab=dx$hab.num,
+  nhab=nhabitats,
+  nsex=nsex,
+  site=dx$site.num,
+  mass=dx$weight
+)
+
+# LMM with 1 fixed factor and 1 random intercept
+mod.name <- "jags_lmm_1fac_randint_v2.txt"
+sink(mod.name)
+cat("
+
+
+model {
+    # priors
+    ## mean for each sex x habitat combination
+    for(j in 1:nsex){
+        for(k in 1:nhab){
+            mu[j,k] ~ dnorm(20, 0.01)
+        }
+    }
+
+    ## random intercept for site
+    sigma.site ~ dunif(0.01, 10)
+    tau.site <- 1 / pow(sigma.site, 2)
+
+    for(j in 1:nsites){
+        gamma.site[j] ~ dnorm(0, tau.site)
+    }
+
+    ## residual SD and precision
+    sigma.res ~ dlnorm(1, 0.25)
+    tau.res <- 1 / pow(sigma.res, 2)
+
+    # likelihood
+    for(i in 1:n){
+        mass[i] ~ dnorm(eta[i], tau.res)
+        eta[i] <- mu[sex[i], hab[i]] + gamma.site[site[i]]
+    }
+
+    
+    # derived quantities
+    ## sex effect within each habitat
+    effect.male.forest <- mu[2,1] - mu[1,1]
+    effect.male.grass <- mu[2,2] - mu[1,2]
+
+    ## habitat effect within each sex
+    effect.grass.female <- mu[1,2] - mu[1,1]
+    effect.grass.male <- mu[2,2] - mu[2,1]
+
+    ## interaction
+    effect.interaction <- effect.male.grass - effect.male.forest
+
+}
+
+
+
+", fill=TRUE)
+sink()
+
+# parameters to monitor
+params <- c("mu", "sigma.site", "gamma.site",
+            "effect.male.forest", "effect.male.grass",
+            "effect.grass.female", "effect.grass.male",
+            "effect.interaction")
+
+# MCMC parameters
+# smaller than normal because of the
+# huge sample size...model takes
+# forever to run!
+n.iter <- 2.5e4
+n.burnin <- 5e3
+n.thin <- 50
+nchains <- 3
+
+# function to define initial values for MCMC chains
+# note that we use an informed prior for beta0:
+# the average mass of a P. leucopus is about 20 g.
+init.fun <- function(nc){
+    res <- vector("list", length=nc)
+    for(i in 1:nc){
+        res[[i]] <- list(
+            mu = matrix(rnorm(nsex * nhabitats, 20, 2),
+                        nrow=nsex, ncol=nhabitats),
+            sigma.site = runif(1, 0.5, 3),
+            sigma.res = rlnorm(1, 1, 2)
+        )
+    }
+    return(res)
+}
+
+inits <- init.fun(nchains)
+
+# fit model
+mod.lmm.2 <- jags(data=jags.data, inits=inits,
+              parameters.to.save=params,
+              model.file=mod.name,
+              n.chains=nchains, n.iter=n.iter,
+              n.burnin=n.burnin, n.thin=n.thin)#jags
+mod.lmm.2
+```
+
+The result shows us that the estimates are approximately the same. Let's compare the fixed effects directly.
+
+For the effects parameterization version of the model, we get:
+
+```{r}
+round(mod.lmm.1$BUGSoutput$summary[1:10,],3)
+```
+
+- Like the MLE version of the model, we have an intercept of about 20.8, representing the mean mass of females in forest habitat.
+- In the MLE model, grassland females were not significantly larger or smaller than forest females (`0.091`). The Bayesian version has a smaller point estimate (0.045), with a 95% CRI that overlaps 0.
+- In the MLE model forest males were about 0.493 g larger than forest females, while in the Bayesian model we see a similar effect size of 0.490 g (`beta.sex`) with a 95% CRI that does not include 0. 
+- In the MLE model grassland males were about 0.683 g larger than grassland females. The Bayesian model had a similar effect size of 0.691 (`beta.int`). 
+
+The derived parameters starting with `effects` summarize the total effects incorporating both the main and interaction effects:
+
+- `effect.grass.female` is the habitat effect for females
+- `effect.grass.male` is the habitat effect for males
+- `effect.male.forest` is the sex effect in forest
+- `effect.male.grass` is the sex effect in grass
+- `effect.interaction` is the difference in sexual dimorphism between grassland and forest
+
+Now let's examine the outputs of the second version of the model.
+
+```{r}
+round(mod.lmm.2$BUGSoutput$summary[c(2:6,20:23),],3)
+```
+
+The matrix `mu` contains the posterior means and their CRI for the four groups: forest females (`mu[1,1]`), grassland females (`mu[2,1]`), forest males (`mu[1,2]`), and grassland males (`mu[2,2]`).
+
+The effects we see correspond to the effects in the LMM and the first version of the Bayesian model.
+
+- `effect.grass.female` is the habitat effect for females
+- `effect.grass.male` is the habitat effect for males
+- `effect.male.forest` is the sex effect in forest habitat
+- `effect.male.grass` is the sex effect in grassland habitat
+- `effect.interaction` is the difference between the sex effects between habitats.
+
+### Example analysis in `brms` {#sec-mixed-lmm-brms}
+
+Finally, we will fit the LMM in `brms`. Note that `brm()` uses a formula syntax very similar to that in `lme4`. We also need to provide `sex`, `habitat`, and `site` as factors rather than numbers as we did for JAGS.
+
+```{r}
+library(brms)
+
+
+mod.brms <- brm(
+    weight ~ sex * habitat + (1 | site),
+    data = dx,
+    family = gaussian(),
+    prior = c(
+        prior(normal(0, 5), class = "b"),
+        prior(normal(20, 5), class = "Intercept"),
+        prior(exponential(1), class = "sd"),
+        prior(exponential(1), class = "sigma")
+    ),
+    chains = 4,
+    iter = 2000,
+    cores = 4,
+    backend = "cmdstanr"
+)
+```
+
+The post-processing functions in `lme4` have close equivalents in `brms`:
+
+| Task | `lme4` | `brms` |
+|:---|:---|:---|
+| Fit linear mixed model | `lmer()` | `brm()` |
+| Fixed-effect estimates | `fixef()` | `fixef()` |
+| Site-specific random effects | `ranef()` | `ranef()` |
+| Fixed + random effects | `coef()` | `coef()` |
+| Variance components | `VarCorr()` | `VarCorr()` |
+| Model summary | `summary()` | `summary()` |
+
+: Comparison of functions for fitting and summarizing mixed models using the frequentist `lme4` package and Bayesian `brms` package in R. Although many functions have the same names, `lme4` generally returns point estimates, whereas `brms` provides posterior summaries and credible intervals. {#tbl-lme4-brms}
+
+
+One important difference from `lme4` is that brms::ranef() returns posterior summaries for each site's random effects, including credible intervals. You can also obtain the full posterior draws for comparisons between sites.
+
+
+```{r}
+summary(mod.brms)
+```
+
+```{r}
+coef(mod.brms)
+```
+
+```{r}
+fixef(mod.brms)
+```
+
+
+
+
+## Generalized linear mixed model (GLMM) {#sec-mixed-glmm}
+
+Coming soon!

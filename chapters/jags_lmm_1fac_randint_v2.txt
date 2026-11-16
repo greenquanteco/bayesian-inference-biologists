@@ -1,0 +1,48 @@
+
+
+
+model {
+    # priors
+    ## mean for each sex x habitat combination
+    for(j in 1:nsex){
+        for(k in 1:nhab){
+            mu[j,k] ~ dnorm(20, 0.01)
+        }
+    }
+
+    ## random intercept for site
+    sigma.site ~ dunif(0.01, 10)
+    tau.site <- 1 / pow(sigma.site, 2)
+
+    for(j in 1:nsites){
+        gamma.site[j] ~ dnorm(0, tau.site)
+    }
+
+    ## residual SD and precision
+    sigma.res ~ dlnorm(1, 0.25)
+    tau.res <- 1 / pow(sigma.res, 2)
+
+    # likelihood
+    for(i in 1:n){
+        mass[i] ~ dnorm(eta[i], tau.res)
+        eta[i] <- mu[sex[i], hab[i]] + gamma.site[site[i]]
+    }
+
+    
+    # derived quantities
+    ## sex effect within each habitat
+    effect.male.forest <- mu[2,1] - mu[1,1]
+    effect.male.grass <- mu[2,2] - mu[1,2]
+
+    ## habitat effect within each sex
+    effect.grass.female <- mu[1,2] - mu[1,1]
+    effect.grass.male <- mu[2,2] - mu[2,1]
+
+    ## interaction
+    effect.interaction <- effect.male.grass - effect.male.forest
+
+}
+
+
+
+

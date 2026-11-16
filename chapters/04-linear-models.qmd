@@ -1350,7 +1350,7 @@ The figure below shows two examples of what ANCOVA looks like in practice. Both 
 
 ***Put figure here***
 
-### ANCOVA with main effects only
+### ANCOVA with main effects only {#sec-linear-ancova-main}
 
 As always, we’ll simulate a dataset and then analyze it. Before that we need to think about how we want to write the ANCOVA model. The traditional way is the effects parameterization:
 
@@ -1521,7 +1521,7 @@ legend("topleft", legend=paste("Group", 1:nfac),
 ```
 
 
-### ANCOVA with interaction
+### ANCOVA with interaction {#sec-linear-ancova-inter}
 
 The ANCOVA with interaction effect model will be constructed by combining bits of the main effects ANCOVA model with the “parameters as arrays” trick we learned in the ANOVA with interaction model. The key is that each group has its own slope and intercept.
 
